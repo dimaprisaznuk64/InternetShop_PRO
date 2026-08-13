@@ -1,0 +1,32 @@
+# Virtual environment
+.venv/
+
+# Environment variables (не заливаємо секрети на GitHub!)
+.env
+.env.*
+!.env.example
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Tests
+.pytest_cache/
+.ruff_cache/
+*.db
+
+# Uploads
+uploads/
+media/
