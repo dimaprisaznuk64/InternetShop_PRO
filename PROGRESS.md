@@ -5,9 +5,13 @@
 ## Останнє оновлення
 
 - Дата: 2026-08-13
-- Стан: **Старт проєкту**. Прийнято 76-урочний roadmap для Internet Shop PRO.
-  Створено каркас: папка проєкту, `git init`, `.gitignore`, `PROGRESS.md`.
-  Далі: **Урок 1 — Проєктування Internet Shop** (без коду).
+- Стан: **CHECKPOINT — старт проєкту**. Прийнято 76-урочний roadmap для Internet Shop PRO.
+  Створено каркас: папка проєкту, `git init`, `.gitignore`, `PROGRESS.md`. Коміт `1925e11`.
+- **Як продовжити (наступного разу):** прочитай цей файл → `git log --oneline` →
+  починаємо **Урок 1 — Проєктування Internet Shop** (без коду: вимоги, функціонал, ролі,
+  архітектура, API, БД, frontend/backend, структура проєкту). Код — з Уроку 2.
+- Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`
+- (TelegramBot_PRO завершено й опубліковано: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\TelegramBot_PRO`)
 
 ## Roadmap (76 уроків)
 
