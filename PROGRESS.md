@@ -11,7 +11,7 @@
   User repository (get_by_email, get_by_id, create),
   Auth router (register + login endpoints з JWT).
   Auth router (register + login + refresh + /me endpoints з JWT).
-  77 тестів зелених (config, security, models, health, auth, roles, profile, categories, products, product images, product variants, search/filters).
+  97 тестів зелених.
 - **Як продовжити (наступного разу):** прочитай цей файл → `git log --oneline` →
   **Урок 7-8 — Login та JWT**: розширити auth (refresh token, logout, get_current_user endpoint).
 - Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`
@@ -55,11 +55,11 @@
 
 ### 🟣 Блок 5. Orders
 
-- [ ] Урок 23 — Order architecture: orders, order_items
-- [ ] Урок 24 — Checkout: Cart → Checkout → Order
-- [ ] Урок 25 — Order statuses: pending, paid, processing, shipped, completed, cancelled
-- [ ] Урок 26 — Order history: користувач бачить свої замовлення
-- [ ] Урок 27 — Admin orders: перегляд, зміна статусу, пошук, робота з клієнтом
+- [x] Урок 23 — Order architecture: orders, order_items
+- [x] Урок 24 — Checkout: Cart → Checkout → Order
+- [x] Урок 25 — Order statuses: pending, paid, processing, shipped, completed, cancelled
+- [x] Урок 26 — Order history: користувач бачить свої замовлення
+- [x] Урок 27 — Admin orders: перегляд, зміна статусу, пошук, робота з клієнтом
 
 ### 🔴 Блок 6. Оплата
 
