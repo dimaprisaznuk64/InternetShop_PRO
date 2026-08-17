@@ -5,12 +5,12 @@
 ## Останнє оновлення
 
 - Дата: 2026-08-17
-- Стан: **Урок 1 завершено**. Створено `DESIGN.md` — повний дизайн-документ:
-  вимоги, ролі (Guest/User/Manager/Admin), функціонал (10 модулів),
-  моделі БД (11 таблиць), API endpoints (35+ маршрутів), структура проєкту, стек.
+- Стан: **Урок 2 завершено**. Створено проєкт: структура папок (models/schemas/routers/services/repositories/utils),
+  `.venv` з усіма залежностями (FastAPI, SQLAlchemy async, asyncpg 0.31, Alembic, JWT, passlib),
+  `.env` / `.env.example`, `config.py` (pydantic-settings), `database.py` (async engine + AsyncSession),
+  `main.py` (FastAPI app з /health endpoint). Перевірено: імпорти працюють, app стартує.
 - **Як продовжити (наступного разу):** прочитай цей файл → `git log --oneline` →
-  починаємо **Урок 2 — Створення проєкту**: структура папок, `.venv`, `.env`,
-  `requirements.txt`, базова конфігурація. Код — з Уроку 2.
+  починаємо **Урок 3 — FastAPI foundation**: routers, dependencies, configuration, Swagger/OpenAPI, health endpoint.
 - Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`
 - (TelegramBot_PRO завершено й опубліковано: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\TelegramBot_PRO`)
 
@@ -19,7 +19,7 @@
 ### 🟢 Блок 1. Архітектура та старт
 
 - [x] Урок 1 — Проєктування Internet Shop: вимоги, функціонал, ролі, архітектура, API, БД, frontend/backend, структура проєкту
-- [ ] Урок 2 — Створення проєкту: Git, .venv, структура, .env, .gitignore, requirements.txt, базова конфігурація
+- [x] Урок 2 — Створення проєкту: Git, .venv, структура, .env, .gitignore, requirements.txt, базова конфігурація
 - [ ] Урок 3 — FastAPI foundation: routers, dependencies, configuration, Swagger/OpenAPI, health endpoint
 - [ ] Урок 4 — PostgreSQL + SQLAlchemy: async engine, AsyncSession, models, база даних
 - [ ] Урок 5 — Alembic: migrations, revision, upgrade/downgrade, автоматичне визначення змін моделей
@@ -139,7 +139,7 @@
 
 ## Поточний блок (наступний крок)
 
-- 🔄 **Урок 2 — Створення проєкту**: Git, .venv, структура, .env, .gitignore, requirements.txt, базова конфігурація
+- 🔄 **Урок 3 — FastAPI foundation**: routers, dependencies, configuration, Swagger/OpenAPI, health endpoint
 
 ## Конвенції проєкту
 
