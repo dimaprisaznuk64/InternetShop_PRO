@@ -4,12 +4,13 @@
 
 ## Останнє оновлення
 
-- Дата: 2026-08-13
-- Стан: **CHECKPOINT — старт проєкту**. Прийнято 76-урочний roadmap для Internet Shop PRO.
-  Створено каркас: папка проєкту, `git init`, `.gitignore`, `PROGRESS.md`. Коміт `1925e11`.
+- Дата: 2026-08-17
+- Стан: **Урок 1 завершено**. Створено `DESIGN.md` — повний дизайн-документ:
+  вимоги, ролі (Guest/User/Manager/Admin), функціонал (10 модулів),
+  моделі БД (11 таблиць), API endpoints (35+ маршрутів), структура проєкту, стек.
 - **Як продовжити (наступного разу):** прочитай цей файл → `git log --oneline` →
-  починаємо **Урок 1 — Проєктування Internet Shop** (без коду: вимоги, функціонал, ролі,
-  архітектура, API, БД, frontend/backend, структура проєкту). Код — з Уроку 2.
+  починаємо **Урок 2 — Створення проєкту**: структура папок, `.venv`, `.env`,
+  `requirements.txt`, базова конфігурація. Код — з Уроку 2.
 - Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`
 - (TelegramBot_PRO завершено й опубліковано: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\TelegramBot_PRO`)
 
@@ -17,7 +18,7 @@
 
 ### 🟢 Блок 1. Архітектура та старт
 
-- [ ] Урок 1 — Проєктування Internet Shop: вимоги, функціонал, ролі, архітектура, API, БД, frontend/backend, структура проєкту
+- [x] Урок 1 — Проєктування Internet Shop: вимоги, функціонал, ролі, архітектура, API, БД, frontend/backend, структура проєкту
 - [ ] Урок 2 — Створення проєкту: Git, .venv, структура, .env, .gitignore, requirements.txt, базова конфігурація
 - [ ] Урок 3 — FastAPI foundation: routers, dependencies, configuration, Swagger/OpenAPI, health endpoint
 - [ ] Урок 4 — PostgreSQL + SQLAlchemy: async engine, AsyncSession, models, база даних
@@ -138,7 +139,7 @@
 
 ## Поточний блок (наступний крок)
 
-- 🔄 **Урок 1 — Проєктування Internet Shop**: вимоги, функціонал, ролі, архітектура, API, БД, frontend/backend, структура проєкту
+- 🔄 **Урок 2 — Створення проєкту**: Git, .venv, структура, .env, .gitignore, requirements.txt, базова конфігурація
 
 ## Конвенції проєкту
 
