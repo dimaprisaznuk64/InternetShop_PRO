@@ -13,6 +13,7 @@ from app.routers.payments import router as payments_router
 from app.routers.favorites import router as favorites_router
 from app.routers.reviews import router as reviews_router
 from app.routers.promo import router as promo_router
+from app.routers.admin import router as admin_router
 
 settings = get_settings()
 
@@ -43,6 +44,7 @@ app.include_router(payments_router)
 app.include_router(favorites_router)
 app.include_router(reviews_router)
 app.include_router(promo_router)
+app.include_router(admin_router)
 
 
 @app.get("/health")
