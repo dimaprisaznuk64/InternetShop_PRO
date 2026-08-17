@@ -10,6 +10,9 @@ from app.routers.product_variants import router as product_variants_router
 from app.routers.cart import router as cart_router
 from app.routers.orders import router as orders_router
 from app.routers.payments import router as payments_router
+from app.routers.favorites import router as favorites_router
+from app.routers.reviews import router as reviews_router
+from app.routers.promo import router as promo_router
 
 settings = get_settings()
 
@@ -37,6 +40,9 @@ app.include_router(product_variants_router)
 app.include_router(cart_router)
 app.include_router(orders_router)
 app.include_router(payments_router)
+app.include_router(favorites_router)
+app.include_router(reviews_router)
+app.include_router(promo_router)
 
 
 @app.get("/health")

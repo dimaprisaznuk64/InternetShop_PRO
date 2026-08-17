@@ -11,7 +11,7 @@
   User repository (get_by_email, get_by_id, create),
   Auth router (register + login endpoints з JWT).
   Auth router (register + login + refresh + /me endpoints з JWT).
-  103 тести зелених.
+  117 тестів зелених.
 - **Як продовжити (наступного разу):** прочитай цей файл → `git log --oneline` →
   **Урок 7-8 — Login та JWT**: розширити auth (refresh token, logout, get_current_user endpoint).
 - Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`
@@ -70,10 +70,10 @@
 
 ### 🟤 Блок 7. Обране, відгуки та промокоди
 
-- [ ] Урок 32 — Favorites: додати, видалити, список
-- [ ] Урок 33 — Reviews: оцінка, текст, перевірка покупки, moderation
-- [ ] Урок 34 — Promo codes: WELCOME10/SALE20, percentage, fixed discount, expiration, usage limits
-- [ ] Урок 35 — Delivery: адреси, доставка, delivery methods, shipping cost
+- [x] Урок 32 — Favorites: додати, видалити, список
+- [x] Урок 33 — Reviews: оцінка, текст, перевірка покупки, moderation
+- [x] Урок 34 — Promo codes: WELCOME10/SALE20, percentage, fixed discount, expiration, usage limits
+- [x] Урок 35 — Delivery: адреси, доставка, delivery methods, shipping cost
 
 ### ⚫ Блок 8. Admin Panel
 
