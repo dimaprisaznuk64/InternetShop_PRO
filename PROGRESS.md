@@ -5,12 +5,12 @@
 ## Останнє оновлення
 
 - Дата: 2026-08-17
-- Стан: **Урок 4 завершено**. Моделі БД (13 таблиць): User (role enum), Category (дерево),
-  Product + ProductImage + ProductVariant, Cart + CartItem, Order + OrderItem (status enum),
-  Payment (status enum), Review, Favorite (unique constraint), PromoCode (discount type enum).
-  Всі моделі імпортуються, UUID PK, timestamps, зв'язки, cascade.
+- Стан: **Блок 1 завершено (Уроки 1-5)**. DESIGN.md, проєкт створено, FastAPI foundation,
+  13 моделей БД, Alembic з першою міграцією (001_initial_tables). Але PostgreSQL не з'єднується
+  з localhost (asyncpg connection error) — треба перевірити конфігурацію pg_hba.conf / порт / пароль.
 - **Як продовжити (наступного разу):** прочитай цей файл → `git log --oneline` →
-  починаємо **Урок 5 — Alembic**: migrations, revision, upgrade/downgrade.
+  1) Відлагодити з'єднання з PostgreSQL → застосувати міграцію →
+  2) **Урок 6 — User model + реєстрація**: Pydantic schemas, валідація, хешування пароля, endpoint.
 - Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`
 - (TelegramBot_PRO завершено й опубліковано: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\TelegramBot_PRO`)
 
@@ -22,7 +22,7 @@
 - [x] Урок 2 — Створення проєкту: Git, .venv, структура, .env, .gitignore, requirements.txt, базова конфігурація
 - [x] Урок 3 — FastAPI foundation: routers, dependencies, configuration, Swagger/OpenAPI, health endpoint
 - [x] Урок 4 — PostgreSQL + SQLAlchemy: async engine, AsyncSession, models, база даних
-- [ ] Урок 5 — Alembic: migrations, revision, upgrade/downgrade, автоматичне визначення змін моделей
+- [x] Урок 5 — Alembic: migrations, revision, upgrade/downgrade, автоматичне визначення змін моделей
 
 ### 🟡 Блок 2. Користувачі та авторизація
 
@@ -139,7 +139,7 @@
 
 ## Поточний блок (наступний крок)
 
-- 🔄 **Урок 5 — Alembic**: migrations, revision, upgrade/downgrade, автоматичне визначення змін моделей
+- 🔄 **Урок 6 — User model + Registration**: Pydantic schemas, валідація, хешування пароля, endpoint (потрібно: відлагодити PostgreSQL connection)
 
 ## Конвенції проєкту
 
