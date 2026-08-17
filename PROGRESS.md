@@ -5,11 +5,12 @@
 ## Останнє оновлення
 
 - Дата: 2026-08-17
-- Стан: **Урок 3 завершено**. FastAPI foundation: CORS middleware, Swagger/OpenAPI на `/docs`,
-  health endpoint, utils (security.py — JWT + bcrypt, dependencies.py — get_current_user, exceptions.py — custom errors).
-  Перевірено: hashing, JWT tokens, app routes працюють.
+- Стан: **Урок 4 завершено**. Моделі БД (13 таблиць): User (role enum), Category (дерево),
+  Product + ProductImage + ProductVariant, Cart + CartItem, Order + OrderItem (status enum),
+  Payment (status enum), Review, Favorite (unique constraint), PromoCode (discount type enum).
+  Всі моделі імпортуються, UUID PK, timestamps, зв'язки, cascade.
 - **Як продовжити (наступного разу):** прочитай цей файл → `git log --oneline` →
-  починаємо **Урок 4 — PostgreSQL + SQLAlchemy**: моделі БД, async engine, session factory.
+  починаємо **Урок 5 — Alembic**: migrations, revision, upgrade/downgrade.
 - Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`
 - (TelegramBot_PRO завершено й опубліковано: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\TelegramBot_PRO`)
 
@@ -20,7 +21,7 @@
 - [x] Урок 1 — Проєктування Internet Shop: вимоги, функціонал, ролі, архітектура, API, БД, frontend/backend, структура проєкту
 - [x] Урок 2 — Створення проєкту: Git, .venv, структура, .env, .gitignore, requirements.txt, базова конфігурація
 - [x] Урок 3 — FastAPI foundation: routers, dependencies, configuration, Swagger/OpenAPI, health endpoint
-- [ ] Урок 4 — PostgreSQL + SQLAlchemy: async engine, AsyncSession, models, база даних
+- [x] Урок 4 — PostgreSQL + SQLAlchemy: async engine, AsyncSession, models, база даних
 - [ ] Урок 5 — Alembic: migrations, revision, upgrade/downgrade, автоматичне визначення змін моделей
 
 ### 🟡 Блок 2. Користувачі та авторизація
@@ -138,7 +139,7 @@
 
 ## Поточний блок (наступний крок)
 
-- 🔄 **Урок 4 — PostgreSQL + SQLAlchemy**: async engine, AsyncSession, models, база даних
+- 🔄 **Урок 5 — Alembic**: migrations, revision, upgrade/downgrade, автоматичне визначення змін моделей
 
 ## Конвенції проєкту
 
