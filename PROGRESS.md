@@ -11,7 +11,7 @@
   User repository (get_by_email, get_by_id, create),
   Auth router (register + login endpoints з JWT).
   Auth router (register + login + refresh + /me endpoints з JWT).
-  30 тестів зелених (config, security, models, health, auth, roles, profile).
+  77 тестів зелених (config, security, models, health, auth, roles, profile, categories, products, product images, product variants, search/filters).
 - **Як продовжити (наступного разу):** прочитай цей файл → `git log --oneline` →
   **Урок 7-8 — Login та JWT**: розширити auth (refresh token, logout, get_current_user endpoint).
 - Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`
@@ -47,10 +47,10 @@
 
 ### 🔵 Блок 4. Кошик
 
-- [ ] Урок 18 — Cart model: cart, cart_items
-- [ ] Урок 19 — Add to cart: додавання, кількість, перевірка stock
-- [ ] Урок 20 — Update / remove: зміна кількості, видалення, очищення
-- [ ] Урок 21 — Cart calculations: subtotal, discount, delivery, total
+- [x] Урок 18 — Cart model: cart, cart_items
+- [x] Урок 19 — Add to cart: додавання, кількість, перевірка stock
+- [x] Урок 20 — Update / remove: зміна кількості, видалення, очищення
+- [x] Урок 21 — Cart calculations: subtotal, discount, delivery, total
 - [ ] Урок 22 — Race conditions: конкуренція на залишках (Stock=1, два покупці) — транзакції/locking
 
 ### 🟣 Блок 5. Orders
