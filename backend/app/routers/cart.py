@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 from app.database import get_db
 from app.models.cart import Cart, CartItem
 from app.models.product import Product
@@ -77,7 +78,9 @@ async def add_to_cart(
     current_user=Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    result = await db.execute(select(Product).where(Product.id == data.product_id))
+    result = await db.execute(
+        select(Product).where(Product.id == data.product_id).with_for_update()
+    )
     product = result.scalar_one_or_none()
     if not product:
         raise NotFoundError("Product not found")
@@ -147,7 +150,7 @@ async def update_cart_item(
     if not item:
         raise NotFoundError("Cart item not found")
 
-    result = await db.execute(select(Product).where(Product.id == item.product_id))
+    result = await db.execute(select(Product).where(Product.id == item.product_id).with_for_update())
     product = result.scalar_one_or_none()
 
     if data.quantity > product.stock:

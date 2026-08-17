@@ -51,7 +51,7 @@
 - [x] Урок 19 — Add to cart: додавання, кількість, перевірка stock
 - [x] Урок 20 — Update / remove: зміна кількості, видалення, очищення
 - [x] Урок 21 — Cart calculations: subtotal, discount, delivery, total
-- [ ] Урок 22 — Race conditions: конкуренція на залишках (Stock=1, два покупці) — транзакції/locking
+- [x] Урок 22 — Race conditions: конкуренція на залишках (Stock=1, два покупці) — транзакції/locking
 
 ### 🟣 Блок 5. Orders
 
