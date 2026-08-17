@@ -40,7 +40,7 @@
 - [x] Урок 11 — Categories: категорії, підкатегорії, зв'язки
 - [x] Урок 12 — Products: товар, ціна, SKU, stock, description, статус
 - [x] Урок 13 — Product images: завантаження, зберігання, URL, основне фото, додаткові фото
-- [ ] Урок 14 — Product variants: варіанти товару (напр. iPhone Black 128GB / White 256GB)
+- [x] Урок 14 — Product variants: варіанти товару (напр. iPhone Black 128GB / White 256GB)
 - [ ] Урок 15 — Search: пошук, ILIKE, full-text search, пошук за SKU
 - [ ] Урок 16 — Filters: category, price, stock, brand, attributes
 - [ ] Урок 17 — Sorting & pagination: pagination, sorting, limit/offset, cursor pagination
