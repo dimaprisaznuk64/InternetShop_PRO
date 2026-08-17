@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 from decimal import Decimal
 from typing import Optional
 from sqlalchemy import String, Boolean, Numeric, Integer, DateTime
+import sqlalchemy as sa
 from sqlalchemy.orm import Mapped, mapped_column
 from app.database import Base
 
@@ -30,7 +31,7 @@ class PromoCode(Base):
     expires_at: Mapped[Optional[datetime]] = mapped_column(
         DateTime, nullable=True
     )
-    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, server_default=sa.text("true"))
     created_at: Mapped[datetime] = mapped_column(
         default=lambda: datetime.now(timezone.utc)
     )

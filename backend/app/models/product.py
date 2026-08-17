@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 from decimal import Decimal
 from typing import Optional
 from sqlalchemy import String, Text, Boolean, ForeignKey, Integer, Numeric
+import sqlalchemy as sa
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.database import Base
 
@@ -21,7 +22,7 @@ class Product(Base):
     stock: Mapped[int] = mapped_column(Integer, default=0)
     category_id: Mapped[str] = mapped_column(String(36), ForeignKey("categories.id"))
     brand: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
-    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, server_default=sa.text("true"))
     created_at: Mapped[datetime] = mapped_column(
         default=lambda: datetime.now(timezone.utc)
     )
