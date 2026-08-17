@@ -42,7 +42,9 @@ async def setup_database():
 async def db_session():
     async with TestSession() as session:
         yield session
-        await session.rollback()
+    async with test_engine.begin() as conn:
+        for table in reversed(Base.metadata.sorted_tables):
+            await conn.execute(table.delete())
 
 
 @pytest.fixture

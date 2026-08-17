@@ -2,9 +2,10 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
 from app.schemas.user import UserRegister, UserLogin, UserResponse, TokenResponse
-from app.repositories.user_repo import get_user_by_email, create_user
-from app.utils.security import hash_password, create_access_token, create_refresh_token
-from app.utils.exceptions import AlreadyExistsError
+from app.repositories.user_repo import get_user_by_email, get_user_by_id, create_user
+from app.utils.security import hash_password, verify_password, create_access_token, create_refresh_token
+from app.utils.dependencies import get_current_user
+from app.utils.exceptions import AlreadyExistsError, BadRequestError
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
@@ -22,9 +23,6 @@ async def register(data: UserRegister, db: AsyncSession = Depends(get_db)):
 
 @router.post("/login", response_model=TokenResponse)
 async def login(data: UserLogin, db: AsyncSession = Depends(get_db)):
-    from app.utils.security import verify_password
-    from app.utils.exceptions import BadRequestError
-
     user = await get_user_by_email(db, data.email)
     if not user or not verify_password(data.password, user.hashed_password):
         raise BadRequestError("Invalid email or password")
@@ -32,3 +30,31 @@ async def login(data: UserLogin, db: AsyncSession = Depends(get_db)):
     access = create_access_token(user.id)
     refresh = create_refresh_token(user.id)
     return TokenResponse(access_token=access, refresh_token=refresh)
+
+
+@router.post("/refresh", response_model=TokenResponse)
+async def refresh_token(token: str, db: AsyncSession = Depends(get_db)):
+    from jose import JWTError, jwt
+    from app.config import get_settings
+
+    settings = get_settings()
+    try:
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
+        user_id: str = payload.get("sub")
+        if user_id is None:
+            raise BadRequestError("Invalid refresh token")
+    except JWTError:
+        raise BadRequestError("Invalid refresh token")
+
+    user = await get_user_by_id(db, user_id)
+    if not user:
+        raise BadRequestError("User not found")
+
+    access = create_access_token(user.id)
+    refresh = create_refresh_token(user.id)
+    return TokenResponse(access_token=access, refresh_token=refresh)
+
+
+@router.get("/me", response_model=UserResponse)
+async def get_me(current_user=Depends(get_current_user)):
+    return current_user
