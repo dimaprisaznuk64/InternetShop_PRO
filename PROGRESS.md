@@ -5,12 +5,11 @@
 ## Останнє оновлення
 
 - Дата: 2026-08-17
-- Стан: **Урок 2 завершено**. Створено проєкт: структура папок (models/schemas/routers/services/repositories/utils),
-  `.venv` з усіма залежностями (FastAPI, SQLAlchemy async, asyncpg 0.31, Alembic, JWT, passlib),
-  `.env` / `.env.example`, `config.py` (pydantic-settings), `database.py` (async engine + AsyncSession),
-  `main.py` (FastAPI app з /health endpoint). Перевірено: імпорти працюють, app стартує.
+- Стан: **Урок 3 завершено**. FastAPI foundation: CORS middleware, Swagger/OpenAPI на `/docs`,
+  health endpoint, utils (security.py — JWT + bcrypt, dependencies.py — get_current_user, exceptions.py — custom errors).
+  Перевірено: hashing, JWT tokens, app routes працюють.
 - **Як продовжити (наступного разу):** прочитай цей файл → `git log --oneline` →
-  починаємо **Урок 3 — FastAPI foundation**: routers, dependencies, configuration, Swagger/OpenAPI, health endpoint.
+  починаємо **Урок 4 — PostgreSQL + SQLAlchemy**: моделі БД, async engine, session factory.
 - Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`
 - (TelegramBot_PRO завершено й опубліковано: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\TelegramBot_PRO`)
 
@@ -20,7 +19,7 @@
 
 - [x] Урок 1 — Проєктування Internet Shop: вимоги, функціонал, ролі, архітектура, API, БД, frontend/backend, структура проєкту
 - [x] Урок 2 — Створення проєкту: Git, .venv, структура, .env, .gitignore, requirements.txt, базова конфігурація
-- [ ] Урок 3 — FastAPI foundation: routers, dependencies, configuration, Swagger/OpenAPI, health endpoint
+- [x] Урок 3 — FastAPI foundation: routers, dependencies, configuration, Swagger/OpenAPI, health endpoint
 - [ ] Урок 4 — PostgreSQL + SQLAlchemy: async engine, AsyncSession, models, база даних
 - [ ] Урок 5 — Alembic: migrations, revision, upgrade/downgrade, автоматичне визначення змін моделей
 
@@ -139,7 +138,7 @@
 
 ## Поточний блок (наступний крок)
 
-- 🔄 **Урок 3 — FastAPI foundation**: routers, dependencies, configuration, Swagger/OpenAPI, health endpoint
+- 🔄 **Урок 4 — PostgreSQL + SQLAlchemy**: async engine, AsyncSession, models, база даних
 
 ## Конвенції проєкту
 
