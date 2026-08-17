@@ -11,7 +11,7 @@
   User repository (get_by_email, get_by_id, create),
   Auth router (register + login endpoints з JWT).
   Auth router (register + login + refresh + /me endpoints з JWT).
-  30 тестів зелених.
+  30 тестів зелених (config, security, models, health, auth, roles, profile).
 - **Як продовжити (наступного разу):** прочитай цей файл → `git log --oneline` →
   **Урок 7-8 — Login та JWT**: розширити auth (refresh token, logout, get_current_user endpoint).
 - Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`
@@ -33,7 +33,7 @@
 - [x] Урок 7 — Registration: Pydantic schemas, валідація, хешування пароля
 - [x] Урок 8 — Login: authentication, JWT, access token, refresh token
 - [x] Урок 9 — Roles & permissions: user / manager / admin, RBAC, permissions, захист endpoint'ів
-- [ ] Урок 10 — Profile: отримання профілю, редагування, зміна пароля, видалення акаунта
+- [x] Урок 10 — Profile: отримання профілю, редагування, зміна пароля, видалення акаунта
 
 ### 🟠 Блок 3. Каталог
 
