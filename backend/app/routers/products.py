@@ -1,6 +1,7 @@
-from fastapi import APIRouter, Depends, status
+from typing import Optional
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, or_
 from app.database import get_db
 from app.models.product import Product
 from app.schemas.product import (
@@ -16,12 +17,91 @@ router = APIRouter(prefix="/api/products", tags=["products"])
 
 
 @router.get("/", response_model=ProductListResponse)
-async def list_products(db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(Product))
+async def list_products(
+    q: Optional[str] = Query(None, description="Search by name or SKU"),
+    category_id: Optional[str] = Query(None, description="Filter by category"),
+    min_price: Optional[float] = Query(None, ge=0),
+    max_price: Optional[float] = Query(None, ge=0),
+    in_stock: Optional[bool] = Query(None, description="Only in stock"),
+    brand: Optional[str] = Query(None, description="Filter by brand"),
+    sort_by: Optional[str] = Query("created_at", description="Sort field"),
+    sort_order: Optional[str] = Query("desc", description="asc or desc"),
+    limit: int = Query(20, ge=1, le=100),
+    offset: int = Query(0, ge=0),
+    db: AsyncSession = Depends(get_db),
+):
+    stmt = select(Product)
+
+    if q:
+        pattern = f"%{q}%"
+        stmt = stmt.where(
+            or_(
+                Product.name.ilike(pattern),
+                Product.sku.ilike(pattern),
+                Product.description.ilike(pattern),
+            )
+        )
+
+    if category_id:
+        stmt = stmt.where(Product.category_id == category_id)
+
+    if min_price is not None:
+        stmt = stmt.where(Product.price >= min_price)
+
+    if max_price is not None:
+        stmt = stmt.where(Product.price <= max_price)
+
+    if in_stock is not None:
+        if in_stock:
+            stmt = stmt.where(Product.stock > 0)
+        else:
+            stmt = stmt.where(Product.stock == 0)
+
+    if brand:
+        stmt = stmt.where(Product.brand.ilike(f"%{brand}%"))
+
+    sort_column = getattr(Product, sort_by, Product.created_at)
+    if sort_order == "asc":
+        stmt = stmt.order_by(sort_column.asc())
+    else:
+        stmt = stmt.order_by(sort_column.desc())
+
+    stmt = stmt.offset(offset).limit(limit)
+
+    result = await db.execute(stmt)
     products = result.scalars().all()
+
+    count_stmt = select(Product)
+    if q:
+        pattern = f"%{q}%"
+        count_stmt = count_stmt.where(
+            or_(
+                Product.name.ilike(pattern),
+                Product.sku.ilike(pattern),
+                Product.description.ilike(pattern),
+            )
+        )
+    if category_id:
+        count_stmt = count_stmt.where(Product.category_id == category_id)
+    if min_price is not None:
+        count_stmt = count_stmt.where(Product.price >= min_price)
+    if max_price is not None:
+        count_stmt = count_stmt.where(Product.price <= max_price)
+    if in_stock is not None:
+        if in_stock:
+            count_stmt = count_stmt.where(Product.stock > 0)
+        else:
+            count_stmt = count_stmt.where(Product.stock == 0)
+    if brand:
+        count_stmt = count_stmt.where(Product.brand.ilike(f"%{brand}%"))
+
+    from sqlalchemy import func
+    total_result = await db.execute(select(func.count()).select_from(count_stmt.subquery()))
+    total = total_result.scalar()
+
     return ProductListResponse(
         products=[ProductResponse.model_validate(p) for p in products],
-        total=len(products),
+        total=total,
     )
 
 
