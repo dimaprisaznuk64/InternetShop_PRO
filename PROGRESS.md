@@ -5,14 +5,16 @@
 ## Останнє оновлення
 
 - Дата: 2026-08-17
-- Стан: **Блок 1 завершено (Уроки 1-5)**. DESIGN.md, проєкт створено, FastAPI foundation,
-  13 моделей БД, Alembic з першою міграцією (001_initial_tables). Але PostgreSQL не з'єднується
-  з localhost (asyncpg connection error) — треба перевірити конфігурацію pg_hba.conf / порт / пароль.
+- Стан: **Урок 6 завершено**. PostgreSQL connection відлагоджено (пароль dmytro53239),
+  БД `internetshop` створено, міграція застосована (14 таблиць). Реалізовано:
+  Pydantic schemas (UserRegister, UserLogin, UserResponse, TokenResponse),
+  User repository (get_by_email, get_by_id, create),
+  Auth router (register + login endpoints з JWT).
+  26 тестів зелених (config, security, models, health, auth). Тести використовують SQLite (aiosqlite).
 - **Як продовжити (наступного разу):** прочитай цей файл → `git log --oneline` →
-  1) Відлагодити з'єднання з PostgreSQL → застосувати міграцію →
-  2) **Урок 6 — User model + реєстрація**: Pydantic schemas, валідація, хешування пароля, endpoint.
+  **Урок 7-8 — Login та JWT**: розширити auth (refresh token, logout, get_current_user endpoint).
 - Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`
-- (TelegramBot_PRO завершено й опубліковано: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\TelegramBot_PRO`)
+- PostgreSQL: user=postgres, password=dmytro53239, host=localhost:5432, db=internetshop
 
 ## Roadmap (76 уроків)
 
@@ -26,8 +28,8 @@
 
 ### 🟡 Блок 2. Користувачі та авторизація
 
-- [ ] Урок 6 — User model: користувач, email, username, password, timestamps
-- [ ] Урок 7 — Registration: Pydantic schemas, валідація, хешування пароля
+- [x] Урок 6 — User model: користувач, email, username, password, timestamps
+- [x] Урок 7 — Registration: Pydantic schemas, валідація, хешування пароля
 - [ ] Урок 8 — Login: authentication, JWT, access token, refresh token
 - [ ] Урок 9 — Roles & permissions: user / manager / admin, RBAC, permissions, захист endpoint'ів
 - [ ] Урок 10 — Profile: отримання профілю, редагування, зміна пароля, видалення акаунта
@@ -139,7 +141,7 @@
 
 ## Поточний блок (наступний крок)
 
-- 🔄 **Урок 6 — User model + Registration**: Pydantic schemas, валідація, хешування пароля, endpoint (потрібно: відлагодити PostgreSQL connection)
+- 🔄 **Урок 7 — Registration**: Pydantic schemas, валідація, хешування пароля (РЕАЛІЗОВАНО в Уроці 6)
 
 ## Конвенції проєкту
 

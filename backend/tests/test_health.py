@@ -1,20 +1,20 @@
 import pytest
 
 
-@pytest.mark.anyio
+@pytest.mark.asyncio
 async def test_health_check(client):
     response = await client.get("/health")
     assert response.status_code == 200
     assert response.json() == {"status": "ok"}
 
 
-@pytest.mark.anyio
+@pytest.mark.asyncio
 async def test_docs_available(client):
     response = await client.get("/docs")
     assert response.status_code == 200
 
 
-@pytest.mark.anyio
+@pytest.mark.asyncio
 async def test_openapi_available(client):
     response = await client.get("/openapi.json")
     assert response.status_code == 200
