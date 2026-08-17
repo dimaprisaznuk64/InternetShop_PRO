@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import Optional
 from sqlalchemy import String, Text, Boolean, ForeignKey, Integer
 from sqlalchemy.orm import Mapped, mapped_column
@@ -22,5 +22,5 @@ class Review(Base):
     text: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     is_moderated: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = mapped_column(
-        default=lambda: datetime.now(timezone.utc)
+        default=lambda: datetime.utcnow()
     )

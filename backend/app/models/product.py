@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime
 from decimal import Decimal
 from typing import Optional
 from sqlalchemy import String, Text, Boolean, ForeignKey, Integer, Numeric
@@ -24,11 +24,11 @@ class Product(Base):
     brand: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, server_default=sa.text("true"))
     created_at: Mapped[datetime] = mapped_column(
-        default=lambda: datetime.now(timezone.utc)
+        default=lambda: datetime.utcnow()
     )
     updated_at: Mapped[datetime] = mapped_column(
-        default=lambda: datetime.now(timezone.utc),
-        onupdate=lambda: datetime.now(timezone.utc),
+        default=lambda: datetime.utcnow(),
+        onupdate=lambda: datetime.utcnow(),
     )
 
     category: Mapped["Category"] = relationship(back_populates="products")

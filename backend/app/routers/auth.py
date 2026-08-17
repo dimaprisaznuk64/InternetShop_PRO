@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, status
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
 from app.schemas.user import UserRegister, UserLogin, UserResponse, TokenResponse
@@ -58,3 +59,17 @@ async def refresh_token(token: str, db: AsyncSession = Depends(get_db)):
 @router.get("/me", response_model=UserResponse)
 async def get_me(current_user=Depends(get_current_user)):
     return current_user
+
+
+@router.post("/token", response_model=TokenResponse)
+async def token(
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    db: AsyncSession = Depends(get_db),
+):
+    user = await get_user_by_email(db, form_data.username)
+    if not user or not verify_password(form_data.password, user.hashed_password):
+        raise BadRequestError("Invalid email or password")
+
+    access = create_access_token(user.id)
+    refresh = create_refresh_token(user.id)
+    return TokenResponse(access_token=access, refresh_token=refresh)

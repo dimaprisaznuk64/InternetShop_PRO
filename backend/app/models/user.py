@@ -1,6 +1,6 @@
 import uuid
 import enum
-from datetime import datetime, timezone
+from datetime import datetime
 from sqlalchemy import String, Boolean, Enum
 import sqlalchemy as sa
 from sqlalchemy.orm import Mapped, mapped_column
@@ -27,9 +27,9 @@ class User(Base):
     )
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, server_default=sa.text("true"))
     created_at: Mapped[datetime] = mapped_column(
-        default=lambda: datetime.now(timezone.utc)
+        default=lambda: datetime.utcnow()
     )
     updated_at: Mapped[datetime] = mapped_column(
-        default=lambda: datetime.now(timezone.utc),
-        onupdate=lambda: datetime.now(timezone.utc),
+        default=lambda: datetime.utcnow(),
+        onupdate=lambda: datetime.utcnow(),
     )

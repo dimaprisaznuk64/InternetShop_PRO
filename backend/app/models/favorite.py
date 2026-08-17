@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime
 from sqlalchemy import String, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 from app.database import Base
@@ -21,5 +21,5 @@ class Favorite(Base):
         String(36), ForeignKey("products.id")
     )
     created_at: Mapped[datetime] = mapped_column(
-        default=lambda: datetime.now(timezone.utc)
+        default=lambda: datetime.utcnow()
     )

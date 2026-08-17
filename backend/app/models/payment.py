@@ -1,6 +1,6 @@
 import uuid
 import enum
-from datetime import datetime, timezone
+from datetime import datetime
 from decimal import Decimal
 from typing import Optional
 from sqlalchemy import String, Enum, ForeignKey, Numeric
@@ -33,7 +33,7 @@ class Payment(Base):
         String(255), nullable=True
     )
     created_at: Mapped[datetime] = mapped_column(
-        default=lambda: datetime.now(timezone.utc)
+        default=lambda: datetime.utcnow()
     )
 
     order: Mapped["Order"] = relationship(back_populates="payment")

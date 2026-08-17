@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import Optional
 from sqlalchemy import String, ForeignKey, Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -16,11 +16,11 @@ class Cart(Base):
         String(36), ForeignKey("users.id", ondelete="CASCADE"), unique=True
     )
     created_at: Mapped[datetime] = mapped_column(
-        default=lambda: datetime.now(timezone.utc)
+        default=lambda: datetime.utcnow()
     )
     updated_at: Mapped[datetime] = mapped_column(
-        default=lambda: datetime.now(timezone.utc),
-        onupdate=lambda: datetime.now(timezone.utc),
+        default=lambda: datetime.utcnow(),
+        onupdate=lambda: datetime.utcnow(),
     )
 
     items: Mapped[list["CartItem"]] = relationship(
