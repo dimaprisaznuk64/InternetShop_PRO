@@ -11,7 +11,7 @@
   User repository (get_by_email, get_by_id, create),
   Auth router (register + login endpoints з JWT).
   Auth router (register + login + refresh + /me endpoints з JWT).
-  97 тестів зелених.
+  103 тести зелених.
 - **Як продовжити (наступного разу):** прочитай цей файл → `git log --oneline` →
   **Урок 7-8 — Login та JWT**: розширити auth (refresh token, logout, get_current_user endpoint).
 - Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`
@@ -63,10 +63,10 @@
 
 ### 🔴 Блок 6. Оплата
 
-- [ ] Урок 28 — Payment architecture: payment flow, payment status, idempotency
-- [ ] Урок 29 — Payment provider: підключення реального payment API
-- [ ] Урок 30 — Webhooks: Payment Provider → Webhook → FastAPI → Order = PAID
-- [ ] Урок 31 — Безпека платежів: signature verification, webhook secret, повторний webhook, idempotency, fraud protection basics
+- [x] Урок 28 — Payment architecture: payment flow, payment status, idempotency
+- [x] Урок 29 — Payment provider: підключення реального payment API
+- [x] Урок 30 — Webhooks: Payment Provider → Webhook → FastAPI → Order = PAID
+- [x] Урок 31 — Безпека платежів: signature verification, webhook secret, повторний webhook, idempotency, fraud protection basics
 
 ### 🟤 Блок 7. Обране, відгуки та промокоди
 
