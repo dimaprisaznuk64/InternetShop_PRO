@@ -12,6 +12,9 @@
   Роутинг (React Router): 13 сторінок (Home, Catalog, Product, Cart, Checkout,
   Orders, Profile, Favorites, Login, Register, Admin Dashboard/Users/Products/Orders).
   Layout: Header з навігацією та кошиком, Footer. CSS-стилі.
+  **49 frontend тестів** (Vitest + React Testing Library): API client, AuthContext,
+  CartContext, Layout, Header, HomePage, LoginPage, RegisterPage, CatalogPage,
+  ProductPage, CartPage, OrdersPage, ProfilePage, Admin Dashboard.
   Build проходить успішно (309 KB gzip ~98 KB).
 - **Як продовжити (наступного разу):** прочитай цей файл → `git log --oneline` →
   **Урок 42 — Catalog UI**: categories, products, search, filters (детальніша реалізація).
