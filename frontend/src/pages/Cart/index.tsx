@@ -24,55 +24,81 @@ export function CartPage() {
     );
   }
 
+  const itemCount = cart.items.reduce((s, i) => s + i.quantity, 0);
+
   return (
     <div className="cart-page">
-      <h1>Shopping Cart</h1>
+      <div className="cart-header">
+        <h1>Shopping Cart</h1>
+        <span className="cart-header__count">
+          {itemCount} {itemCount === 1 ? "item" : "items"}
+        </span>
+      </div>
 
-      <table className="cart-table">
-        <thead>
-          <tr>
-            <th>Product</th>
-            <th>Price</th>
-            <th>Quantity</th>
-            <th>Total</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {cart.items.map((item) => (
-            <tr key={item.id}>
-              <td>{item.product?.name ?? item.product_id}</td>
-              <td>
-                ${Number(item.product?.price ?? 0).toFixed(2)}
-              </td>
-              <td>
-                <input
-                  type="number"
-                  min={1}
-                  value={item.quantity}
-                  onChange={(e) =>
-                    updateItem(item.id, Number(e.target.value))
-                  }
-                />
-              </td>
-              <td>
-                $
-                {(
-                  Number(item.product?.price ?? 0) * item.quantity
-                ).toFixed(2)}
-              </td>
-              <td>
-                <button onClick={() => removeItem(item.id)}>Remove</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <div className="cart-items">
+        {cart.items.map((item) => (
+          <div key={item.id} className="cart-item">
+            <Link to={`/catalog/${item.product_id}`} className="cart-item__image">
+              {item.product?.images?.[0]?.url ? (
+                <img src={item.product.images[0].url} alt={item.product?.name ?? ""} />
+              ) : (
+                <div className="cart-item__placeholder">No image</div>
+              )}
+            </Link>
+
+            <div className="cart-item__details">
+              <Link to={`/catalog/${item.product_id}`} className="cart-item__name">
+                {item.product?.name ?? item.product_id}
+              </Link>
+              {item.variant && (
+                <span className="cart-item__variant">{item.variant.name}</span>
+              )}
+              <span className="cart-item__sku">
+                SKU: {item.product?.sku ?? "—"}
+              </span>
+            </div>
+
+            <div className="cart-item__price">
+              ${Number(item.product?.price ?? 0).toFixed(2)}
+            </div>
+
+            <div className="cart-item__quantity">
+              <input
+                type="number"
+                min={1}
+                max={item.product?.stock ?? 999}
+                value={item.quantity}
+                onChange={(e) =>
+                  updateItem(item.id, Number(e.target.value))
+                }
+              />
+            </div>
+
+            <div className="cart-item__total">
+              ${(Number(item.product?.price ?? 0) * item.quantity).toFixed(2)}
+            </div>
+
+            <button
+              className="cart-item__remove btn btn--ghost btn--sm"
+              onClick={() => removeItem(item.id)}
+            >
+              ×
+            </button>
+          </div>
+        ))}
+      </div>
 
       <div className="cart-summary">
-        <p className="cart-subtotal">
-          Subtotal: <strong>${Number(cart.subtotal).toFixed(2)}</strong>
-        </p>
+        <div className="cart-summary__info">
+          <div className="cart-summary__row">
+            <span>Items:</span>
+            <span>{itemCount}</span>
+          </div>
+          <div className="cart-summary__row cart-summary__row--total">
+            <span>Subtotal:</span>
+            <strong>${Number(cart.subtotal).toFixed(2)}</strong>
+          </div>
+        </div>
         <div className="cart-actions">
           <button onClick={() => clear()} className="btn btn--ghost">
             Clear Cart

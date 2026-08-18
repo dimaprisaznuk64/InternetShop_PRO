@@ -10,7 +10,7 @@
   redirect hint ("log in to access /page"), autocomplete attributes,
   кращі placeholder'и. 60 frontend тестів.
 - **Як продовжити (наступного разу):** прочитай цей файл → `git log --oneline` →
-  **Урок 45 — Cart UI**: cart, quantity, total, checkout.
+  **Урок 46 — Orders UI**: order creation, order history, order details.
 - Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`
 - PostgreSQL: user=postgres, password=dmytro53239, host=localhost:5432, db=internetshop
 
@@ -86,7 +86,7 @@
 - [x] Урок 42 — Catalog UI: categories, products, search, filters
 - [x] Урок 43 — Product page: photos, variants, price, stock, add to cart
 - [x] Урок 44 — Authentication UI: registration, login, logout, tokens
-- [ ] Урок 45 — Cart UI: cart, quantity, total, checkout
+- [x] Урок 45 — Cart UI: cart, quantity, total, checkout
 - [ ] Урок 46 — Orders UI: order creation, order history, order details
 - [ ] Урок 47 — Profile UI: user information, addresses, password
 - [ ] Урок 48 — Admin frontend: dashboard, products, users, orders, statistics

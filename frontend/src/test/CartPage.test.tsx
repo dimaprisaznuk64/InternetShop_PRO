@@ -135,4 +135,22 @@ describe("CartPage", () => {
       );
     });
   });
+
+  it("shows item count in header", async () => {
+    vi.mocked(cartApi.get).mockResolvedValue(mockCart);
+
+    render(
+      <MemoryRouter>
+        <AuthProvider>
+          <CartProvider>
+            <CartPage />
+          </CartProvider>
+        </AuthProvider>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("2 items")).toBeInTheDocument();
+    });
+  });
 });
