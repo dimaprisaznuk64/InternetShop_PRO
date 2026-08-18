@@ -4,16 +4,17 @@
 
 ## Останнє оновлення
 
-- Дата: 2026-08-17
-- Стан: **Урок 6 завершено**. PostgreSQL connection відлагоджено (пароль dmytro53239),
-  БД `internetshop` створено, міграція застосована (14 таблиць). Реалізовано:
-  Pydantic schemas (UserRegister, UserLogin, UserResponse, TokenResponse),
-  User repository (get_by_email, get_by_id, create),
-  Auth router (register + login endpoints з JWT).
-  Auth router (register + login + refresh + /me endpoints з JWT).
-  125 тестів зелених.
+- Дата: 2026-08-18
+- Стан: **Урок 41 завершено**. Створено Frontend архітектуру:
+  Vite + React + TypeScript, 13 API-сервісів (всі 58 endpoint'ів),
+  AuthContext (login/register/logout/JWT auto-refresh),
+  CartContext (add/update/remove/clear),
+  Роутинг (React Router): 13 сторінок (Home, Catalog, Product, Cart, Checkout,
+  Orders, Profile, Favorites, Login, Register, Admin Dashboard/Users/Products/Orders).
+  Layout: Header з навігацією та кошиком, Footer. CSS-стилі.
+  Build проходить успішно (309 KB gzip ~98 KB).
 - **Як продовжити (наступного разу):** прочитай цей файл → `git log --oneline` →
-  **Урок 7-8 — Login та JWT**: розширити auth (refresh token, logout, get_current_user endpoint).
+  **Урок 42 — Catalog UI**: categories, products, search, filters (детальніша реалізація).
 - Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`
 - PostgreSQL: user=postgres, password=dmytro53239, host=localhost:5432, db=internetshop
 
@@ -85,7 +86,7 @@
 
 ### 🌐 Блок 9. Frontend
 
-- [ ] Урок 41 — Frontend architecture: структура, routing, API client, environment
+- [x] Урок 41 — Frontend architecture: структура, routing, API client, environment
 - [ ] Урок 42 — Catalog UI: categories, products, search, filters
 - [ ] Урок 43 — Product page: photos, variants, price, stock, add to cart
 - [ ] Урок 44 — Authentication UI: registration, login, logout, tokens
@@ -142,7 +143,7 @@
 
 ## Поточний блок (наступний крок)
 
-- 🔄 **Урок 9 — Roles & permissions**: RBAC, permissions, захист endpoint'ів
+- 🔄 **Урок 42 — Catalog UI**: categories, products, search, filters
 
 ## Конвенції проєкту
 
