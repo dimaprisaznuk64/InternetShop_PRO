@@ -5,14 +5,12 @@
 ## Останнє оновлення
 
 - Дата: 2026-08-18
-- Стан: **Урок 43 завершено**. Product page покращено:
-  Image gallery з thumbnails (клікабельні), вибір варіантів (click → price/stock змінюється),
-  favorite toggle (♡/♥), breadcrumb навігація (Home > Category > Product),
-  середній рейтинг з зірками, зірки в reviews list, SKU/price/stock адаптуються до варіанту.
-  CSS для галереї, breadcrumbs, variant buttons, rating stars, favorite icon.
-  57 frontend тестів. Build проходить успішно (315 KB gzip ~99 KB).
+- Стан: **Урок 44 завершено**. Auth UI покращено:
+  Show/hide password toggle, confirm password field з валідацією,
+  redirect hint ("log in to access /page"), autocomplete attributes,
+  кращі placeholder'и. 60 frontend тестів.
 - **Як продовжити (наступного разу):** прочитай цей файл → `git log --oneline` →
-  **Урок 44 — Authentication UI**: registration, login, logout, tokens (детальніша реалізація).
+  **Урок 45 — Cart UI**: cart, quantity, total, checkout.
 - Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`
 - PostgreSQL: user=postgres, password=dmytro53239, host=localhost:5432, db=internetshop
 
@@ -87,7 +85,7 @@
 - [x] Урок 41 — Frontend architecture: структура, routing, API client, environment
 - [x] Урок 42 — Catalog UI: categories, products, search, filters
 - [x] Урок 43 — Product page: photos, variants, price, stock, add to cart
-- [ ] Урок 44 — Authentication UI: registration, login, logout, tokens
+- [x] Урок 44 — Authentication UI: registration, login, logout, tokens
 - [ ] Урок 45 — Cart UI: cart, quantity, total, checkout
 - [ ] Урок 46 — Orders UI: order creation, order history, order details
 - [ ] Урок 47 — Profile UI: user information, addresses, password
@@ -141,7 +139,7 @@
 
 ## Поточний блок (наступний крок)
 
-- 🔄 **Урок 44 — Authentication UI**: registration, login, logout, tokens
+- 🔄 **Урок 45 — Cart UI**: cart, quantity, total, checkout
 
 ## Конвенції проєкту
 

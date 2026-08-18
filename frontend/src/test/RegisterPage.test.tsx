@@ -33,11 +33,12 @@ describe("RegisterPage", () => {
 
   it("renders register form with all fields", () => {
     renderWithAuth(<RegisterPage />);
-    expect(screen.getByRole("heading", { name: /register/i })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /create account/i })).toBeInTheDocument();
     expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/username/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /register/i })).toBeInTheDocument();
+    expect(screen.getByLabelText(/^username/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/^password/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/confirm password/i)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /create account/i })).toBeInTheDocument();
   });
 
   it("shows link to login page", () => {
@@ -48,7 +49,27 @@ describe("RegisterPage", () => {
     );
   });
 
-  it("calls register on form submit", async () => {
+  it("shows password mismatch error", async () => {
+    const user = userEvent.setup();
+    renderWithAuth(<RegisterPage />);
+
+    await user.type(screen.getByLabelText(/email/i), "test@test.com");
+    await user.type(screen.getByLabelText(/^username/i), "tester");
+    await user.type(screen.getByLabelText(/^password/i), "pass123");
+    await user.type(screen.getByLabelText(/confirm password/i), "pass456");
+    await user.click(screen.getByRole("button", { name: /create account/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/passwords do not match/i)).toBeInTheDocument();
+    });
+  });
+
+  it("shows password toggle button", () => {
+    renderWithAuth(<RegisterPage />);
+    expect(screen.getByText("Show")).toBeInTheDocument();
+  });
+
+  it("calls register on valid form submit", async () => {
     const user = userEvent.setup();
     vi.mocked(authApi.register).mockResolvedValue({
       id: "1",
@@ -77,9 +98,10 @@ describe("RegisterPage", () => {
     renderWithAuth(<RegisterPage />);
 
     await user.type(screen.getByLabelText(/email/i), "new@new.com");
-    await user.type(screen.getByLabelText(/username/i), "newuser");
-    await user.type(screen.getByLabelText(/password/i), "pass123");
-    await user.click(screen.getByRole("button", { name: /register/i }));
+    await user.type(screen.getByLabelText(/^username/i), "newuser");
+    await user.type(screen.getByLabelText(/^password/i), "pass123");
+    await user.type(screen.getByLabelText(/confirm password/i), "pass123");
+    await user.click(screen.getByRole("button", { name: /create account/i }));
 
     await waitFor(() => {
       expect(authApi.register).toHaveBeenCalledWith({
@@ -97,14 +119,13 @@ describe("RegisterPage", () => {
     renderWithAuth(<RegisterPage />);
 
     await user.type(screen.getByLabelText(/email/i), "dup@dup.com");
-    await user.type(screen.getByLabelText(/username/i), "dup");
-    await user.type(screen.getByLabelText(/password/i), "pass123");
-    await user.click(screen.getByRole("button", { name: /register/i }));
+    await user.type(screen.getByLabelText(/^username/i), "dup");
+    await user.type(screen.getByLabelText(/^password/i), "pass123");
+    await user.type(screen.getByLabelText(/confirm password/i), "pass123");
+    await user.click(screen.getByRole("button", { name: /create account/i }));
 
     await waitFor(() => {
-      expect(
-        screen.getByText(/registration failed/i)
-      ).toBeInTheDocument();
+      expect(screen.getByText(/registration failed/i)).toBeInTheDocument();
     });
   });
 });

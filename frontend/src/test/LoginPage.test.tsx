@@ -51,6 +51,13 @@ describe("LoginPage", () => {
     });
   });
 
+  it("shows password toggle button", async () => {
+    renderWithAuth(<LoginPage />);
+    await waitFor(() => {
+      expect(screen.getByText("Show")).toBeInTheDocument();
+    });
+  });
+
   it("calls login on form submit", async () => {
     const user = userEvent.setup();
     vi.mocked(authApi.login).mockResolvedValue({

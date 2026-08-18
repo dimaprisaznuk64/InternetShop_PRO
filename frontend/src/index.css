@@ -153,6 +153,16 @@ body {
   margin: 0 auto;
 }
 
+.auth-page h1 {
+  margin-bottom: 0.5rem;
+}
+
+.auth-redirect-hint {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
 .auth-form {
   display: flex;
   flex-direction: column;
@@ -173,6 +183,54 @@ body {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   font-size: 0.9rem;
+}
+
+.auth-form input::placeholder {
+  color: var(--text-muted);
+}
+
+.auth-password-field {
+  position: relative;
+  display: flex;
+}
+
+.auth-password-field input {
+  flex: 1;
+  padding-right: 3.5rem;
+}
+
+.auth-password-toggle {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  padding: 0 0.75rem;
+  background: none;
+  border: none;
+  border-left: 1px solid var(--border);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: var(--primary);
+}
+
+.auth-password-toggle:hover {
+  color: var(--primary-hover);
+}
+
+.auth-link {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.auth-link a {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.auth-link a:hover {
+  text-decoration: underline;
 }
 
 /* ── Catalog ─────────────────────────────────────────────────────── */
