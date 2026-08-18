@@ -5,19 +5,14 @@
 ## Останнє оновлення
 
 - Дата: 2026-08-18
-- Стан: **Урок 41 завершено**. Створено Frontend архітектуру:
-  Vite + React + TypeScript, 13 API-сервісів (всі 58 endpoint'ів),
-  AuthContext (login/register/logout/JWT auto-refresh),
-  CartContext (add/update/remove/clear),
-  Роутинг (React Router): 13 сторінок (Home, Catalog, Product, Cart, Checkout,
-  Orders, Profile, Favorites, Login, Register, Admin Dashboard/Users/Products/Orders).
-  Layout: Header з навігацією та кошиком, Footer. CSS-стилі.
-  **49 frontend тестів** (Vitest + React Testing Library): API client, AuthContext,
-  CartContext, Layout, Header, HomePage, LoginPage, RegisterPage, CatalogPage,
-  ProductPage, CartPage, OrdersPage, ProfilePage, Admin Dashboard.
-  Build проходить успішно (309 KB gzip ~98 KB).
+- Стан: **Урок 42 завершено**. Catalog UI розширено:
+  Price filter (min/max), Availability filter (in stock/out of stock),
+  Brand filter (auto-generated з товарів), Sort by (newest/name/price) + asc/desc,
+  product count display, "Clear all filters" button, stock quantity показується.
+  CSS для фільтрів, toolbar, brand badges. 56 frontend тестів.
+  Build проходить успішно (312 KB gzip ~98 KB).
 - **Як продовжити (наступного разу):** прочитай цей файл → `git log --oneline` →
-  **Урок 42 — Catalog UI**: categories, products, search, filters (детальніша реалізація).
+  **Урок 43 — Product page**: photos, variants, price, stock, add to cart (детальніша реалізація).
 - Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`
 - PostgreSQL: user=postgres, password=dmytro53239, host=localhost:5432, db=internetshop
 
@@ -90,7 +85,7 @@
 ### 🌐 Блок 9. Frontend
 
 - [x] Урок 41 — Frontend architecture: структура, routing, API client, environment
-- [ ] Урок 42 — Catalog UI: categories, products, search, filters
+- [x] Урок 42 — Catalog UI: categories, products, search, filters
 - [ ] Урок 43 — Product page: photos, variants, price, stock, add to cart
 - [ ] Урок 44 — Authentication UI: registration, login, logout, tokens
 - [ ] Урок 45 — Cart UI: cart, quantity, total, checkout
@@ -146,7 +141,7 @@
 
 ## Поточний блок (наступний крок)
 
-- 🔄 **Урок 42 — Catalog UI**: categories, products, search, filters
+- 🔄 **Урок 43 — Product page**: photos, variants, price, stock, add to cart
 
 ## Конвенції проєкту
 

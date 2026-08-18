@@ -160,4 +160,133 @@ describe("CatalogPage", () => {
       expect(screen.getByText(/no products found/i)).toBeInTheDocument();
     });
   });
+
+  it("shows product count", async () => {
+    vi.mocked(productsApi.list).mockResolvedValue(mockProducts);
+    vi.mocked(categoriesApi.list).mockResolvedValue(mockCategories);
+
+    render(
+      <MemoryRouter>
+        <AuthProvider>
+          <CatalogPage />
+        </AuthProvider>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("2 products found")).toBeInTheDocument();
+    });
+  });
+
+  it("shows brand on product cards", async () => {
+    vi.mocked(productsApi.list).mockResolvedValue(mockProducts);
+    vi.mocked(categoriesApi.list).mockResolvedValue(mockCategories);
+
+    render(
+      <MemoryRouter>
+        <AuthProvider>
+          <CatalogPage />
+        </AuthProvider>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getAllByText("TechBrand").length).toBeGreaterThanOrEqual(2);
+    });
+  });
+
+  it("shows sort controls", async () => {
+    vi.mocked(productsApi.list).mockResolvedValue(mockProducts);
+    vi.mocked(categoriesApi.list).mockResolvedValue(mockCategories);
+
+    render(
+      <MemoryRouter>
+        <AuthProvider>
+          <CatalogPage />
+        </AuthProvider>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("Sort by:")).toBeInTheDocument();
+      expect(screen.getByDisplayValue("Newest")).toBeInTheDocument();
+    });
+  });
+
+  it("shows price filter inputs", async () => {
+    vi.mocked(productsApi.list).mockResolvedValue(mockProducts);
+    vi.mocked(categoriesApi.list).mockResolvedValue(mockCategories);
+
+    render(
+      <MemoryRouter>
+        <AuthProvider>
+          <CatalogPage />
+        </AuthProvider>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByPlaceholderText("Min")).toBeInTheDocument();
+      expect(screen.getByPlaceholderText("Max")).toBeInTheDocument();
+    });
+  });
+
+  it("shows availability filter buttons", async () => {
+    vi.mocked(productsApi.list).mockResolvedValue(mockProducts);
+    vi.mocked(categoriesApi.list).mockResolvedValue(mockCategories);
+
+    render(
+      <MemoryRouter>
+        <AuthProvider>
+          <CatalogPage />
+        </AuthProvider>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: "In Stock" })).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: "Out of Stock" })).toBeInTheDocument();
+    });
+  });
+
+  it("passes filter params to API", async () => {
+    vi.mocked(productsApi.list).mockResolvedValue(mockProducts);
+    vi.mocked(categoriesApi.list).mockResolvedValue(mockCategories);
+
+    render(
+      <MemoryRouter initialEntries={["/catalog?q=laptop&category_id=cat1&sort_by=price&sort_order=asc"]}>
+        <AuthProvider>
+          <CatalogPage />
+        </AuthProvider>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(productsApi.list).toHaveBeenCalledWith(
+        expect.objectContaining({
+          q: "laptop",
+          category_id: "cat1",
+          sort_by: "price",
+          sort_order: "asc",
+        })
+      );
+    });
+  });
+
+  it("shows stock count for in-stock products", async () => {
+    vi.mocked(productsApi.list).mockResolvedValue(mockProducts);
+    vi.mocked(categoriesApi.list).mockResolvedValue(mockCategories);
+
+    render(
+      <MemoryRouter>
+        <AuthProvider>
+          <CatalogPage />
+        </AuthProvider>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("5 in stock")).toBeInTheDocument();
+    });
+  });
 });
