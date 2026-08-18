@@ -5,12 +5,17 @@
 ## Останнє оновлення
 
 - Дата: 2026-08-18
-- Стан: **Урок 44 завершено**. Auth UI покращено:
-  Show/hide password toggle, confirm password field з валідацією,
-  redirect hint ("log in to access /page"), autocomplete attributes,
-  кращі placeholder'и. 60 frontend тестів.
+- Стан: **Уроки 41-47 завершені**. Frontend повністю побудований:
+  41: Архітектура (Vite+React+TS, routing, API client, contexts).
+  42: Catalog UI (filters, sorting, brands, product count).
+  43: Product page (gallery, variant selector, favorites, breadcrumbs, rating).
+  44: Auth UI (show/hide password, confirm password, redirect).
+  45: Cart UI (card layout, images, variant names, item count).
+  46: Orders UI (order detail page, breadcrumbs, items table).
+  47: Profile UI (avatar card, member since, role badge).
+  **61 frontend тест** (Vitest + React Testing Library). Build ~320 KB gzip ~100 KB.
 - **Як продовжити (наступного разу):** прочитай цей файл → `git log --oneline` →
-  **Урок 46 — Orders UI**: order creation, order history, order details.
+  **Урок 48 — Admin frontend**: dashboard, products, users, orders, statistics.
 - Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`
 - PostgreSQL: user=postgres, password=dmytro53239, host=localhost:5432, db=internetshop
 
@@ -88,7 +93,7 @@
 - [x] Урок 44 — Authentication UI: registration, login, logout, tokens
 - [x] Урок 45 — Cart UI: cart, quantity, total, checkout
 - [x] Урок 46 — Orders UI: order creation, order history, order details
-- [ ] Урок 47 — Profile UI: user information, addresses, password
+- [x] Урок 47 — Profile UI: user information, addresses, password
 - [ ] Урок 48 — Admin frontend: dashboard, products, users, orders, statistics
 
 ### ⚡ Блок 10. Redis та background tasks
@@ -139,7 +144,7 @@
 
 ## Поточний блок (наступний крок)
 
-- 🔄 **Урок 45 — Cart UI**: cart, quantity, total, checkout
+- 🔄 **Урок 48 — Admin frontend**: dashboard, products, users, orders, statistics
 
 ## Конвенції проєкту
 

@@ -60,14 +60,29 @@ export function ProfilePage() {
   return (
     <div className="profile-page">
       <h1>Profile</h1>
-      <p className="role">
-        Role: <strong>{user.role}</strong>
-      </p>
+
+      <div className="profile-info">
+        <div className="profile-info__avatar">
+          {user.username.charAt(0).toUpperCase()}
+        </div>
+        <div className="profile-info__details">
+          <h2>{user.username}</h2>
+          <p className="profile-info__email">{user.email}</p>
+          <div className="profile-info__meta">
+            <span className="status-badge" style={{ backgroundColor: user.role === "admin" ? "#dc2626" : user.role === "manager" ? "#0275d8" : "#333" }}>
+              {user.role}
+            </span>
+            <span className="profile-info__date">
+              Member since {new Date(user.created_at).toLocaleDateString()}
+            </span>
+          </div>
+        </div>
+      </div>
 
       <form onSubmit={handleUpdateProfile} className="profile-form">
         <h3>Account Info</h3>
         <label>
-          Username:
+          Username
           <input
             type="text"
             value={username}
@@ -75,7 +90,7 @@ export function ProfilePage() {
           />
         </label>
         <label>
-          Email:
+          Email
           <input
             type="email"
             value={email}
@@ -90,7 +105,7 @@ export function ProfilePage() {
       <form onSubmit={handleChangePassword} className="profile-form">
         <h3>Change Password</h3>
         <label>
-          Current Password:
+          Current Password
           <input
             type="password"
             value={currentPassword}
@@ -99,12 +114,13 @@ export function ProfilePage() {
           />
         </label>
         <label>
-          New Password:
+          New Password
           <input
             type="password"
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
             required
+            minLength={6}
           />
         </label>
         <button type="submit" className="btn btn--primary">

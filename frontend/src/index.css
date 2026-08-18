@@ -989,8 +989,58 @@ body {
 }
 
 /* ── Profile ─────────────────────────────────────────────────────── */
+.profile-page {
+  max-width: 600px;
+}
+
+.profile-info {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  margin-bottom: 2rem;
+}
+
+.profile-info__avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.profile-info__details h2 {
+  font-size: 1.25rem;
+  margin-bottom: 0.15rem;
+}
+
+.profile-info__email {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.profile-info__meta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.profile-info__date {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
 .profile-form {
-  max-width: 400px;
   margin-bottom: 2rem;
 }
 
