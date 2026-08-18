@@ -875,6 +875,55 @@ body {
   text-transform: capitalize;
 }
 
+.order-detail__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin: 1rem 0 2rem;
+}
+
+.order-detail__section {
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.order-detail__section h3 {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.order-detail__date {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 0.5rem;
+}
+
+.order-detail__total {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.order-detail__notes {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 0.5rem;
+}
+
+.orders-table a {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.orders-table a:hover {
+  text-decoration: underline;
+}
+
 /* ── Admin ───────────────────────────────────────────────────────── */
 .stats-grid {
   display: grid;

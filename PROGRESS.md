@@ -87,7 +87,7 @@
 - [x] Урок 43 — Product page: photos, variants, price, stock, add to cart
 - [x] Урок 44 — Authentication UI: registration, login, logout, tokens
 - [x] Урок 45 — Cart UI: cart, quantity, total, checkout
-- [ ] Урок 46 — Orders UI: order creation, order history, order details
+- [x] Урок 46 — Orders UI: order creation, order history, order details
 - [ ] Урок 47 — Profile UI: user information, addresses, password
 - [ ] Урок 48 — Admin frontend: dashboard, products, users, orders, statistics
 

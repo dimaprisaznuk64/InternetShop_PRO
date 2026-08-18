@@ -9,6 +9,7 @@ import { ProductPage } from "./pages/Product";
 import { CartPage } from "./pages/Cart";
 import { CheckoutPage } from "./pages/Checkout";
 import { OrdersPage } from "./pages/Orders";
+import { OrderDetailPage } from "./pages/Orders/OrderDetail";
 import { ProfilePage } from "./pages/Profile";
 import { FavoritesPage } from "./pages/Favorites";
 import { LoginPage } from "./pages/Auth/LoginPage";
@@ -67,6 +68,14 @@ function AppRoutes() {
           element={
             <ProtectedRoute>
               <OrdersPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/orders/:id"
+          element={
+            <ProtectedRoute>
+              <OrderDetailPage />
             </ProtectedRoute>
           }
         />
