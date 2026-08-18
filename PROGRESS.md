@@ -5,14 +5,14 @@
 ## Останнє оновлення
 
 - Дата: 2026-08-18
-- Стан: **Урок 42 завершено**. Catalog UI розширено:
-  Price filter (min/max), Availability filter (in stock/out of stock),
-  Brand filter (auto-generated з товарів), Sort by (newest/name/price) + asc/desc,
-  product count display, "Clear all filters" button, stock quantity показується.
-  CSS для фільтрів, toolbar, brand badges. 56 frontend тестів.
-  Build проходить успішно (312 KB gzip ~98 KB).
+- Стан: **Урок 43 завершено**. Product page покращено:
+  Image gallery з thumbnails (клікабельні), вибір варіантів (click → price/stock змінюється),
+  favorite toggle (♡/♥), breadcrumb навігація (Home > Category > Product),
+  середній рейтинг з зірками, зірки в reviews list, SKU/price/stock адаптуються до варіанту.
+  CSS для галереї, breadcrumbs, variant buttons, rating stars, favorite icon.
+  57 frontend тестів. Build проходить успішно (315 KB gzip ~99 KB).
 - **Як продовжити (наступного разу):** прочитай цей файл → `git log --oneline` →
-  **Урок 43 — Product page**: photos, variants, price, stock, add to cart (детальніша реалізація).
+  **Урок 44 — Authentication UI**: registration, login, logout, tokens (детальніша реалізація).
 - Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`
 - PostgreSQL: user=postgres, password=dmytro53239, host=localhost:5432, db=internetshop
 
@@ -86,7 +86,7 @@
 
 - [x] Урок 41 — Frontend architecture: структура, routing, API client, environment
 - [x] Урок 42 — Catalog UI: categories, products, search, filters
-- [ ] Урок 43 — Product page: photos, variants, price, stock, add to cart
+- [x] Урок 43 — Product page: photos, variants, price, stock, add to cart
 - [ ] Урок 44 — Authentication UI: registration, login, logout, tokens
 - [ ] Урок 45 — Cart UI: cart, quantity, total, checkout
 - [ ] Урок 46 — Orders UI: order creation, order history, order details
@@ -141,7 +141,7 @@
 
 ## Поточний блок (наступний крок)
 
-- 🔄 **Урок 43 — Product page**: photos, variants, price, stock, add to cart
+- 🔄 **Урок 44 — Authentication UI**: registration, login, logout, tokens
 
 ## Конвенції проєкту
 

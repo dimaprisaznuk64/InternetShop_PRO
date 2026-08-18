@@ -47,6 +47,11 @@ vi.mock("../api", () => ({
     listByProduct: vi.fn().mockResolvedValue({ reviews: [] }),
     create: vi.fn(),
   },
+  favoritesApi: {
+    list: vi.fn().mockResolvedValue({ favorites: [] }),
+    add: vi.fn(),
+    remove: vi.fn(),
+  },
   authApi: { me: vi.fn().mockRejectedValue(new Error("no token")) },
   setTokens: vi.fn(),
   clearTokens: vi.fn(),
@@ -80,31 +85,33 @@ describe("ProductPage", () => {
     renderProduct();
 
     await waitFor(() => {
-      expect(screen.getByText("Test Widget")).toBeInTheDocument();
+      expect(screen.getByRole("heading", { name: "Test Widget" })).toBeInTheDocument();
       expect(screen.getByText("TestBrand")).toBeInTheDocument();
-      expect(screen.getByText("SKU: TW001")).toBeInTheDocument();
       expect(screen.getByText("A widget for testing")).toBeInTheDocument();
     });
 
     expect(screen.getAllByText(/49\.99/).length).toBeGreaterThanOrEqual(1);
-    expect(screen.getByText("15 in stock")).toBeInTheDocument();
+    expect(screen.getByText("8 in stock")).toBeInTheDocument();
   });
 
-  it("renders product variants", async () => {
+  it("renders product variants as buttons", async () => {
     vi.mocked(productsApi.get).mockResolvedValue(mockProduct);
 
     renderProduct();
 
     await waitFor(() => {
       expect(screen.getByRole("heading", { name: "Variants" })).toBeInTheDocument();
-      expect(screen.getByText(/Small.*49\.99/)).toBeInTheDocument();
-      expect(screen.getByText(/Large.*59\.99/)).toBeInTheDocument();
+      expect(screen.getByText("Small")).toBeInTheDocument();
+      expect(screen.getByText("Large")).toBeInTheDocument();
+      expect(screen.getByText("8 left")).toBeInTheDocument();
+      expect(screen.getByText("7 left")).toBeInTheDocument();
     });
   });
 
   it("shows out of stock message for zero stock", async () => {
     vi.mocked(productsApi.get).mockResolvedValue({
       ...mockProduct,
+      variants: [],
       stock: 0,
     });
 
@@ -125,15 +132,28 @@ describe("ProductPage", () => {
     });
   });
 
-  it("shows back to catalog link", async () => {
+  it("shows breadcrumb with catalog link", async () => {
     vi.mocked(productsApi.get).mockResolvedValue(mockProduct);
 
     renderProduct();
 
     await waitFor(() => {
-      expect(screen.getByText(/back to catalog/i)).toHaveAttribute(
+      expect(screen.getByRole("link", { name: "Catalog" })).toHaveAttribute(
         "href",
         "/catalog"
+      );
+    });
+  });
+
+  it("shows breadcrumb home link", async () => {
+    vi.mocked(productsApi.get).mockResolvedValue(mockProduct);
+
+    renderProduct();
+
+    await waitFor(() => {
+      expect(screen.getByRole("link", { name: "Home" })).toHaveAttribute(
+        "href",
+        "/"
       );
     });
   });

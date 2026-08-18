@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
-import { productsApi, reviewsApi } from "../../api";
+import { productsApi, reviewsApi, favoritesApi } from "../../api";
 import { useAuth } from "../../contexts/AuthContext";
 import { useCart } from "../../contexts/CartContext";
-import type { Product, Review } from "../../types";
+import type { Product, Review, ProductVariant } from "../../types";
 
 export function ProductPage() {
   const { id } = useParams<{ id: string }>();
@@ -14,6 +14,9 @@ export function ProductPage() {
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [addedToCart, setAddedToCart] = useState(false);
+  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
+  const [selectedImage, setSelectedImage] = useState(0);
+  const [isFavorite, setIsFavorite] = useState(false);
   const [rating, setRating] = useState(5);
   const [reviewText, setReviewText] = useState("");
 
@@ -22,23 +25,54 @@ export function ProductPage() {
     Promise.all([
       productsApi.get(id),
       reviewsApi.listByProduct(id).catch(() => ({ reviews: [] })),
+      user
+        ? favoritesApi.list().catch(() => ({ favorites: [] }))
+        : Promise.resolve({ favorites: [] }),
     ])
-      .then(([productData, reviewData]) => {
+      .then(([productData, reviewData, favData]) => {
         setProduct(productData);
         setReviews(reviewData.reviews);
+        if (productData.variants?.length) {
+          setSelectedVariant(productData.variants[0]);
+        }
+        setIsFavorite(
+          favData.favorites.some((f) => f.product_id === productData.id)
+        );
       })
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, [id]);
+  }, [id, user]);
+
+  const currentPrice = selectedVariant
+    ? Number(selectedVariant.price)
+    : Number(product?.price ?? 0);
+  const currentStock = selectedVariant
+    ? selectedVariant.stock
+    : product?.stock ?? 0;
+  const currentSku = selectedVariant ? selectedVariant.sku : product?.sku ?? "";
 
   const handleAddToCart = async () => {
     if (!product) return;
     try {
-      await addItem(product.id, quantity);
+      await addItem(product.id, quantity, selectedVariant?.id);
       setAddedToCart(true);
       setTimeout(() => setAddedToCart(false), 2000);
     } catch (err) {
       console.error("Failed to add to cart", err);
+    }
+  };
+
+  const handleToggleFavorite = async () => {
+    if (!product) return;
+    try {
+      if (isFavorite) {
+        await favoritesApi.remove(product.id);
+      } else {
+        await favoritesApi.add(product.id);
+      }
+      setIsFavorite(!isFavorite);
+    } catch (err) {
+      console.error("Failed to toggle favorite", err);
     }
   };
 
@@ -59,26 +93,68 @@ export function ProductPage() {
     }
   };
 
+  const averageRating =
+    reviews.length > 0
+      ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+      : null;
+
+  const handleVariantSelect = useCallback(
+    (variant: ProductVariant) => {
+      setSelectedVariant(variant);
+      setQuantity(1);
+    },
+    []
+  );
+
   if (loading) return <p>Loading...</p>;
   if (!product) return <p>Product not found.</p>;
 
+  const sortedImages = [...(product.images ?? [])].sort(
+    (a, b) => a.position - b.position
+  );
+
   return (
     <div className="product-page">
-      <Link to="/catalog">&larr; Back to catalog</Link>
+      <nav className="breadcrumb">
+        <Link to="/">Home</Link>
+        <span>/</span>
+        <Link to="/catalog">Catalog</Link>
+        {product.category && (
+          <>
+            <span>/</span>
+            <Link to={`/catalog?category_id=${product.category.id}`}>
+              {product.category.name}
+            </Link>
+          </>
+        )}
+        <span>/</span>
+        <span>{product.name}</span>
+      </nav>
 
       <div className="product-page__content">
         <div className="product-page__images">
-          {product.images?.length ? (
-            product.images
-              .sort((a, b) => a.position - b.position)
-              .map((img) => (
+          {sortedImages.length > 0 ? (
+            <>
+              <div className="product-page__main-image">
                 <img
-                  key={img.id}
-                  src={img.url}
+                  src={sortedImages[selectedImage]?.url}
                   alt={product.name}
-                  className={img.is_primary ? "primary" : ""}
                 />
-              ))
+              </div>
+              {sortedImages.length > 1 && (
+                <div className="product-page__thumbnails">
+                  {sortedImages.map((img, i) => (
+                    <button
+                      key={img.id}
+                      className={`product-page__thumb ${i === selectedImage ? "active" : ""}`}
+                      onClick={() => setSelectedImage(i)}
+                    >
+                      <img src={img.url} alt={`Photo ${i + 1}`} />
+                    </button>
+                  ))}
+                </div>
+              )}
+            </>
           ) : (
             <div className="product-page__placeholder">No images</div>
           )}
@@ -87,43 +163,78 @@ export function ProductPage() {
         <div className="product-page__details">
           <h1>{product.name}</h1>
           {product.brand && <p className="brand">{product.brand}</p>}
-          <p className="price">${Number(product.price).toFixed(2)}</p>
-          <p className="sku">SKU: {product.sku}</p>
-          <p className="stock">
-            {product.stock > 0 ? `${product.stock} in stock` : "Out of stock"}
-          </p>
-          {product.description && <p>{product.description}</p>}
 
-          {product.variants?.length > 0 && (
-            <div className="variants">
-              <h4>Variants</h4>
-              <ul>
-                {product.variants.map((v) => (
-                  <li key={v.id}>
-                    {v.name} — ${Number(v.price).toFixed(2)} ({v.stock} in
-                    stock)
-                  </li>
+          {averageRating !== null && (
+            <div className="product-page__rating">
+              <span className="stars">
+                {[1, 2, 3, 4, 5].map((n) => (
+                  <span key={n} className={n <= Math.round(averageRating) ? "star filled" : "star"}>
+                    ★
+                  </span>
                 ))}
-              </ul>
+              </span>
+              <span className="rating-text">
+                {averageRating.toFixed(1)} ({reviews.length}{" "}
+                {reviews.length === 1 ? "review" : "reviews"})
+              </span>
             </div>
           )}
 
-          {product.stock > 0 && (
+          <p className="price">${currentPrice.toFixed(2)}</p>
+          <p className="sku">SKU: {currentSku}</p>
+          <p className="stock">
+            {currentStock > 0 ? `${currentStock} in stock` : "Out of stock"}
+          </p>
+          {product.description && <p className="description">{product.description}</p>}
+
+          {product.variants?.length ? (
+            <div className="variants">
+              <h4>Variants</h4>
+              <div className="variants__list">
+                {product.variants.map((v) => (
+                  <button
+                    key={v.id}
+                    className={`variants__item ${selectedVariant?.id === v.id ? "active" : ""} ${v.stock === 0 ? "disabled" : ""}`}
+                    onClick={() => handleVariantSelect(v)}
+                    disabled={v.stock === 0}
+                  >
+                    <span className="variants__name">{v.name}</span>
+                    <span className="variants__price">
+                      ${Number(v.price).toFixed(2)}
+                    </span>
+                    <span className="variants__stock">
+                      {v.stock > 0 ? `${v.stock} left` : "Out"}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          {currentStock > 0 && (
             <div className="add-to-cart">
               <input
                 type="number"
                 min={1}
-                max={product.stock}
+                max={currentStock}
                 value={quantity}
                 onChange={(e) => setQuantity(Number(e.target.value))}
               />
               <button
                 onClick={handleAddToCart}
                 className="btn btn--primary"
-                disabled={product.stock === 0}
               >
                 {addedToCart ? "Added!" : "Add to Cart"}
               </button>
+              {user && (
+                <button
+                  onClick={handleToggleFavorite}
+                  className={`btn btn--icon ${isFavorite ? "favorited" : ""}`}
+                  title={isFavorite ? "Remove from favorites" : "Add to favorites"}
+                >
+                  {isFavorite ? "♥" : "♡"}
+                </button>
+              )}
             </div>
           )}
         </div>
@@ -164,9 +275,17 @@ export function ProductPage() {
           <ul className="reviews-list">
             {reviews.map((review) => (
               <li key={review.id}>
-                <strong>Rating: {review.rating}/5</strong>
+                <div className="review-header">
+                  <span className="stars">
+                    {[1, 2, 3, 4, 5].map((n) => (
+                      <span key={n} className={n <= review.rating ? "star filled" : "star"}>
+                        ★
+                      </span>
+                    ))}
+                  </span>
+                  <small>{new Date(review.created_at).toLocaleDateString()}</small>
+                </div>
                 {review.text && <p>{review.text}</p>}
-                <small>{new Date(review.created_at).toLocaleDateString()}</small>
               </li>
             ))}
           </ul>
