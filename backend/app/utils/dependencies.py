@@ -1,10 +1,14 @@
-from functools import wraps
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
-from jose import JWTError, jwt
+from jose import JWTError
 from app.database import get_db
 from app.config import get_settings
+from app.utils.security import (
+    decode_token,
+    verify_token_type,
+    verify_token_not_blacklisted,
+)
 
 settings = get_settings()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/token")
@@ -22,9 +26,14 @@ async def get_current_user(
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
-        payload = jwt.decode(
-            token, settings.SECRET_KEY, algorithms=["HS256"]
-        )
+        payload = decode_token(token)
+
+        if not verify_token_type(payload, "access"):
+            raise credentials_exception
+
+        if not verify_token_not_blacklisted(payload):
+            raise credentials_exception
+
         user_id: str = payload.get("sub")
         if user_id is None:
             raise credentials_exception

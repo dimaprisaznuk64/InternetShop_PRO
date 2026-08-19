@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 from app.config import get_settings
 from app.cache import init_redis, close_redis, get_redis
 from app.services.background import task_manager, cleanup_service
+from app.middleware import SecurityHeadersMiddleware, RateLimitMiddleware
 from app.routers.auth import router as auth_router
 from app.routers.profile import router as profile_router
 from app.routers.categories import router as categories_router
@@ -48,6 +49,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.add_middleware(SecurityHeadersMiddleware)
+app.add_middleware(RateLimitMiddleware)
 
 app.include_router(auth_router)
 app.include_router(profile_router)

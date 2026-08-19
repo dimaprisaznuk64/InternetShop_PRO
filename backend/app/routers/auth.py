@@ -1,10 +1,20 @@
 from fastapi import APIRouter, Depends, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
+from jose import JWTError
 from app.database import get_db
-from app.schemas.user import UserRegister, UserLogin, UserResponse, TokenResponse
+from app.schemas.user import UserRegister, UserLogin, UserResponse, TokenResponse, RefreshRequest
 from app.repositories.user_repo import get_user_by_email, get_user_by_id, create_user
-from app.utils.security import hash_password, verify_password, create_access_token, create_refresh_token
+from app.utils.security import (
+    hash_password,
+    verify_password,
+    create_access_token,
+    create_refresh_token,
+    decode_token,
+    verify_token_type,
+    verify_token_not_blacklisted,
+    blacklist_token,
+)
 from app.utils.dependencies import get_current_user
 from app.utils.exceptions import AlreadyExistsError, BadRequestError
 from app.services.background import email_service, notification_service, task_manager
@@ -42,13 +52,16 @@ async def login(data: UserLogin, db: AsyncSession = Depends(get_db)):
 
 
 @router.post("/refresh", response_model=TokenResponse)
-async def refresh_token(token: str, db: AsyncSession = Depends(get_db)):
-    from jose import JWTError, jwt
-    from app.config import get_settings
-
-    settings = get_settings()
+async def refresh_token(data: RefreshRequest, db: AsyncSession = Depends(get_db)):
     try:
-        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
+        payload = decode_token(data.refresh_token)
+
+        if not verify_token_type(payload, "refresh"):
+            raise BadRequestError("Invalid token type — expected refresh token")
+
+        if not verify_token_not_blacklisted(payload):
+            raise BadRequestError("Refresh token has been revoked")
+
         user_id: str = payload.get("sub")
         if user_id is None:
             raise BadRequestError("Invalid refresh token")
@@ -59,9 +72,29 @@ async def refresh_token(token: str, db: AsyncSession = Depends(get_db)):
     if not user:
         raise BadRequestError("User not found")
 
+    # Blacklist old refresh token (rotation)
+    jti = payload.get("jti")
+    if jti:
+        blacklist_token(jti)
+
     access = create_access_token(user.id)
     refresh = create_refresh_token(user.id)
     return TokenResponse(access_token=access, refresh_token=refresh)
+
+
+@router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
+async def logout(
+    data: RefreshRequest,
+    current_user=Depends(get_current_user),
+):
+    """Logout: blacklist the refresh token."""
+    try:
+        refresh_payload = decode_token(data.refresh_token)
+        jti = refresh_payload.get("jti")
+        if jti:
+            blacklist_token(jti)
+    except JWTError:
+        pass
 
 
 @router.get("/me", response_model=UserResponse)

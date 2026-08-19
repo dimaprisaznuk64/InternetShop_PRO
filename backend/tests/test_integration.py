@@ -143,7 +143,7 @@ class TestAuthLifecycle:
         login_resp = await _login(client, "refresh@test.com")
         refresh_token = login_resp.json()["refresh_token"]
 
-        resp = await client.post("/api/auth/refresh", params={"token": refresh_token})
+        resp = await client.post("/api/auth/refresh", json={"refresh_token": refresh_token})
         assert resp.status_code == 200
         assert "access_token" in resp.json()
         assert "refresh_token" in resp.json()

@@ -142,7 +142,7 @@ async def test_refresh_token(client):
     })
     refresh = login_resp.json()["refresh_token"]
 
-    response = await client.post(f"/api/auth/refresh?token={refresh}")
+    response = await client.post("/api/auth/refresh", json={"refresh_token": refresh})
     assert response.status_code == 200
     data = response.json()
     assert "access_token" in data
@@ -151,5 +151,5 @@ async def test_refresh_token(client):
 
 @pytest.mark.asyncio
 async def test_refresh_invalid_token(client):
-    response = await client.post("/api/auth/refresh?token=invalidtoken123")
+    response = await client.post("/api/auth/refresh", json={"refresh_token": "invalidtoken123"})
     assert response.status_code == 400

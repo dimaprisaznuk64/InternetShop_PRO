@@ -5,11 +5,11 @@
 ## Останнє оновлення
 
 - Дата: 2026-08-19
-- Стан: **Урок 56 завершений**. Integration tests (full e2e flows across all layers):
-  56: integration tests — auth lifecycle (register/login/profile/password/refresh/delete), catalog CRUD + search/filter/pagination, full purchase flow (register→browse→cart→checkout→pay→verify→notifications), multi-product stock consistency, admin panel (user management, stats, popular products), reviews + favorites (cross-user, moderation), payment + webhook refund flow, payment access control, order status transitions, promo CRUD + expiration workflow. 25 new tests.
-  **82 frontend тестів** + **253 backend тестів**. Build ~338 KB gzip ~103 KB.
+- Стан: **Урок 57 завершений**. Security audit:
+  57: security audit — token_type ("access"/"refresh") claim, jti + iat в JWT, token blacklist (refresh.rotation + logout), RefreshRequest body (не query param), SecurityHeadersMiddleware (X-Content-Type-Options, X-Frame-Options, X-XSS-Protection, Referrer-Policy), RateLimitMiddleware (10/min auth, 100/min default), 37 security tests (token structure, blacklist, type validation, expiry, tamper, API flow, RBAC, SQL injection, XSS). +31 new tests.
+  **284 backend тестів** + **82 frontend тестів**. Build ~338 KB gzip ~103 KB.
 - **Як продовжити (наступного разу):** прочитай цей файл → `git log --oneline` →
-  **Урок 57 — Security audit**: перевіряємо весь проєкт.
+  **Урок 58**: поки не визначений (дивись roadmap нижче).
 - Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`
 - PostgreSQL: user=postgres, password=dmytro53239, host=localhost:5432, db=internetshop
 
@@ -106,7 +106,7 @@
 
 ### 🔐 Блок 12. Security
 
-- [ ] Урок 57 — Security audit: перевіряємо весь проєкт
+- [x] Урок 57 — Security audit: перевіряємо весь проєкт
 - [ ] Урок 58 — OWASP basics: SQL injection, XSS, CSRF, IDOR, broken access control
 - [ ] Урок 59 — Rate limiting: login, registration, API, sensitive endpoints
 - [ ] Урок 60 — Secure configuration: secrets, environment, CORS, headers, production settings
@@ -138,7 +138,7 @@
 
 ## Поточний блок (наступний крок)
 
-- 🔄 **Урок 57 — Security audit**: перевіряємо весь проєкт.
+- ✅ **Урок 57 — Security audit**: перевіряємо весь проєкт.
 
 ## Конвенції проєкту
 
