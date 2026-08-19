@@ -15,6 +15,7 @@ from app.schemas.order import (
 )
 from app.utils.dependencies import get_current_user, require_admin
 from app.utils.exceptions import NotFoundError, BadRequestError
+from app.cache import cache_delete, cache_delete_pattern
 
 router = APIRouter(prefix="/api/orders", tags=["orders"])
 
@@ -106,6 +107,9 @@ async def checkout(
         select(Order).where(Order.id == order.id).options(selectinload(Order.items))
     )
     order = result.scalar_one()
+
+    await cache_delete("admin:stats")
+    await cache_delete_pattern("products:list:*")
     return _serialize_order(order)
 
 
@@ -200,4 +204,6 @@ async def update_order_status(
         select(Order).where(Order.id == order.id).options(selectinload(Order.items))
     )
     order = result.scalar_one()
+
+    await cache_delete("admin:stats")
     return _serialize_order(order)

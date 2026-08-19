@@ -12,8 +12,12 @@ from app.schemas.promo import (
 )
 from app.utils.dependencies import require_admin
 from app.utils.exceptions import NotFoundError, AlreadyExistsError, BadRequestError
+from app.cache import cache_get, cache_set, cache_delete
 
 router = APIRouter(prefix="/api/promo-codes", tags=["promo codes"])
+
+PROMO_LIST_CACHE_KEY = "promo:list"
+PROMO_TTL = 300  # 5 min
 
 
 @router.get("/", response_model=PromoCodeListResponse)
@@ -21,12 +25,18 @@ async def list_promo_codes(
     current_user=Depends(require_admin),
     db: AsyncSession = Depends(get_db),
 ):
+    cached = await cache_get(PROMO_LIST_CACHE_KEY)
+    if cached is not None:
+        return PromoCodeListResponse(**cached)
+
     result = await db.execute(select(PromoCode))
     codes = result.scalars().all()
-    return PromoCodeListResponse(
+    data = PromoCodeListResponse(
         promo_codes=[PromoCodeResponse.model_validate(c) for c in codes],
         total=len(codes),
     )
+    await cache_set(PROMO_LIST_CACHE_KEY, data.model_dump(), PROMO_TTL)
+    return data
 
 
 @router.post("/", response_model=PromoCodeResponse, status_code=status.HTTP_201_CREATED)
@@ -43,6 +53,8 @@ async def create_promo_code(
     db.add(promo)
     await db.commit()
     await db.refresh(promo)
+
+    await cache_delete(PROMO_LIST_CACHE_KEY)
     return promo
 
 
@@ -91,3 +103,5 @@ async def delete_promo_code(
 
     await db.delete(promo)
     await db.commit()
+
+    await cache_delete(PROMO_LIST_CACHE_KEY)

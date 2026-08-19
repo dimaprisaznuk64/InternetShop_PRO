@@ -1,7 +1,7 @@
 from typing import Optional
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, or_
+from sqlalchemy import select, or_, func
 from app.database import get_db
 from app.models.product import Product
 from app.schemas.product import (
@@ -12,8 +12,24 @@ from app.schemas.product import (
 )
 from app.utils.dependencies import require_admin, require_manager
 from app.utils.exceptions import NotFoundError, AlreadyExistsError
+from app.cache import cache_get, cache_set, cache_delete, cache_delete_pattern
 
 router = APIRouter(prefix="/api/products", tags=["products"])
+
+PRODUCTS_CACHE_PREFIX = "products"
+PRODUCTS_LIST_TTL = 120  # 2 min
+PRODUCT_DETAIL_TTL = 300  # 5 min
+
+
+def _products_list_cache_key(
+    q, category_id, min_price, max_price, in_stock, brand, sort_by, sort_order, limit, offset
+) -> str:
+    parts = [
+        f"q={q}", f"cat={category_id}", f"minp={min_price}", f"maxp={max_price}",
+        f"stock={in_stock}", f"brand={brand}", f"sort={sort_by}", f"order={sort_order}",
+        f"lim={limit}", f"off={offset}",
+    ]
+    return f"{PRODUCTS_CACHE_PREFIX}:list:{'|'.join(parts)}"
 
 
 @router.get("/", response_model=ProductListResponse)
@@ -30,6 +46,13 @@ async def list_products(
     offset: int = Query(0, ge=0),
     db: AsyncSession = Depends(get_db),
 ):
+    cache_key = _products_list_cache_key(
+        q, category_id, min_price, max_price, in_stock, brand, sort_by, sort_order, limit, offset
+    )
+    cached = await cache_get(cache_key)
+    if cached is not None:
+        return ProductListResponse(**cached)
+
     stmt = select(Product)
 
     if q:
@@ -95,23 +118,32 @@ async def list_products(
     if brand:
         count_stmt = count_stmt.where(Product.brand.ilike(f"%{brand}%"))
 
-    from sqlalchemy import func
     total_result = await db.execute(select(func.count()).select_from(count_stmt.subquery()))
     total = total_result.scalar()
 
-    return ProductListResponse(
+    data = ProductListResponse(
         products=[ProductResponse.model_validate(p) for p in products],
         total=total,
     )
+    await cache_set(cache_key, data.model_dump(), PRODUCTS_LIST_TTL)
+    return data
 
 
 @router.get("/{product_id}", response_model=ProductResponse)
 async def get_product(product_id: str, db: AsyncSession = Depends(get_db)):
+    cache_key = f"{PRODUCTS_CACHE_PREFIX}:detail:{product_id}"
+    cached = await cache_get(cache_key)
+    if cached is not None:
+        return ProductResponse(**cached)
+
     result = await db.execute(select(Product).where(Product.id == product_id))
     product = result.scalar_one_or_none()
     if not product:
         raise NotFoundError("Product not found")
-    return product
+
+    data = ProductResponse.model_validate(product)
+    await cache_set(cache_key, data.model_dump(), PRODUCT_DETAIL_TTL)
+    return data
 
 
 @router.post("/", response_model=ProductResponse, status_code=status.HTTP_201_CREATED)
@@ -130,6 +162,8 @@ async def create_product(
     db.add(product)
     await db.commit()
     await db.refresh(product)
+
+    await cache_delete_pattern(f"{PRODUCTS_CACHE_PREFIX}:list:*")
     return product
 
 
@@ -159,6 +193,9 @@ async def update_product(
 
     await db.commit()
     await db.refresh(product)
+
+    await cache_delete_pattern(f"{PRODUCTS_CACHE_PREFIX}:list:*")
+    await cache_delete(f"{PRODUCTS_CACHE_PREFIX}:detail:{product_id}")
     return product
 
 
@@ -175,3 +212,6 @@ async def delete_product(
 
     await db.delete(product)
     await db.commit()
+
+    await cache_delete_pattern(f"{PRODUCTS_CACHE_PREFIX}:list:*")
+    await cache_delete(f"{PRODUCTS_CACHE_PREFIX}:detail:{product_id}")

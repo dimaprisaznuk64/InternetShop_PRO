@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
 from app.config import get_settings
+from app.cache import init_redis, close_redis
 from app.routers.auth import router as auth_router
 from app.routers.profile import router as profile_router
 from app.routers.categories import router as categories_router
@@ -17,11 +19,20 @@ from app.routers.admin import router as admin_router
 
 settings = get_settings()
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await init_redis()
+    yield
+    await close_redis()
+
+
 app = FastAPI(
     title="Internet Shop PRO",
     description="Full-featured e-commerce API",
     version="0.1.0",
     debug=settings.DEBUG,
+    lifespan=lifespan,
 )
 
 app.add_middleware(

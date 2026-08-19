@@ -7,6 +7,7 @@ from app.models.product import Product
 from app.schemas.review import ReviewCreate, ReviewResponse, ReviewListResponse
 from app.utils.dependencies import get_current_user, require_admin
 from app.utils.exceptions import NotFoundError, AlreadyExistsError, BadRequestError
+from app.cache import cache_delete
 
 router = APIRouter(prefix="/api/reviews", tags=["reviews"])
 
@@ -89,4 +90,6 @@ async def moderate_review(
     review.is_moderated = True
     await db.commit()
     await db.refresh(review)
+
+    await cache_delete("admin:stats")
     return review

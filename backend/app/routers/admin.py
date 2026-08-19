@@ -9,8 +9,12 @@ from app.models.review import Review
 from app.schemas.user import UserResponse
 from app.utils.dependencies import require_admin
 from app.utils.exceptions import NotFoundError, BadRequestError
+from app.cache import cache_get, cache_set, cache_delete
 
 router = APIRouter(prefix="/api/admin", tags=["admin"])
+
+STATS_CACHE_KEY = "admin:stats"
+STATS_TTL = 60  # 1 min
 
 
 @router.get("/users")
@@ -64,6 +68,8 @@ async def block_user(
     user.is_active = False
     await db.commit()
     await db.refresh(user)
+
+    await cache_delete(STATS_CACHE_KEY)
     return UserResponse.model_validate(user)
 
 
@@ -81,6 +87,8 @@ async def unblock_user(
     user.is_active = True
     await db.commit()
     await db.refresh(user)
+
+    await cache_delete(STATS_CACHE_KEY)
     return UserResponse.model_validate(user)
 
 
@@ -112,6 +120,10 @@ async def get_statistics(
     current_user=Depends(require_admin),
     db: AsyncSession = Depends(get_db),
 ):
+    cached = await cache_get(STATS_CACHE_KEY)
+    if cached is not None:
+        return cached
+
     from app.models.order import OrderStatus
 
     users_result = await db.execute(select(func.count(User.id)))
@@ -137,7 +149,7 @@ async def get_statistics(
     avg_rating_result = await db.execute(select(func.avg(Review.rating)).where(Review.is_moderated == True))
     avg_rating = float(avg_rating_result.scalar() or 0)
 
-    return {
+    data = {
         "total_users": total_users,
         "active_users": active_users,
         "total_products": total_products,
@@ -146,3 +158,5 @@ async def get_statistics(
         "total_reviews": total_reviews,
         "average_rating": f"{avg_rating:.2f}",
     }
+    await cache_set(STATS_CACHE_KEY, data, STATS_TTL)
+    return data
