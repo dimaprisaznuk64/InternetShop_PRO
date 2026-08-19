@@ -5,11 +5,11 @@
 ## Останнє оновлення
 
 - Дата: 2026-08-19
-- Стан: **Урок 55 завершений**. Business logic tests (promos, stock, checkout, payments):
-  55: business logic tests — promo codes (create/apply/validation/expiry/limits/permissions), stock (validation, zero stock, decrement, increment overflow, failed checkout), checkout (total calc, multi-product, cart clear, delivery info, items creation, pending status), payments (amount match, status update, idempotency, access control, webhook success/failed/refunded). 41 new tests. Fixed factories.py import bug (PromoDiscountType→DiscountType) and CategoryFactory description field.
-  **82 frontend тестів** + **228 backend тестів**. Build ~338 KB gzip ~103 KB.
+- Стан: **Урок 56 завершений**. Integration tests (full e2e flows across all layers):
+  56: integration tests — auth lifecycle (register/login/profile/password/refresh/delete), catalog CRUD + search/filter/pagination, full purchase flow (register→browse→cart→checkout→pay→verify→notifications), multi-product stock consistency, admin panel (user management, stats, popular products), reviews + favorites (cross-user, moderation), payment + webhook refund flow, payment access control, order status transitions, promo CRUD + expiration workflow. 25 new tests.
+  **82 frontend тестів** + **253 backend тестів**. Build ~338 KB gzip ~103 KB.
 - **Як продовжити (наступного разу):** прочитай цей файл → `git log --oneline` →
-  **Урок 56 — Integration tests**: API → Service → Repository → PostgreSQL.
+  **Урок 57 — Security audit**: перевіряємо весь проєкт.
 - Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`
 - PostgreSQL: user=postgres, password=dmytro53239, host=localhost:5432, db=internetshop
 
@@ -102,7 +102,7 @@
 - [x] Урок 53 — Pytest: структура тестів, fixtures, test database
 - [x] Урок 54 — API tests: registration, login, products, cart, orders
 - [x] Урок 55 — Business logic tests: discounts, stock, checkout, payments
-- [ ] Урок 56 — Integration tests: API → Service → Repository → PostgreSQL
+- [x] Урок 56 — Integration tests: API → Service → Repository → PostgreSQL
 
 ### 🔐 Блок 12. Security
 
@@ -138,7 +138,7 @@
 
 ## Поточний блок (наступний крок)
 
-- 🔄 **Урок 56 — Integration tests**: API → Service → Repository → PostgreSQL.
+- 🔄 **Урок 57 — Security audit**: перевіряємо весь проєкт.
 
 ## Конвенції проєкту
 
