@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
 from sqlalchemy.orm import selectinload
 from app.database import get_db
+from app.models.user import User
 from app.models.cart import Cart, CartItem
 from app.models.product import Product
 from app.models.order import Order, OrderItem, OrderStatus
@@ -16,6 +17,7 @@ from app.schemas.order import (
 from app.utils.dependencies import get_current_user, require_admin
 from app.utils.exceptions import NotFoundError, BadRequestError
 from app.cache import cache_delete, cache_delete_pattern
+from app.services.background import email_service, notification_service, task_manager
 
 router = APIRouter(prefix="/api/orders", tags=["orders"])
 
@@ -111,6 +113,18 @@ async def checkout(
     await cache_delete("admin:stats")
     await cache_delete_pattern("products:list:*")
     await cache_delete_pattern("admin:popular_products:*")
+
+    await task_manager.submit(
+        email_service.send_order_confirmation,
+        current_user.email, order.id, f"${float(order.total):.2f}",
+    )
+    notification_service.create(
+        current_user.id, "order_created",
+        "Order placed",
+        f"Your order #{order.id[:8]} for ${float(order.total):.2f} has been placed.",
+        {"order_id": order.id},
+    )
+
     return _serialize_order(order)
 
 
@@ -208,4 +222,21 @@ async def update_order_status(
 
     await cache_delete("admin:stats")
     await cache_delete_pattern("admin:popular_products:*")
+
+    # Send notification to order owner
+    user_result = await db.execute(select(User).where(User.id == order.user_id))
+    order_user = user_result.scalar_one_or_none()
+    if order_user:
+        status_label = data.status.replace("_", " ").title()
+        await task_manager.submit(
+            email_service.send_order_status_change,
+            order_user.email, order.id, status_label,
+        )
+        notification_service.create(
+            order_user.id, f"order_{data.status}",
+            f"Order status: {status_label}",
+            f"Your order #{order.id[:8]} is now {status_label}.",
+            {"order_id": order.id, "status": data.status},
+        )
+
     return _serialize_order(order)

@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from app.config import get_settings
 from app.cache import init_redis, close_redis, get_redis
+from app.services.background import task_manager, cleanup_service
 from app.routers.auth import router as auth_router
 from app.routers.profile import router as profile_router
 from app.routers.categories import router as categories_router
@@ -16,6 +17,7 @@ from app.routers.favorites import router as favorites_router
 from app.routers.reviews import router as reviews_router
 from app.routers.promo import router as promo_router
 from app.routers.admin import router as admin_router
+from app.routers.notifications import router as notifications_router
 
 settings = get_settings()
 
@@ -23,7 +25,11 @@ settings = get_settings()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await init_redis()
+    await task_manager.start()
+    await cleanup_service.start()
     yield
+    await cleanup_service.stop()
+    await task_manager.stop()
     await close_redis()
 
 
@@ -56,6 +62,7 @@ app.include_router(favorites_router)
 app.include_router(reviews_router)
 app.include_router(promo_router)
 app.include_router(admin_router)
+app.include_router(notifications_router)
 
 
 @app.get("/health")

@@ -7,6 +7,7 @@ from app.repositories.user_repo import get_user_by_email, get_user_by_id, create
 from app.utils.security import hash_password, verify_password, create_access_token, create_refresh_token
 from app.utils.dependencies import get_current_user
 from app.utils.exceptions import AlreadyExistsError, BadRequestError
+from app.services.background import email_service, notification_service, task_manager
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
@@ -19,6 +20,13 @@ async def register(data: UserRegister, db: AsyncSession = Depends(get_db)):
 
     hashed = hash_password(data.password)
     user = await create_user(db, data.email, data.username, hashed)
+
+    await task_manager.submit(email_service.send_welcome, data.email, data.username)
+    notification_service.create(
+        user.id, "welcome", "Welcome!",
+        f"Hello {data.username}, welcome to Internet Shop PRO!",
+    )
+
     return user
 
 

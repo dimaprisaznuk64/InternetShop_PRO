@@ -14,6 +14,7 @@ from app.schemas.payment import (
 )
 from app.utils.dependencies import get_current_user, require_admin
 from app.utils.exceptions import NotFoundError, BadRequestError
+from app.services.background import email_service, notification_service, task_manager
 
 router = APIRouter(prefix="/api/payments", tags=["payments"])
 
@@ -67,6 +68,18 @@ async def create_payment(
         select(Payment).where(Payment.id == payment.id)
     )
     payment = result.scalar_one()
+
+    await task_manager.submit(
+        email_service.send_payment_confirmation,
+        current_user.email, order.id, f"${float(order.total):.2f}",
+    )
+    notification_service.create(
+        current_user.id, "order_paid",
+        "Payment received",
+        f"Payment of ${float(order.total):.2f} received for order #{order.id[:8]}.",
+        {"order_id": order.id, "payment_id": payment.id},
+    )
+
     return _serialize_payment(payment)
 
 
@@ -113,18 +126,50 @@ async def payment_webhook(
     data: WebhookPayload,
     db: AsyncSession = Depends(get_db),
 ):
+    from app.models.user import User
+
     result = await db.execute(select(Payment).where(Payment.provider_payment_id == data.provider_payment_id))
     payment = result.scalar_one_or_none()
     if not payment:
         raise NotFoundError("Payment not found")
 
+    order_result = await db.execute(select(Order).where(Order.id == payment.order_id))
+    order = order_result.scalar_one_or_none()
+
     if data.status == "success":
         payment.status = PaymentStatus.success
-        result = await db.execute(select(Order).where(Order.id == payment.order_id))
-        order = result.scalar_one()
-        order.status = OrderStatus.paid
+        if order:
+            order.status = OrderStatus.paid
+
+            user_result = await db.execute(select(User).where(User.id == order.user_id))
+            order_user = user_result.scalar_one_or_none()
+            if order_user:
+                await task_manager.submit(
+                    email_service.send_payment_confirmation,
+                    order_user.email, order.id, f"${float(order.total):.2f}",
+                )
+                notification_service.create(
+                    order_user.id, "order_paid",
+                    "Payment confirmed",
+                    f"Payment of ${float(order.total):.2f} confirmed for order #{order.id[:8]}.",
+                    {"order_id": order.id, "payment_id": payment.id},
+                )
     elif data.status == "failed":
         payment.status = PaymentStatus.failed
+        if order:
+            user_result = await db.execute(select(User).where(User.id == order.user_id))
+            order_user = user_result.scalar_one_or_none()
+            if order_user:
+                await task_manager.submit(
+                    email_service.send_payment_failed,
+                    order_user.email, order.id,
+                )
+                notification_service.create(
+                    order_user.id, "payment_failed",
+                    "Payment failed",
+                    f"Payment failed for order #{order.id[:8]}.",
+                    {"order_id": order.id, "payment_id": payment.id},
+                )
     elif data.status == "refunded":
         payment.status = PaymentStatus.refunded
 
