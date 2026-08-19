@@ -8,6 +8,7 @@ async def test_health_check(client):
     data = response.json()
     assert data["status"] == "ok"
     assert "redis" in data
+    assert "celery" in data
 
 
 @pytest.mark.asyncio

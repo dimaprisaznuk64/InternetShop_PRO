@@ -11,6 +11,21 @@ logger = logging.getLogger(__name__)
 
 settings = get_settings()
 
+# Try to import Celery; fall back to asyncio-based tasks
+try:
+    from app.services.celery_tasks import (
+        send_welcome_email,
+        send_order_confirmation,
+        send_order_status_change,
+        send_payment_confirmation,
+        send_payment_failed,
+    )
+    USE_CELERY = True
+    logger.info("Using Celery for background tasks")
+except ImportError:
+    USE_CELERY = False
+    logger.info("Celery not available, using asyncio-based background tasks")
+
 
 @dataclass
 class TaskResult:
@@ -143,7 +158,7 @@ class NotificationService:
 
 
 class BackgroundTaskManager:
-    """Manages background tasks with in-memory queue and asyncio workers."""
+    """Manages background tasks with Celery (preferred) or asyncio workers."""
 
     def __init__(self, max_workers: int = 3):
         self._queue: asyncio.Queue = asyncio.Queue()
@@ -152,15 +167,32 @@ class BackgroundTaskManager:
         self._max_workers = max_workers
         self._running = False
         self._task_counter = 0
+        self._use_celery = USE_CELERY
+        self._celery_available = False
 
     async def start(self):
         if self._running:
             return
         self._running = True
-        for i in range(self._max_workers):
-            worker = asyncio.create_task(self._worker(f"worker-{i}"))
-            self._workers.append(worker)
-        logger.info("Background task manager started with %d workers", self._max_workers)
+        if self._use_celery:
+            try:
+                from app.celery_app import celery_app
+                inspect = celery_app.control.inspect(timeout=1.0)
+                result = inspect.ping()
+                if result is not None:
+                    self._celery_available = True
+                    logger.info("Background task manager started (Celery mode)")
+                else:
+                    self._celery_available = False
+                    logger.info("Celery workers not found, falling back to asyncio")
+            except Exception:
+                self._celery_available = False
+                logger.info("Celery broker unavailable, falling back to asyncio")
+        if not self._celery_available:
+            for i in range(self._max_workers):
+                worker = asyncio.create_task(self._worker(f"worker-{i}"))
+                self._workers.append(worker)
+            logger.info("Background task manager started with %d asyncio workers", self._max_workers)
 
     async def stop(self):
         self._running = False
@@ -175,8 +207,35 @@ class BackgroundTaskManager:
         self._task_counter += 1
         task_id = f"task-{self._task_counter}"
         self._results[task_id] = TaskResult(task_id=task_id)
+
+        if self._celery_available:
+            celery_task = self._map_to_celery_task(func)
+            if celery_task:
+                try:
+                    result = celery_task.apply_async(
+                        args=args, kwargs=kwargs, timeout=5
+                    )
+                    self._results[task_id].status = "submitted"
+                    self._results[task_id].result = {"celery_task_id": result.id}
+                    return task_id
+                except Exception as e:
+                    logger.warning("Celery submit failed, falling back to asyncio: %s", e)
+
+        # Fallback to asyncio queue
         await self._queue.put((task_id, func, args, kwargs))
         return task_id
+
+    def _map_to_celery_task(self, func: Callable):
+        """Map email_service methods to Celery tasks."""
+        from app.services.background import email_service
+        mapping = {
+            email_service.send_welcome: send_welcome_email,
+            email_service.send_order_confirmation: send_order_confirmation,
+            email_service.send_order_status_change: send_order_status_change,
+            email_service.send_payment_confirmation: send_payment_confirmation,
+            email_service.send_payment_failed: send_payment_failed,
+        }
+        return mapping.get(func)
 
     def get_result(self, task_id: str) -> Optional[TaskResult]:
         return self._results.get(task_id)

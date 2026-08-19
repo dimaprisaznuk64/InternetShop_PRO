@@ -5,14 +5,15 @@
 ## Останнє оновлення
 
 - Дата: 2026-08-19
-- Стан: **Уроки 48-51 завершені**. Admin frontend + Redis caching + extended caching + background tasks:
+- Стан: **Уроки 48-52 завершені**. Admin frontend + Redis caching + extended caching + background tasks + Celery:
   48: Admin frontend (sidebar, dashboard, products CRUD, categories, promo, pagination).
   49: Redis caching (categories 5min, products 2min, product detail 5min, admin stats 1min, promo 5min). Cache invalidation on CRUD.
   50: Extended caching (reviews by product 2min, product images 5min, variants 5min, variant detail 5min). Popular products endpoint (admin, 3min TTL). Cache health check. 15 cache tests.
   51: Background tasks (email service, notification service, task manager with asyncio workers, cleanup service, notifications API). Welcome emails, order confirmations, payment confirmations, order status notifications. 23 background task tests.
-  **82 frontend тестів** + **163 backend тестів**. Build ~338 KB gzip ~103 KB.
+  52: Celery task queue (celery_app, celery tasks, beat schedule, graceful fallback to asyncio). Health check includes celery status. 14 celery tests.
+  **82 frontend тестів** + **177 backend тестів**. Build ~338 KB gzip ~103 KB.
 - **Як продовжити (наступного разу):** прочитай цей файл → `git log --oneline` →
-  **Урок 52 — Celery / task queue**: виробничий task queue.
+  **Урок 53 — Pytest**: структура тестів, fixtures, test database.
 - Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`
 - PostgreSQL: user=postgres, password=dmytro53239, host=localhost:5432, db=internetshop
 
@@ -98,7 +99,7 @@
 - [x] Урок 49 — Redis: cache, connection, TTL
 - [x] Урок 50 — Caching: кешуємо categories, popular products, catalog queries
 - [x] Урок 51 — Background tasks: email, notifications, cleanup, asynchronous jobs
-- [ ] Урок 52 — Celery / task queue (якщо потрібно для production-рівня)
+- [x] Урок 52 — Celery / task queue (якщо потрібно для production-рівня)
 
 ### 🧪 Блок 11. Testing
 
@@ -141,7 +142,7 @@
 
 ## Поточний блок (наступний крок)
 
-- 🔄 **Урок 52 — Celery / task queue**: виробничий task queue
+- 🔄 **Урок 53 — Pytest**: структура тестів, fixtures, test database
 
 ## Конвенції проєкту
 

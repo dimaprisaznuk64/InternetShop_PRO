@@ -75,4 +75,17 @@ async def health_check():
             redis_status = "connected"
         except Exception:
             redis_status = "error"
-    return {"status": "ok", "redis": redis_status}
+
+    celery_status = "not_configured"
+    try:
+        from app.celery_app import celery_app
+        inspect = celery_app.control.inspect(timeout=1.0)
+        active = inspect.active()
+        if active is not None:
+            celery_status = "connected"
+        else:
+            celery_status = "no_workers"
+    except Exception:
+        celery_status = "unavailable"
+
+    return {"status": "ok", "redis": redis_status, "celery": celery_status}
