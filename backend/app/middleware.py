@@ -23,20 +23,32 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         return response
 
 
+# Endpoint-specific rate limits: (requests, window_seconds)
+RATE_LIMITS: dict[str, tuple[int, int]] = {
+    "/api/auth/login":       (5, 60),    # 5 login attempts / min
+    "/api/auth/register":    (3, 60),    # 3 registrations / min
+    "/api/auth/token":       (10, 60),   # 10 token refreshes / min
+    "/api/auth/logout":      (10, 60),
+    "/api/profile/password": (3, 300),   # 3 password changes / 5 min
+    "/api/profile":          (20, 60),   # 20 profile updates / min
+}
+
+DEFAULT_LIMIT = (100, 60)  # 100 requests / min for everything else
+
+
 class RateLimitMiddleware(BaseHTTPMiddleware):
-    """Simple in-memory rate limiter.
+    """In-memory rate limiter with per-endpoint limits.
 
     Limits:
-      - login/register: 10 requests per minute per IP
-      - other endpoints: 100 requests per minute per IP
+      - login: 5/min, register: 3/min, password change: 3/5min
+      - other endpoints: 100/min per IP
 
-    Disabled when app.debug is True (test/dev mode).
+    Sends X-RateLimit-Remaining and X-RateLimit-Reset headers.
     """
 
-    def __init__(self, app, login_limit: int = 10, default_limit: int = 100):
+    def __init__(self, app, force_enabled: bool = False):
         super().__init__(app)
-        self._login_limit = login_limit
-        self._default_limit = default_limit
+        self._force_enabled = force_enabled
         self._requests: dict[str, list[float]] = defaultdict(list)
 
     def _is_rate_limited(self, key: str, limit: int, window: int = 60) -> bool:
@@ -48,30 +60,57 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         self._requests[key].append(now)
         return False
 
+    def _remaining(self, key: str, limit: int, window: int = 60) -> int:
+        now = time.time()
+        cutoff = now - window
+        count = sum(1 for t in self._requests[key] if t > cutoff)
+        return max(0, limit - count)
+
+    def _reset_time(self, window: int = 60) -> int:
+        return int(time.time()) + window
+
+    def _get_limit(self, path: str) -> tuple[int, int]:
+        # Check exact match first
+        if path in RATE_LIMITS:
+            return RATE_LIMITS[path]
+        # Check prefix matches (e.g. /api/profile/password matches /api/profile)
+        for prefix, limits in sorted(RATE_LIMITS.items(), key=lambda x: -len(x[0])):
+            if path.startswith(prefix):
+                return limits
+        return DEFAULT_LIMIT
+
     async def dispatch(self, request: Request, call_next):
-        # Skip rate limiting in debug/test mode
-        if getattr(request.app, "debug", False):
+        # Skip rate limiting in debug/test mode unless forced
+        if not self._force_enabled and getattr(request.app, "debug", False):
             return await call_next(request)
 
         client_ip = request.client.host if request.client else "unknown"
         path = request.url.path
 
-        # Auth endpoints: stricter limit
-        if path in ("/api/auth/login", "/api/auth/register", "/api/auth/token"):
-            key = f"auth:{client_ip}"
-            limit = self._login_limit
-        else:
-            key = f"api:{client_ip}"
-            limit = self._default_limit
+        limit, window = self._get_limit(path)
+        key = f"rate:{path}:{client_ip}"
 
-        if self._is_rate_limited(key, limit):
-            logger.warning("Rate limit exceeded for %s on %s", client_ip, path)
+        if self._is_rate_limited(key, limit, window):
+            logger.warning("Rate limit exceeded for %s on %s (%d/%ds)", client_ip, path, limit, window)
             return JSONResponse(
                 status_code=429,
                 content={"detail": "Too many requests. Please try again later."},
+                headers={
+                    "Retry-After": str(window),
+                    "X-RateLimit-Limit": str(limit),
+                    "X-RateLimit-Remaining": "0",
+                    "X-RateLimit-Reset": str(self._reset_time(window)),
+                },
             )
 
-        return await call_next(request)
+        response = await call_next(request)
+
+        remaining = self._remaining(key, limit, window)
+        response.headers["X-RateLimit-Limit"] = str(limit)
+        response.headers["X-RateLimit-Remaining"] = str(remaining)
+        response.headers["X-RateLimit-Reset"] = str(self._reset_time(window))
+
+        return response
 
     def reset(self):
         """Reset all counters (for testing)."""
