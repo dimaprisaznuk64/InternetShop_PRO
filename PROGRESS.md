@@ -5,11 +5,11 @@
 ## Останнє оновлення
 
 - Дата: 2026-08-19
-- Стан: **Урок 59 завершений**. Rate limiting:
-  59: per-endpoint rate limiting — login 5/min, register 3/min, password change 3/5min, general 100/min, X-RateLimit-Limit/Remaining/Reset headers, Retry-After на 429, force_enabled для тестів, 9 rate limit tests.
-  **325 backend тестів** + **82 frontend тестів**. Build ~338 KB gzip ~103 KB.
+- Стан: **Урок 60 завершений**. Secure configuration:
+  60: config security — SECRET_KEY validator (warns on default, rejects <16 chars), DATABASE_URL validator (warns on default creds), CORS_ORIGINS/ALLOWED_HOSTS з .env, is_production property, generate_secret_key() utility, 24 config tests.
+  **349 backend тестів** + **82 frontend тестів**. Build ~338 KB gzip ~103 KB.
 - **Як продовжити (наступного разу):** прочитай цей файл → `git log --oneline` →
-  **Урок 60 — Secure configuration**: secrets, environment, CORS, headers, production settings.
+  **Блок 13 — Docker**: Dockerfile, Docker Compose, volumes, networks.
 - Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`
 - PostgreSQL: user=postgres, password=dmytro53239, host=localhost:5432, db=internetshop
 
@@ -109,7 +109,7 @@
 - [x] Урок 57 — Security audit: перевіряємо весь проєкт
 - [x] Урок 58 — OWASP basics: SQL injection, XSS, CSRF, IDOR, broken access control
 - [x] Урок 59 — Rate limiting: login, registration, API, sensitive endpoints
-- [ ] Урок 60 — Secure configuration: secrets, environment, CORS, headers, production settings
+- [x] Урок 60 — Secure configuration: secrets, environment, CORS, headers, production settings
 
 ### 🐳 Блок 13. Docker
 
@@ -138,7 +138,7 @@
 
 ## Поточний блок (наступний крок)
 
-- ✅ **Урок 59 — Rate limiting**: per-endpoint limits, headers, 429 responses.
+- ✅ **Урок 60 — Secure configuration**: secrets validation, CORS from env, production settings.
 
 ## Конвенції проєкту
 
