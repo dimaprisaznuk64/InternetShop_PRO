@@ -110,6 +110,7 @@ async def checkout(
 
     await cache_delete("admin:stats")
     await cache_delete_pattern("products:list:*")
+    await cache_delete_pattern("admin:popular_products:*")
     return _serialize_order(order)
 
 
@@ -206,4 +207,5 @@ async def update_order_status(
     order = result.scalar_one()
 
     await cache_delete("admin:stats")
+    await cache_delete_pattern("admin:popular_products:*")
     return _serialize_order(order)

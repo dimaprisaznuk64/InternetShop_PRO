@@ -138,3 +138,46 @@ async def test_cache_json_serialization():
         result = await cache_get("test:json")
         assert result["total"] == 5
         assert result["items"] == ["a", "b"]
+
+
+@pytest.mark.asyncio
+async def test_cache_ttl_passed_correctly():
+    mock_redis = AsyncMock()
+
+    with patch("app.cache.redis_client", mock_redis):
+        await cache_set("test:ttl", {"data": 1}, ttl=120)
+        call_args = mock_redis.set.call_args
+        assert call_args[1]["ex"] == 120
+
+
+@pytest.mark.asyncio
+async def test_cache_handles_json_decode_error():
+    mock_redis = AsyncMock()
+    mock_redis.get.return_value = "not-json"
+
+    with patch("app.cache.redis_client", mock_redis):
+        result = await cache_get("test:bad_json")
+        assert result is None
+
+
+@pytest.mark.asyncio
+async def test_cache_delete_handles_redis_error():
+    mock_redis = AsyncMock()
+    mock_redis.delete.side_effect = Exception("Connection lost")
+
+    with patch("app.cache.redis_client", mock_redis):
+        await cache_delete("test:key")
+
+
+@pytest.mark.asyncio
+async def test_cache_delete_pattern_handles_redis_error():
+    mock_redis = AsyncMock()
+
+    async def fake_scan_iter(match=None):
+        raise Exception("Connection lost")
+        yield
+
+    mock_redis.scan_iter = fake_scan_iter
+
+    with patch("app.cache.redis_client", mock_redis):
+        await cache_delete_pattern("bad:pattern:*")

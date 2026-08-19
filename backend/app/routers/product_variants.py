@@ -11,8 +11,12 @@ from app.schemas.product_variant import (
 )
 from app.utils.dependencies import require_manager
 from app.utils.exceptions import NotFoundError, AlreadyExistsError
+from app.cache import cache_get, cache_set, cache_delete
 
 router = APIRouter(prefix="/api/products/{product_id}/variants", tags=["product variants"])
+
+VARIANTS_CACHE_PREFIX = "variants"
+VARIANTS_TTL = 300  # 5 min
 
 
 @router.get("/", response_model=ProductVariantListResponse)
@@ -20,14 +24,21 @@ async def list_variants(
     product_id: str,
     db: AsyncSession = Depends(get_db),
 ):
+    cache_key = f"{VARIANTS_CACHE_PREFIX}:product:{product_id}"
+    cached = await cache_get(cache_key)
+    if cached is not None:
+        return ProductVariantListResponse(**cached)
+
     result = await db.execute(
         select(ProductVariant).where(ProductVariant.product_id == product_id)
     )
     variants = result.scalars().all()
-    return ProductVariantListResponse(
+    data = ProductVariantListResponse(
         variants=[ProductVariantResponse.model_validate(v) for v in variants],
         total=len(variants),
     )
+    await cache_set(cache_key, data.model_dump(), VARIANTS_TTL)
+    return data
 
 
 @router.get("/{variant_id}", response_model=ProductVariantResponse)
@@ -36,6 +47,11 @@ async def get_variant(
     variant_id: str,
     db: AsyncSession = Depends(get_db),
 ):
+    cache_key = f"{VARIANTS_CACHE_PREFIX}:detail:{variant_id}"
+    cached = await cache_get(cache_key)
+    if cached is not None:
+        return ProductVariantResponse(**cached)
+
     result = await db.execute(
         select(ProductVariant).where(
             ProductVariant.id == variant_id,
@@ -45,7 +61,10 @@ async def get_variant(
     variant = result.scalar_one_or_none()
     if not variant:
         raise NotFoundError("Variant not found")
-    return variant
+
+    data = ProductVariantResponse.model_validate(variant)
+    await cache_set(cache_key, data.model_dump(), VARIANTS_TTL)
+    return data
 
 
 @router.post("/", response_model=ProductVariantResponse, status_code=status.HTTP_201_CREATED)
@@ -65,6 +84,8 @@ async def create_variant(
     db.add(variant)
     await db.commit()
     await db.refresh(variant)
+
+    await cache_delete(f"{VARIANTS_CACHE_PREFIX}:product:{product_id}")
     return variant
 
 
@@ -100,6 +121,9 @@ async def update_variant(
 
     await db.commit()
     await db.refresh(variant)
+
+    await cache_delete(f"{VARIANTS_CACHE_PREFIX}:product:{product_id}")
+    await cache_delete(f"{VARIANTS_CACHE_PREFIX}:detail:{variant_id}")
     return variant
 
 
@@ -122,3 +146,6 @@ async def delete_variant(
 
     await db.delete(variant)
     await db.commit()
+
+    await cache_delete(f"{VARIANTS_CACHE_PREFIX}:product:{product_id}")
+    await cache_delete(f"{VARIANTS_CACHE_PREFIX}:detail:{variant_id}")

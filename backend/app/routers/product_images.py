@@ -10,8 +10,12 @@ from app.schemas.product_image import (
 )
 from app.utils.dependencies import get_current_user, require_manager
 from app.utils.exceptions import NotFoundError
+from app.cache import cache_get, cache_set, cache_delete
 
 router = APIRouter(prefix="/api/products/{product_id}/images", tags=["product images"])
+
+IMAGES_CACHE_PREFIX = "images"
+IMAGES_TTL = 300  # 5 min
 
 
 @router.get("/", response_model=ProductImageListResponse)
@@ -19,14 +23,21 @@ async def list_images(
     product_id: str,
     db: AsyncSession = Depends(get_db),
 ):
+    cache_key = f"{IMAGES_CACHE_PREFIX}:product:{product_id}"
+    cached = await cache_get(cache_key)
+    if cached is not None:
+        return ProductImageListResponse(**cached)
+
     result = await db.execute(
         select(ProductImage).where(ProductImage.product_id == product_id)
     )
     images = result.scalars().all()
-    return ProductImageListResponse(
+    data = ProductImageListResponse(
         images=[ProductImageResponse.model_validate(i) for i in images],
         total=len(images),
     )
+    await cache_set(cache_key, data.model_dump(), IMAGES_TTL)
+    return data
 
 
 @router.post("/", response_model=ProductImageResponse, status_code=status.HTTP_201_CREATED)
@@ -40,6 +51,8 @@ async def add_image(
     db.add(image)
     await db.commit()
     await db.refresh(image)
+
+    await cache_delete(f"{IMAGES_CACHE_PREFIX}:product:{product_id}")
     return image
 
 
@@ -62,3 +75,5 @@ async def delete_image(
 
     await db.delete(image)
     await db.commit()
+
+    await cache_delete(f"{IMAGES_CACHE_PREFIX}:product:{product_id}")

@@ -5,12 +5,13 @@
 ## Останнє оновлення
 
 - Дата: 2026-08-19
-- Стан: **Уроки 48-49 завершені**. Admin frontend + Redis caching:
+- Стан: **Уроки 48-50 завершені**. Admin frontend + Redis caching + extended caching:
   48: Admin frontend (sidebar, dashboard, products CRUD, categories, promo, pagination).
   49: Redis caching (categories 5min, products 2min, product detail 5min, admin stats 1min, promo 5min). Cache invalidation on CRUD.
-  **82 frontend тестів** + **136 backend тестів** (з 11 cache tests). Build ~338 KB gzip ~103 KB.
+  50: Extended caching (reviews by product 2min, product images 5min, variants 5min, variant detail 5min). Popular products endpoint (admin, 3min TTL). Cache health check. 15 cache tests.
+  **82 frontend тестів** + **140 backend тестів**. Build ~338 KB gzip ~103 KB.
 - **Як продовжити (наступного разу):** прочитай цей файл → `git log --oneline` →
-  **Урок 50 — Caching**: кешуємо categories, popular products, catalog queries.
+  **Урок 51 — Background tasks**: email, notifications, cleanup, asynchronous jobs.
 - Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`
 - PostgreSQL: user=postgres, password=dmytro53239, host=localhost:5432, db=internetshop
 
@@ -94,7 +95,7 @@
 ### ⚡ Блок 10. Redis та background tasks
 
 - [x] Урок 49 — Redis: cache, connection, TTL
-- [ ] Урок 50 — Caching: кешуємо categories, popular products, catalog queries
+- [x] Урок 50 — Caching: кешуємо categories, popular products, catalog queries
 - [ ] Урок 51 — Background tasks: email, notifications, cleanup, asynchronous jobs
 - [ ] Урок 52 — Celery / task queue (якщо потрібно для production-рівня)
 
@@ -139,7 +140,7 @@
 
 ## Поточний блок (наступний крок)
 
-- 🔄 **Урок 50 — Caching**: кешуємо categories, popular products, catalog queries
+- 🔄 **Урок 51 — Background tasks**: email, notifications, cleanup, asynchronous jobs
 
 ## Конвенції проєкту
 

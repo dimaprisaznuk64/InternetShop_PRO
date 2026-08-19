@@ -7,9 +7,12 @@ from app.models.product import Product
 from app.schemas.review import ReviewCreate, ReviewResponse, ReviewListResponse
 from app.utils.dependencies import get_current_user, require_admin
 from app.utils.exceptions import NotFoundError, AlreadyExistsError, BadRequestError
-from app.cache import cache_delete
+from app.cache import cache_get, cache_set, cache_delete, cache_delete_pattern
 
 router = APIRouter(prefix="/api/reviews", tags=["reviews"])
+
+REVIEWS_CACHE_PREFIX = "reviews"
+REVIEWS_TTL = 120  # 2 min
 
 
 @router.get("/product/{product_id}", response_model=ReviewListResponse)
@@ -17,14 +20,21 @@ async def list_reviews(
     product_id: str,
     db: AsyncSession = Depends(get_db),
 ):
+    cache_key = f"{REVIEWS_CACHE_PREFIX}:product:{product_id}"
+    cached = await cache_get(cache_key)
+    if cached is not None:
+        return ReviewListResponse(**cached)
+
     result = await db.execute(
         select(Review).where(Review.product_id == product_id, Review.is_moderated == True)
     )
     reviews = result.scalars().all()
-    return ReviewListResponse(
+    data = ReviewListResponse(
         reviews=[ReviewResponse.model_validate(r) for r in reviews],
         total=len(reviews),
     )
+    await cache_set(cache_key, data.model_dump(), REVIEWS_TTL)
+    return data
 
 
 @router.post("/", response_model=ReviewResponse, status_code=status.HTTP_201_CREATED)
@@ -55,6 +65,8 @@ async def create_review(
     db.add(review)
     await db.commit()
     await db.refresh(review)
+
+    await cache_delete(f"{REVIEWS_CACHE_PREFIX}:product:{data.product_id}")
     return review
 
 
@@ -72,8 +84,11 @@ async def delete_review(
     if review.user_id != current_user.id and current_user.role != "admin":
         raise BadRequestError("Access denied")
 
+    product_id = review.product_id
     await db.delete(review)
     await db.commit()
+
+    await cache_delete(f"{REVIEWS_CACHE_PREFIX}:product:{product_id}")
 
 
 @router.patch("/{review_id}/moderate", response_model=ReviewResponse)
@@ -92,4 +107,5 @@ async def moderate_review(
     await db.refresh(review)
 
     await cache_delete("admin:stats")
+    await cache_delete(f"{REVIEWS_CACHE_PREFIX}:product:{review.product_id}")
     return review

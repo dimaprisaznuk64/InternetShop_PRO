@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from app.config import get_settings
-from app.cache import init_redis, close_redis
+from app.cache import init_redis, close_redis, get_redis
 from app.routers.auth import router as auth_router
 from app.routers.profile import router as profile_router
 from app.routers.categories import router as categories_router
@@ -60,4 +60,12 @@ app.include_router(admin_router)
 
 @app.get("/health")
 async def health_check():
-    return {"status": "ok"}
+    redis = await get_redis()
+    redis_status = "disconnected"
+    if redis:
+        try:
+            await redis.ping()
+            redis_status = "connected"
+        except Exception:
+            redis_status = "error"
+    return {"status": "ok", "redis": redis_status}

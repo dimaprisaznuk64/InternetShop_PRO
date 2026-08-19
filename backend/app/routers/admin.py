@@ -3,10 +3,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
 from app.database import get_db
 from app.models.user import User
-from app.models.order import Order
+from app.models.order import Order, OrderItem
 from app.models.product import Product
 from app.models.review import Review
 from app.schemas.user import UserResponse
+from app.schemas.product import ProductResponse
 from app.utils.dependencies import require_admin
 from app.utils.exceptions import NotFoundError, BadRequestError
 from app.cache import cache_get, cache_set, cache_delete
@@ -15,6 +16,8 @@ router = APIRouter(prefix="/api/admin", tags=["admin"])
 
 STATS_CACHE_KEY = "admin:stats"
 STATS_TTL = 60  # 1 min
+POPULAR_PRODUCTS_CACHE_KEY = "admin:popular_products"
+POPULAR_TTL = 180  # 3 min
 
 
 @router.get("/users")
@@ -159,4 +162,49 @@ async def get_statistics(
         "average_rating": f"{avg_rating:.2f}",
     }
     await cache_set(STATS_CACHE_KEY, data, STATS_TTL)
+    return data
+
+
+@router.get("/popular-products")
+async def popular_products(
+    limit: int = Query(10, ge=1, le=50),
+    current_user=Depends(require_admin),
+    db: AsyncSession = Depends(get_db),
+):
+    cache_key = f"{POPULAR_PRODUCTS_CACHE_KEY}:{limit}"
+    cached = await cache_get(cache_key)
+    if cached is not None:
+        return cached
+
+    stmt = (
+        select(
+            Product.id,
+            Product.name,
+            Product.slug,
+            Product.sku,
+            Product.price,
+            Product.stock,
+            func.coalesce(func.sum(OrderItem.quantity), 0).label("total_sold"),
+        )
+        .outerjoin(OrderItem, Product.id == OrderItem.product_id)
+        .group_by(Product.id)
+        .order_by(func.coalesce(func.sum(OrderItem.quantity), 0).desc())
+        .limit(limit)
+    )
+    result = await db.execute(stmt)
+    rows = result.all()
+
+    data = [
+        {
+            "id": str(row.id),
+            "name": row.name,
+            "slug": row.slug,
+            "sku": row.sku,
+            "price": str(row.price),
+            "stock": row.stock,
+            "total_sold": int(row.total_sold),
+        }
+        for row in rows
+    ]
+    await cache_set(cache_key, data, POPULAR_TTL)
     return data
