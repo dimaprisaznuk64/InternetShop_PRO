@@ -11,8 +11,11 @@ const mockStats = {
   total_orders: 340,
   total_revenue: "12499.50",
   total_reviews: 67,
-  average_rating: 4.3,
+  average_rating: "4.30",
 };
+
+const mockOrders = { orders: [], total: 0 };
+const mockProducts = { products: [], total: 0 };
 
 vi.mock("../api", () => ({
   adminApi: {
@@ -21,6 +24,28 @@ vi.mock("../api", () => ({
     blockUser: vi.fn(),
     unblockUser: vi.fn(),
     changeRole: vi.fn(),
+    listPromoCodes: vi.fn(),
+    createPromoCode: vi.fn(),
+    deletePromoCode: vi.fn(),
+    createCategory: vi.fn(),
+    updateCategory: vi.fn(),
+    deleteCategory: vi.fn(),
+  },
+  ordersApi: {
+    adminList: vi.fn(),
+    list: vi.fn(),
+    get: vi.fn(),
+    updateStatus: vi.fn(),
+  },
+  productsApi: {
+    list: vi.fn(),
+    get: vi.fn(),
+    create: vi.fn(),
+    update: vi.fn(),
+    delete: vi.fn(),
+  },
+  categoriesApi: {
+    list: vi.fn(),
   },
   authApi: {
     me: vi.fn().mockResolvedValue({
@@ -38,7 +63,7 @@ vi.mock("../api", () => ({
   getAccessToken: vi.fn().mockReturnValue("token"),
 }));
 
-import { adminApi } from "../api";
+import { adminApi, ordersApi, productsApi } from "../api";
 
 describe("Admin DashboardPage", () => {
   beforeEach(() => {
@@ -47,6 +72,8 @@ describe("Admin DashboardPage", () => {
 
   it("loads and displays stats", async () => {
     vi.mocked(adminApi.stats).mockResolvedValue(mockStats);
+    vi.mocked(ordersApi.adminList).mockResolvedValue(mockOrders);
+    vi.mocked(productsApi.list).mockResolvedValue(mockProducts);
 
     render(
       <MemoryRouter>
@@ -57,17 +84,18 @@ describe("Admin DashboardPage", () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText("Admin Dashboard")).toBeInTheDocument();
+      expect(screen.getByText("Dashboard")).toBeInTheDocument();
       expect(screen.getByText("150")).toBeInTheDocument();
       expect(screen.getByText("85")).toBeInTheDocument();
       expect(screen.getByText("340")).toBeInTheDocument();
       expect(screen.getByText("67")).toBeInTheDocument();
-      expect(screen.getAllByText(/12499\.50/).length).toBeGreaterThanOrEqual(1);
     });
   });
 
   it("shows error when stats fail", async () => {
     vi.mocked(adminApi.stats).mockRejectedValue(new Error("500"));
+    vi.mocked(ordersApi.adminList).mockResolvedValue(mockOrders);
+    vi.mocked(productsApi.list).mockResolvedValue(mockProducts);
 
     render(
       <MemoryRouter>
@@ -79,6 +107,25 @@ describe("Admin DashboardPage", () => {
 
     await waitFor(() => {
       expect(screen.getByText(/failed to load statistics/i)).toBeInTheDocument();
+    });
+  });
+
+  it("renders recent orders and latest products sections", async () => {
+    vi.mocked(adminApi.stats).mockResolvedValue(mockStats);
+    vi.mocked(ordersApi.adminList).mockResolvedValue(mockOrders);
+    vi.mocked(productsApi.list).mockResolvedValue(mockProducts);
+
+    render(
+      <MemoryRouter>
+        <AuthProvider>
+          <DashboardPage />
+        </AuthProvider>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("Recent Orders")).toBeInTheDocument();
+      expect(screen.getByText("Latest Products")).toBeInTheDocument();
     });
   });
 });

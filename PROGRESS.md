@@ -4,18 +4,12 @@
 
 ## Останнє оновлення
 
-- Дата: 2026-08-18
-- Стан: **Уроки 41-47 завершені**. Frontend повністю побудований:
-  41: Архітектура (Vite+React+TS, routing, API client, contexts).
-  42: Catalog UI (filters, sorting, brands, product count).
-  43: Product page (gallery, variant selector, favorites, breadcrumbs, rating).
-  44: Auth UI (show/hide password, confirm password, redirect).
-  45: Cart UI (card layout, images, variant names, item count).
-  46: Orders UI (order detail page, breadcrumbs, items table).
-  47: Profile UI (avatar card, member since, role badge).
-  **61 frontend тест** (Vitest + React Testing Library). Build ~320 KB gzip ~100 KB.
+- Дата: 2026-08-19
+- Стан: **Урок 48 завершений**. Admin frontend повністю побудований:
+  48: Admin frontend (sidebar layout, dashboard з recent orders/latest products, products CRUD модалки, categories CRUD, promo codes管理, users з пагінацією, orders з пагінацією).
+  **82 frontend тестів** (Vitest + React Testing Library). Build ~338 KB gzip ~103 KB.
 - **Як продовжити (наступного разу):** прочитай цей файл → `git log --oneline` →
-  **Урок 48 — Admin frontend**: dashboard, products, users, orders, statistics.
+  **Урок 49 — Redis**: cache, connection, TTL.
 - Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`
 - PostgreSQL: user=postgres, password=dmytro53239, host=localhost:5432, db=internetshop
 
@@ -94,7 +88,7 @@
 - [x] Урок 45 — Cart UI: cart, quantity, total, checkout
 - [x] Урок 46 — Orders UI: order creation, order history, order details
 - [x] Урок 47 — Profile UI: user information, addresses, password
-- [ ] Урок 48 — Admin frontend: dashboard, products, users, orders, statistics
+- [x] Урок 48 — Admin frontend: dashboard, products, users, orders, statistics
 
 ### ⚡ Блок 10. Redis та background tasks
 
@@ -144,7 +138,7 @@
 
 ## Поточний блок (наступний крок)
 
-- 🔄 **Урок 48 — Admin frontend**: dashboard, products, users, orders, statistics
+- 🔄 **Урок 49 — Redis**: cache, connection, TTL
 
 ## Конвенції проєкту
 

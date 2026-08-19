@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { CartProvider } from "./contexts/CartContext";
 import { Layout } from "./components/layout/Layout";
+import { AdminLayout } from "./components/layout/AdminLayout";
 
 import { HomePage } from "./pages/Home";
 import { CatalogPage } from "./pages/Catalog";
@@ -19,6 +20,8 @@ import { DashboardPage } from "./pages/Admin/Dashboard";
 import { AdminProductsPage } from "./pages/Admin/Products";
 import { AdminUsersPage } from "./pages/Admin/Users";
 import { AdminOrdersPage } from "./pages/Admin/Orders";
+import { AdminCategoriesPage } from "./pages/Admin/Categories";
+import { AdminPromoPage } from "./pages/Admin/Promo";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -96,39 +99,22 @@ function AppRoutes() {
           }
         />
 
-        {/* Admin */}
+        {/* Admin (nested with sidebar layout) */}
         <Route
           path="/admin"
           element={
             <AdminRoute>
-              <DashboardPage />
+              <AdminLayout />
             </AdminRoute>
           }
-        />
-        <Route
-          path="/admin/products"
-          element={
-            <AdminRoute>
-              <AdminProductsPage />
-            </AdminRoute>
-          }
-        />
-        <Route
-          path="/admin/users"
-          element={
-            <AdminRoute>
-              <AdminUsersPage />
-            </AdminRoute>
-          }
-        />
-        <Route
-          path="/admin/orders"
-          element={
-            <AdminRoute>
-              <AdminOrdersPage />
-            </AdminRoute>
-          }
-        />
+        >
+          <Route index element={<DashboardPage />} />
+          <Route path="products" element={<AdminProductsPage />} />
+          <Route path="categories" element={<AdminCategoriesPage />} />
+          <Route path="users" element={<AdminUsersPage />} />
+          <Route path="orders" element={<AdminOrdersPage />} />
+          <Route path="promo" element={<AdminPromoPage />} />
+        </Route>
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />

@@ -315,6 +315,21 @@ export interface AdminUserListResponse {
   total: number;
 }
 
+export interface AdminCategoryListResponse {
+  categories: Category[];
+  total: number;
+}
+
+export interface AdminPromoListResponse {
+  promo_codes: PromoCode[];
+  total: number;
+}
+
+export interface AdminOrderListResponse {
+  orders: Order[];
+  total: number;
+}
+
 // ─── Pagination ────────────────────────────────────────────────────
 export interface PaginationParams {
   limit?: number;
