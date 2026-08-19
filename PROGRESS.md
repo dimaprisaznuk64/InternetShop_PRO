@@ -5,11 +5,11 @@
 ## Останнє оновлення
 
 - Дата: 2026-08-19
-- Стан: **Уроки 48-54 завершені**. Admin frontend + Redis caching + extended caching + background tasks + Celery + Pytest + API tests:
-  54: API integration tests (full checkout+payment flow, notifications, favorites, reviews, promo apply, admin stats, popular products, task status). 10 new tests.
-  **82 frontend тестів** + **187 backend тестів**. Build ~338 KB gzip ~103 KB.
+- Стан: **Урок 55 завершений**. Business logic tests (promos, stock, checkout, payments):
+  55: business logic tests — promo codes (create/apply/validation/expiry/limits/permissions), stock (validation, zero stock, decrement, increment overflow, failed checkout), checkout (total calc, multi-product, cart clear, delivery info, items creation, pending status), payments (amount match, status update, idempotency, access control, webhook success/failed/refunded). 41 new tests. Fixed factories.py import bug (PromoDiscountType→DiscountType) and CategoryFactory description field.
+  **82 frontend тестів** + **228 backend тестів**. Build ~338 KB gzip ~103 KB.
 - **Як продовжити (наступного разу):** прочитай цей файл → `git log --oneline` →
-  **Урок 55 — Business logic tests**: discounts, stock, checkout, payments.
+  **Урок 56 — Integration tests**: API → Service → Repository → PostgreSQL.
 - Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`
 - PostgreSQL: user=postgres, password=dmytro53239, host=localhost:5432, db=internetshop
 
@@ -101,7 +101,7 @@
 
 - [x] Урок 53 — Pytest: структура тестів, fixtures, test database
 - [x] Урок 54 — API tests: registration, login, products, cart, orders
-- [ ] Урок 55 — Business logic tests: discounts, stock, checkout, payments
+- [x] Урок 55 — Business logic tests: discounts, stock, checkout, payments
 - [ ] Урок 56 — Integration tests: API → Service → Repository → PostgreSQL
 
 ### 🔐 Блок 12. Security
@@ -138,7 +138,7 @@
 
 ## Поточний блок (наступний крок)
 
-- 🔄 **Урок 55 — Business logic tests**: discounts, stock, checkout, payments
+- 🔄 **Урок 56 — Integration tests**: API → Service → Repository → PostgreSQL.
 
 ## Конвенції проєкту
 

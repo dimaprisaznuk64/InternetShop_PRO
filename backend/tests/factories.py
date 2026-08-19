@@ -9,7 +9,7 @@ from app.models.user import User, UserRole
 from app.models.category import Category
 from app.models.product import Product
 from app.models.order import Order, OrderItem, OrderStatus
-from app.models.promo import PromoCode, PromoDiscountType
+from app.models.promo import PromoCode, DiscountType
 from app.utils.security import hash_password
 
 
@@ -51,14 +51,12 @@ class CategoryFactory:
         db: AsyncSession,
         name: Optional[str] = None,
         slug: Optional[str] = None,
-        description: str = "Test category",
         parent_id: Optional[str] = None,
     ) -> Category:
         uid = str(uuid.uuid4())[:8]
         cat = Category(
             name=name or f"Category {uid}",
             slug=slug or f"category-{uid}",
-            description=description,
             parent_id=parent_id,
         )
         db.add(cat)
@@ -125,7 +123,7 @@ class PromoFactory:
     async def create(
         db: AsyncSession,
         code: Optional[str] = None,
-        discount_type: PromoDiscountType = PromoDiscountType.percentage,
+        discount_type: DiscountType = DiscountType.percentage,
         discount_value: float = 10.0,
         max_uses: int = 100,
         is_active: bool = True,
