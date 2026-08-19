@@ -9,6 +9,8 @@ from httpx import AsyncClient, ASGITransport
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 from app.main import app
 from app.database import Base, get_db
+from app.models.user import User, UserRole
+from app.utils.security import hash_password, create_access_token
 
 TEST_DATABASE_URL = "sqlite+aiosqlite:///./test.db"
 
@@ -57,3 +59,78 @@ async def client(db_session):
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
         yield ac
     app.dependency_overrides.clear()
+
+
+@pytest.fixture
+async def test_user(db_session: AsyncSession) -> User:
+    user = User(
+        email="fixture@test.com",
+        username="fixtureuser",
+        hashed_password=hash_password("testpass123"),
+        role=UserRole.user,
+        is_active=True,
+    )
+    db_session.add(user)
+    await db_session.commit()
+    await db_session.refresh(user)
+    return user
+
+
+@pytest.fixture
+async def test_admin(db_session: AsyncSession) -> User:
+    user = User(
+        email="admin@fixture.com",
+        username="fixtureadmin",
+        hashed_password=hash_password("testpass123"),
+        role=UserRole.admin,
+        is_active=True,
+    )
+    db_session.add(user)
+    await db_session.commit()
+    await db_session.refresh(user)
+    return user
+
+
+@pytest.fixture
+async def test_manager(db_session: AsyncSession) -> User:
+    user = User(
+        email="manager@fixture.com",
+        username="fixturemanager",
+        hashed_password=hash_password("testpass123"),
+        role=UserRole.manager,
+        is_active=True,
+    )
+    db_session.add(user)
+    await db_session.commit()
+    await db_session.refresh(user)
+    return user
+
+
+@pytest.fixture
+def user_token(test_user: User) -> str:
+    return create_access_token(test_user.id)
+
+
+@pytest.fixture
+def admin_token(test_admin: User) -> str:
+    return create_access_token(test_admin.id)
+
+
+@pytest.fixture
+def manager_token(test_manager: User) -> str:
+    return create_access_token(test_manager.id)
+
+
+@pytest.fixture
+def user_headers(user_token: str) -> dict:
+    return {"Authorization": f"Bearer {user_token}"}
+
+
+@pytest.fixture
+def admin_headers(admin_token: str) -> dict:
+    return {"Authorization": f"Bearer {admin_token}"}
+
+
+@pytest.fixture
+def manager_headers(manager_token: str) -> dict:
+    return {"Authorization": f"Bearer {manager_token}"}
