@@ -5,11 +5,11 @@
 ## Останнє оновлення
 
 - Дата: 2026-08-19
-- Стан: **Урок 57 завершений**. Security audit:
-  57: security audit — token_type ("access"/"refresh") claim, jti + iat в JWT, token blacklist (refresh.rotation + logout), RefreshRequest body (не query param), SecurityHeadersMiddleware (X-Content-Type-Options, X-Frame-Options, X-XSS-Protection, Referrer-Policy), RateLimitMiddleware (10/min auth, 100/min default), 37 security tests (token structure, blacklist, type validation, expiry, tamper, API flow, RBAC, SQL injection, XSS). +31 new tests.
-  **284 backend тестів** + **82 frontend тестів**. Build ~338 KB gzip ~103 KB.
+- Стан: **Урок 58 завершений**. OWASP basics:
+  58: OWASP tests — CSRF (Bearer ≠ cookie → неможливий), IDOR (orders, reviews, payments, cart, notifications, profile — жоден юзер не бачить/не змінює чужі ресурси), broken access control (admin endpoints захищені, user не може створювати promo/ Categories/видаляти products), sensitive data exposure (login generic error, no password hash в JSON, no internal leak при duplicate register), input validation (negative/zero/huge quantity, invalid email/password/rating), mass assignment (role не можна задати при реєстрації чи оновленні профілю). 32 new tests.
+  **316 backend тестів** + **82 frontend тестів**. Build ~338 KB gzip ~103 KB.
 - **Як продовжити (наступного разу):** прочитай цей файл → `git log --oneline` →
-  **Урок 58**: поки не визначений (дивись roadmap нижче).
+  **Урок 59 — Rate limiting**: login, registration, API, sensitive endpoints.
 - Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`
 - PostgreSQL: user=postgres, password=dmytro53239, host=localhost:5432, db=internetshop
 
@@ -107,7 +107,7 @@
 ### 🔐 Блок 12. Security
 
 - [x] Урок 57 — Security audit: перевіряємо весь проєкт
-- [ ] Урок 58 — OWASP basics: SQL injection, XSS, CSRF, IDOR, broken access control
+- [x] Урок 58 — OWASP basics: SQL injection, XSS, CSRF, IDOR, broken access control
 - [ ] Урок 59 — Rate limiting: login, registration, API, sensitive endpoints
 - [ ] Урок 60 — Secure configuration: secrets, environment, CORS, headers, production settings
 
@@ -138,7 +138,7 @@
 
 ## Поточний блок (наступний крок)
 
-- ✅ **Урок 57 — Security audit**: перевіряємо весь проєкт.
+- ✅ **Урок 58 — OWASP basics**: CSRF, IDOR, broken access control, sensitive data, input validation, mass assignment.
 
 ## Конвенції проєкту
 
