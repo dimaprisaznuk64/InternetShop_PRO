@@ -5,16 +5,11 @@
 ## Останнє оновлення
 
 - Дата: 2026-08-19
-- Стан: **Уроки 48-53 завершені**. Admin frontend + Redis caching + extended caching + background tasks + Celery + Pytest:
-  48: Admin frontend (sidebar, dashboard, products CRUD, categories, promo, pagination).
-  49: Redis caching (categories 5min, products 2min, product detail 5min, admin stats 1min, promo 5min). Cache invalidation on CRUD.
-  50: Extended caching (reviews by product 2min, product images 5min, variants 5min, variant detail 5min). Popular products endpoint (admin, 3min TTL). Cache health check. 15 cache tests.
-  51: Background tasks (email service, notification service, task manager with asyncio workers, cleanup service, notifications API). Welcome emails, order confirmations, payment confirmations, order status notifications. 23 background task tests.
-  52: Celery task queue (celery_app, celery tasks, beat schedule, graceful fallback to asyncio). Health check includes celery status. 14 celery tests.
-  53: Pytest improvements (factories: User, Category, Product, Order, Promo; fixtures: test_user, test_admin, test_manager, tokens, headers).
-  **82 frontend тестів** + **177 backend тестів**. Build ~338 KB gzip ~103 KB.
+- Стан: **Уроки 48-54 завершені**. Admin frontend + Redis caching + extended caching + background tasks + Celery + Pytest + API tests:
+  54: API integration tests (full checkout+payment flow, notifications, favorites, reviews, promo apply, admin stats, popular products, task status). 10 new tests.
+  **82 frontend тестів** + **187 backend тестів**. Build ~338 KB gzip ~103 KB.
 - **Як продовжити (наступного разу):** прочитай цей файл → `git log --oneline` →
-  **Урок 54 — API tests**: registration, login, products, cart, orders.
+  **Урок 55 — Business logic tests**: discounts, stock, checkout, payments.
 - Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`
 - PostgreSQL: user=postgres, password=dmytro53239, host=localhost:5432, db=internetshop
 
@@ -105,7 +100,7 @@
 ### 🧪 Блок 11. Testing
 
 - [x] Урок 53 — Pytest: структура тестів, fixtures, test database
-- [ ] Урок 54 — API tests: registration, login, products, cart, orders
+- [x] Урок 54 — API tests: registration, login, products, cart, orders
 - [ ] Урок 55 — Business logic tests: discounts, stock, checkout, payments
 - [ ] Урок 56 — Integration tests: API → Service → Repository → PostgreSQL
 
@@ -143,7 +138,7 @@
 
 ## Поточний блок (наступний крок)
 
-- 🔄 **Урок 54 — API tests**: registration, login, products, cart, orders
+- 🔄 **Урок 55 — Business logic tests**: discounts, stock, checkout, payments
 
 ## Конвенції проєкту
 
