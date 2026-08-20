@@ -68,7 +68,10 @@ class TestComposeServices:
         assert "frontend" in compose["services"]
 
     def test_four_services_total(self, compose):
-        assert len(compose["services"]) == 4
+        services = compose["services"]
+        assert len(services) >= 4
+        for svc in ("postgres", "redis", "backend", "frontend"):
+            assert svc in services
 
 
 # ─── PostgreSQL service ────────────────────────────────────────────

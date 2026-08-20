@@ -1,7 +1,7 @@
 import asyncio
 import json
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 from typing import Any, Callable, Optional
 from dataclasses import dataclass, field
 
@@ -33,7 +33,7 @@ class TaskResult:
     status: str = "pending"
     result: Any = None
     error: Optional[str] = None
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(UTC))
     completed_at: Optional[datetime] = None
 
 
@@ -116,7 +116,7 @@ class NotificationService:
             "message": message,
             "is_read": False,
             "metadata": metadata,
-            "created_at": datetime.utcnow().isoformat(),
+            "created_at": datetime.now(UTC).isoformat(),
         }
         self._notifications.setdefault(user_id, []).append(notif)
         logger.info("NOTIFICATION → %s | %s: %s", user_id, ntype, title)
@@ -273,7 +273,7 @@ class BackgroundTaskManager:
                     result.error = str(e)
                     logger.error("Task %s failed: %s", task_id, e)
                 finally:
-                    result.completed_at = datetime.utcnow()
+                    result.completed_at = datetime.now(UTC)
 
 
 class CleanupService:
@@ -311,7 +311,7 @@ class CleanupService:
     async def _cleanup(self) -> dict:
         result = {
             "notifications_cleaned": 0,
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
 
         # Cleanup old read notifications (> 30 days)

@@ -1,6 +1,6 @@
 import uuid
 import enum
-from datetime import datetime
+from datetime import datetime, UTC
 from typing import Optional
 from sqlalchemy import String, Text, Enum, ForeignKey, Boolean
 from sqlalchemy.orm import Mapped, mapped_column
@@ -34,5 +34,5 @@ class Notification(Base):
     is_read: Mapped[bool] = mapped_column(Boolean, default=False, server_default="false")
     metadata_json: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
-        default=lambda: datetime.utcnow()
+        default=lambda: datetime.now(UTC)
     )

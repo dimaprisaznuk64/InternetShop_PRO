@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 from app.celery_app import celery_app
 
 logger = logging.getLogger(__name__)
@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 @celery_app.task(bind=True, name="app.services.celery_tasks.send_email")
 def send_email(self, to: str, subject: str, body: str):
     logger.info("CELERY EMAIL -> %s | Subject: %s", to, subject)
-    return {"to": to, "subject": subject, "status": "sent", "timestamp": datetime.utcnow().isoformat()}
+    return {"to": to, "subject": subject, "status": "sent", "timestamp": datetime.now(UTC).isoformat()}
 
 
 @celery_app.task(bind=True, name="app.services.celery_tasks.send_welcome_email")
@@ -58,7 +58,7 @@ def cleanup_old_notifications(self):
     return {
         "task": "cleanup_old_notifications",
         "cleaned": 0,
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
     }
 
 
@@ -68,7 +68,7 @@ def cleanup_expired_promos(self):
     return {
         "task": "cleanup_expired_promos",
         "cleaned": 0,
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
     }
 
 
@@ -77,7 +77,7 @@ def generate_daily_stats(self):
     logger.info("CELERY: Running generate_daily_stats")
     return {
         "task": "generate_daily_stats",
-        "generated_at": datetime.utcnow().isoformat(),
+        "generated_at": datetime.now(UTC).isoformat(),
     }
 
 

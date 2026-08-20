@@ -46,6 +46,9 @@ async def login(data: UserLogin, db: AsyncSession = Depends(get_db)):
     if not user or not verify_password(data.password, user.hashed_password):
         raise BadRequestError("Invalid email or password")
 
+    if not user.is_active:
+        raise BadRequestError("Account is deactivated")
+
     access = create_access_token(user.id)
     refresh = create_refresh_token(user.id)
     return TokenResponse(access_token=access, refresh_token=refresh)
@@ -57,7 +60,7 @@ async def refresh_token(data: RefreshRequest, db: AsyncSession = Depends(get_db)
         payload = decode_token(data.refresh_token)
 
         if not verify_token_type(payload, "refresh"):
-            raise BadRequestError("Invalid token type — expected refresh token")
+            raise BadRequestError("Invalid token type -- expected refresh token")
 
         if not verify_token_not_blacklisted(payload):
             raise BadRequestError("Refresh token has been revoked")
@@ -71,6 +74,9 @@ async def refresh_token(data: RefreshRequest, db: AsyncSession = Depends(get_db)
     user = await get_user_by_id(db, user_id)
     if not user:
         raise BadRequestError("User not found")
+
+    if not user.is_active:
+        raise BadRequestError("Account is deactivated")
 
     # Blacklist old refresh token (rotation)
     jti = payload.get("jti")
@@ -110,6 +116,9 @@ async def token(
     user = await get_user_by_email(db, form_data.username)
     if not user or not verify_password(form_data.password, user.hashed_password):
         raise BadRequestError("Invalid email or password")
+
+    if not user.is_active:
+        raise BadRequestError("Account is deactivated")
 
     access = create_access_token(user.id)
     refresh = create_refresh_token(user.id)

@@ -7,6 +7,7 @@ from app.models.payment import Payment, PaymentStatus
 from app.models.review import Review
 from app.models.favorite import Favorite
 from app.models.promo import PromoCode, DiscountType
+from app.models.notification import Notification, NotificationType
 
 __all__ = [
     "User", "UserRole",
@@ -18,4 +19,5 @@ __all__ = [
     "Review",
     "Favorite",
     "PromoCode", "DiscountType",
+    "Notification", "NotificationType",
 ]

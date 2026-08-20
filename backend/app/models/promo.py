@@ -1,6 +1,6 @@
 import uuid
 import enum
-from datetime import datetime
+from datetime import datetime, UTC
 from decimal import Decimal
 from typing import Optional
 from sqlalchemy import String, Boolean, Numeric, Integer, DateTime
@@ -33,5 +33,5 @@ class PromoCode(Base):
     )
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, server_default=sa.text("true"))
     created_at: Mapped[datetime] = mapped_column(
-        default=lambda: datetime.utcnow()
+        default=lambda: datetime.now(UTC)
     )

@@ -72,6 +72,36 @@ services:
     networks:
       - frontend-net
 
+  celery-worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: celery -A app.celery_app worker -l info -c 4
+    restart: unless-stopped
+    env_file:
+      - .env.docker
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - backend-net
+
+  celery-beat:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: celery -A app.celery_app beat -l info
+    restart: unless-stopped
+    env_file:
+      - .env.docker
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - backend-net
+
 networks:
   backend-net:
     driver: bridge

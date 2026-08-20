@@ -53,6 +53,38 @@ services:
           memory: 128M
           cpus: "0.5"
 
+  celery-worker:
+    restart: always
+    environment:
+      - DEBUG=false
+    command: celery -A app.celery_app worker -l info -c 4
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: "0.5"
+
+  celery-beat:
+    restart: always
+    environment:
+      - DEBUG=false
+    command: celery -A app.celery_app beat -l info
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+          cpus: "0.5"
+
 networks:
   backend-net:
     driver: bridge

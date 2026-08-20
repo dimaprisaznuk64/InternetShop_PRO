@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
     REDIS_URL: str = "redis://localhost:6379/0"
     DEBUG: bool = True
+    WEBHOOK_SECRET: str = ""
 
     CORS_ORIGINS: str = "http://localhost:3000"
     ALLOWED_HOSTS: str = "*"
@@ -32,6 +33,11 @@ class Settings(BaseSettings):
             )
         if len(v) < 16:
             raise ValueError("SECRET_KEY must be at least 16 characters")
+        return v
+
+    @field_validator("ALLOWED_HOSTS")
+    @classmethod
+    def validate_allowed_hosts(cls, v: str) -> str:
         return v
 
     @field_validator("DATABASE_URL")

@@ -1,8 +1,11 @@
 import uuid
+import hmac
+import hashlib
 from fastapi import APIRouter, Depends, Header, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
+from app.config import get_settings
 from app.database import get_db
 from app.models.payment import Payment, PaymentStatus
 from app.models.order import Order, OrderStatus
@@ -15,6 +18,8 @@ from app.schemas.payment import (
 from app.utils.dependencies import get_current_user, require_admin
 from app.utils.exceptions import NotFoundError, BadRequestError
 from app.services.background import email_service, notification_service, task_manager
+
+settings = get_settings()
 
 router = APIRouter(prefix="/api/payments", tags=["payments"])
 
@@ -124,9 +129,20 @@ async def get_payment(
 @router.post("/webhook")
 async def payment_webhook(
     data: WebhookPayload,
+    x_webhook_signature: str | None = Header(default=None),
     db: AsyncSession = Depends(get_db),
 ):
     from app.models.user import User
+
+    if settings.WEBHOOK_SECRET:
+        if not x_webhook_signature:
+            raise BadRequestError("Missing webhook signature")
+        raw = f"{data.provider_payment_id}:{data.status}"
+        expected = hmac.new(
+            settings.WEBHOOK_SECRET.encode(), raw.encode(), hashlib.sha256
+        ).hexdigest()
+        if not hmac.compare_digest(expected, x_webhook_signature):
+            raise BadRequestError("Invalid webhook signature")
 
     result = await db.execute(select(Payment).where(Payment.provider_payment_id == data.provider_payment_id))
     payment = result.scalar_one_or_none()

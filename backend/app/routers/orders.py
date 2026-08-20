@@ -65,7 +65,7 @@ async def checkout(
     order_items = []
     for cart_item in cart.items:
         result = await db.execute(
-            select(Product).where(Product.id == cart_item.product_id)
+            select(Product).where(Product.id == cart_item.product_id).with_for_update()
         )
         product = result.scalar_one_or_none()
         if not product:
