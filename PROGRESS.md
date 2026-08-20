@@ -5,13 +5,12 @@
 ## Останнє оновлення
 
 - Дата: 2026-08-20
-- Стан: **Урок 65 завершений**. Server setup:
-  65: deploy/server-setup.sh (Docker, UFW, fail2ban, unattended-upgrades, app user), deploy/firewall.sh (deny incoming, allow 22/80/443), deploy/ssh-setup.sh (no root, key-only, hardening), deploy/nginx/internetshop.conf (SSL, HSTS, reverse proxy), deploy/nginx/api-proxy.conf (upstream keepalive), 62 deploy tests.
-  **587 backend тестів** + **82 frontend тестів**.
+- Стан: **Урок 66 завершений**. Deploy backend:
+  66: deploy-backend.sh (git pull, build, migrate, restart, health check loop), backup-db.sh (pg_dump gzip, keep last 7), health-check.sh (backend/frontend/docker), .env.prod.example (placeholders, DEBUG=false), 54 deploy backend tests.
+  **641 backend тестів** + **82 frontend тестів**.
 - **Як продовжити (наступного разу):** прочитай цей файл → `git log --oneline` →
-  **Урок 66 — Deploy backend**: FastAPI у production.
+  **Урок 67 — Deploy frontend**: frontend → production.
 - Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`
-- PostgreSQL: user=postgres, password=dmytro53239, host=localhost:5432, db=internetshop
 
 ## Roadmap (76 уроків)
 
@@ -121,7 +120,7 @@
 ### 🚀 Блок 14. Deploy
 
 - [x] Урок 65 — Server: VPS, Linux, SSH, firewall
-- [ ] Урок 66 — Deploy backend: FastAPI у production
+- [x] Урок 66 — Deploy backend: FastAPI у production
 - [ ] Урок 67 — Deploy frontend: frontend → production
 - [ ] Урок 68 — Domain + HTTPS: domain, DNS, SSL, reverse proxy
 - [ ] Урок 69 — Nginx: Internet → Nginx → Frontend / API
@@ -138,8 +137,8 @@
 
 ## Поточний блок (наступний крок)
 
-- ✅ **Урок 65 — Server setup**: deploy scripts, firewall, SSH, nginx, 62 tests.
-- ➡️ **Наступний: Урок 66 — Deploy backend**: FastAPI у production.
+- ✅ **Урок 66 — Deploy backend**: deploy, backup, health check, env prod, 54 tests.
+- ➡️ **Наступний: Урок 67 — Deploy frontend**: frontend → production.
 
 ## Конвенції проєкту
 
