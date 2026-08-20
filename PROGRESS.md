@@ -5,11 +5,11 @@
 ## Останнє оновлення
 
 - Дата: 2026-08-20
-- Стан: **Урок 62 завершений**. Docker Compose:
-  62: docker-compose.yml (4 сервіси: postgres:16-alpine, redis:7-alpine, backend, frontend), healthchecks, depends_on condition:service_healthy, named volumes (pgdata, redisdata, uploads), entrypoint.sh (wait-for-db + alembic migrate + uvicorn), .env.docker, 50 compose tests.
-  **443 backend тестів** + **82 frontend тестів**. Build ~338 KB gzip ~103 KB.
+- Стан: **Урок 63 завершений**. Volumes & networks:
+  63: named networks (backend-net, frontend-net), bridge drivers, service network assignments, network isolation (frontend cannot reach postgres/redis directly), volume drivers (local), persistence (pgdata, redisdata, uploads), 36 volumes/networks tests.
+  **479 backend тестів** + **82 frontend тестів**. Build ~338 KB gzip ~103 KB.
 - **Як продовжити (наступного разу):** прочитай цей файл → `git log --oneline` →
-  **Урок 63 — Volumes & networks**: database persistence, networking, service communication.
+  **Урок 64 — Production Docker**: multi-stage builds, non-root user, оптимізація image.
 - Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`
 - PostgreSQL: user=postgres, password=dmytro53239, host=localhost:5432, db=internetshop
 
@@ -115,7 +115,7 @@
 
 - [x] Урок 61 — Docker basics: image, container, Dockerfile
 - [x] Урок 62 — Docker Compose: FastAPI + PostgreSQL + Redis + Frontend
-- [ ] Урок 63 — Volumes & networks: database persistence, networking, service communication
+- [x] Урок 63 — Volumes & networks: database persistence, networking, service communication
 - [ ] Урок 64 — Production Docker: multi-stage builds, non-root user, оптимізація image
 
 ### 🚀 Блок 14. Deploy
@@ -138,8 +138,8 @@
 
 ## Поточний блок (наступний крок)
 
-- ✅ **Урок 62 — Docker Compose**: 4 сервіси, healthchecks, volumes, entrypoint.
-- ➡️ **Наступний: Урок 63 — Volumes & networks**: persistence, networking, service communication.
+- ✅ **Урок 63 — Volumes & networks**: named networks, isolation, volume drivers, 36 tests.
+- ➡️ **Наступний: Урок 64 — Production Docker**: multi-stage builds, security, image optimization.
 
 ## Конвенції проєкту
 

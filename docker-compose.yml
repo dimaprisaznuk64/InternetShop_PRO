@@ -10,6 +10,8 @@ services:
       - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    networks:
+      - backend-net
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-internetshop}"]
       interval: 5s
@@ -23,6 +25,8 @@ services:
       - "${REDIS_PORT:-6379}:6379"
     volumes:
       - redisdata:/data
+    networks:
+      - backend-net
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
@@ -45,6 +49,9 @@ services:
         condition: service_healthy
     volumes:
       - uploads:/app/uploads
+    networks:
+      - backend-net
+      - frontend-net
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
       interval: 10s
@@ -62,8 +69,19 @@ services:
     depends_on:
       backend:
         condition: service_healthy
+    networks:
+      - frontend-net
+
+networks:
+  backend-net:
+    driver: bridge
+  frontend-net:
+    driver: bridge
 
 volumes:
   pgdata:
+    driver: local
   redisdata:
+    driver: local
   uploads:
+    driver: local
