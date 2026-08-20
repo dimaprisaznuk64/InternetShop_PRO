@@ -67,15 +67,17 @@ class TestBackendDockerfileDependencies:
         self.content = read_file(os.path.join(BACKEND_DIR, "Dockerfile"))
 
     def test_copies_requirements_first(self):
-        req_pos = self.content.find("requirements.txt")
-        app_pos = self.content.find("COPY . .")
-        assert req_pos < app_pos, "requirements.txt must be copied before source"
+        req_pos = self.content.find("requirements")
+        copy_pos = self.content.find("COPY --from=builder")
+        if copy_pos == -1:
+            copy_pos = self.content.find("COPY . .")
+        assert req_pos < copy_pos, "requirements must be copied before source"
 
     def test_pip_install_no_cache(self):
         assert "pip install" in self.content and "--no-cache-dir" in self.content
 
     def test_pip_installs_from_requirements(self):
-        assert "pip install" in self.content and "requirements.txt" in self.content
+        assert "pip install" in self.content and "requirements" in self.content
 
 
 class TestBackendDockerfileCMD:
@@ -271,15 +273,17 @@ class TestDockerfilePrinciples:
     def test_backend_copies_requirements_before_source(self):
         content = read_file(os.path.join(BACKEND_DIR, "Dockerfile"))
         req_line = None
-        copy_all_line = None
+        source_line = None
         for i, line in enumerate(content.splitlines()):
             stripped = line.strip()
-            if "requirements.txt" in stripped and stripped.startswith("COPY"):
+            if "requirements" in stripped and stripped.startswith("COPY"):
                 req_line = i
-            if stripped == "COPY . .":
-                copy_all_line = i
-        assert req_line is not None and copy_all_line is not None
-        assert req_line < copy_all_line
+            if stripped.startswith("COPY ") and (
+                "app/" in stripped or "alembic" in stripped or stripped == "COPY . ."
+            ):
+                source_line = i
+        assert req_line is not None and source_line is not None
+        assert req_line < source_line
 
     def test_frontend_copies_package_json_before_install(self):
         content = read_file(os.path.join(FRONTEND_DIR, "Dockerfile"))

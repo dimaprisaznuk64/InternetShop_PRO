@@ -5,11 +5,11 @@
 ## Останнє оновлення
 
 - Дата: 2026-08-20
-- Стан: **Урок 63 завершений**. Volumes & networks:
-  63: named networks (backend-net, frontend-net), bridge drivers, service network assignments, network isolation (frontend cannot reach postgres/redis directly), volume drivers (local), persistence (pgdata, redisdata, uploads), 36 volumes/networks tests.
-  **479 backend тестів** + **82 frontend тестів**. Build ~338 KB gzip ~103 KB.
+- Стан: **Урок 64 завершений**. Production Docker:
+  64: backend multi-stage build (builder + production, requirements-prod.txt, --prefix install), frontend hardening (--ignore-scripts, rm default.conf, chown), docker-compose.prod.yml (restart:always, json-file logging, resource limits, redis maxmemory, POSTGRES_PASSWORD required), 46 production tests.
+  **525 backend тестів** + **82 frontend тестів**. Build ~338 KB gzip ~103 KB.
 - **Як продовжити (наступного разу):** прочитай цей файл → `git log --oneline` →
-  **Урок 64 — Production Docker**: multi-stage builds, non-root user, оптимізація image.
+  **Блок 14 — Deploy**: Урок 65 — Server: VPS, Linux, SSH, firewall.
 - Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`
 - PostgreSQL: user=postgres, password=dmytro53239, host=localhost:5432, db=internetshop
 
@@ -116,7 +116,7 @@
 - [x] Урок 61 — Docker basics: image, container, Dockerfile
 - [x] Урок 62 — Docker Compose: FastAPI + PostgreSQL + Redis + Frontend
 - [x] Урок 63 — Volumes & networks: database persistence, networking, service communication
-- [ ] Урок 64 — Production Docker: multi-stage builds, non-root user, оптимізація image
+- [x] Урок 64 — Production Docker: multi-stage builds, non-root user, оптимізація image
 
 ### 🚀 Блок 14. Deploy
 
@@ -138,8 +138,8 @@
 
 ## Поточний блок (наступний крок)
 
-- ✅ **Урок 63 — Volumes & networks**: named networks, isolation, volume drivers, 36 tests.
-- ➡️ **Наступний: Урок 64 — Production Docker**: multi-stage builds, security, image optimization.
+- ✅ **Блок 13 — Docker (Уроки 61-64)** завершений. 177 Docker тестів.
+- ➡️ **Наступний: Блок 14 — Deploy (Уроки 65-70)**: Server, Backend, Frontend, Domain, Nginx, Production DB.
 
 ## Конвенції проєкту
 
