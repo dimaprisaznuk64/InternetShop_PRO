@@ -5,11 +5,11 @@
 ## Останнє оновлення
 
 - Дата: 2026-08-20
-- Стан: **Урок 70 завершений**. Production DB:
-  70: postgres-prod.conf (shared_buffers 256MB, work_mem 4MB, WAL tuning, logging collector, autovacuum), redis-prod.conf (256mb maxmemory, allkeys-lru, AOF + RDB, slow log), docker-compose.prod.yml (custom config mounting, restart:always, resource limits), monitor-db.sh (connections, DB size, Redis memory), 61 prod tests.
-  **889 backend тестів** + **82 frontend тестів**.
+- Стан: **Урок 74 завершений**. CI/CD:
+  74: ci.yml (backend pytest + frontend build, postgres/redis services), deploy.yml (SSH deploy, docker compose, alembic, health check), notify.yml (Telegram), dependabot.yml (pip/npm/actions weekly), 53 CI tests.
+  **942 backend тестів** + **82 frontend тестів**.
 - **Як продовжити (наступного разу):** прочитай цей файл → `git log --oneline` →
-  **Урок 71 — Automated Deploy CI/CD**: GitHub Actions, auto-deploy.
+  **Урок 71 — Production audit**: security, database, API, frontend, Docker, logs.
 - Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`
 
 ## Roadmap (76 уроків)
@@ -131,14 +131,14 @@
 - [ ] Урок 71 — Production audit: security, database, API, frontend, Docker, logs
 - [ ] Урок 72 — Performance: SQL queries, indexes, N+1, caching, response time
 - [ ] Урок 73 — Logging & monitoring: structured logs, errors, health checks, monitoring
-- [ ] Урок 74 — CI/CD: GitHub Actions (git push → Tests → Lint → Build → Deploy)
+- [x] Урок 74 — CI/CD: GitHub Actions (git push → Tests → Lint → Build → Deploy)
 - [ ] Урок 75 — Final GitHub: README, screenshots, architecture diagram, installation, API documentation, .env.example
 - [ ] Урок 76 — Фінальний реліз InternetShop_PRO v1.0: повністю готовий production-проєкт
 
 ## Поточний блок (наступний крок)
 
-- ✅ **Урок 70 — Production PostgreSQL / Redis**: custom configs, AOF/RDB, monitoring, 61 tests.
-- ➡️ **Наступний: Урок 71 — Automated Deploy CI/CD**.
+- ✅ **Урок 74 — CI/CD**: GitHub Actions workflows, auto-deploy, notifications, dependabot, 53 tests.
+- ➡️ **Наступний: Урок 71 — Production audit** (security, database, API, frontend, Docker, logs).
 
 ## Конвенції проєкту
 
