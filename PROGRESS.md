@@ -5,11 +5,11 @@
 ## Останнє оновлення
 
 - Дата: 2026-08-20
-- Стан: **Урок 72 завершений**. Performance:
-  72: performance-check.sh (API response time, cache hit ratio, slow queries, bloat, Redis hit rate, Docker stats), db-performance.sql (index audit, unused indexes, bloat, slow queries via pg_stat_statements, cache hit ratio, long running queries), 35 performance tests.
-  **1031 backend тестів** + **82 frontend тестів**.
+- Стан: **Урок 73 завершений**. Logging & monitoring:
+  73: logging.sh (logrotate daily+compress, journald 500M, nginx log rotation), health-check-full.sh (API, PostgreSQL, Redis, Frontend, Nginx, Docker containers, disk space), 39 logging tests.
+  **1070 backend тестів** + **82 frontend тестів**.
 - **Як продовжити (наступного разу):** прочитай цей файл → `git log --oneline` →
-  **Урок 73 — Logging & monitoring**: structured logs, errors, health checks, monitoring.
+  **Урок 75 — Final GitHub**: README, screenshots, architecture diagram, installation, API docs, .env.example.
 - Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`
 
 ## Roadmap (76 уроків)
@@ -130,15 +130,15 @@
 
 - [x] Урок 71 — Production audit: security, database, API, frontend, Docker, logs
 - [x] Урок 72 — Performance: SQL queries, indexes, N+1, caching, response time
-- [ ] Урок 73 — Logging & monitoring: structured logs, errors, health checks, monitoring
+- [x] Урок 73 — Logging & monitoring: structured logs, errors, health checks, monitoring
 - [x] Урок 74 — CI/CD: GitHub Actions (git push → Tests → Lint → Build → Deploy)
 - [ ] Урок 75 — Final GitHub: README, screenshots, architecture diagram, installation, API documentation, .env.example
 - [ ] Урок 76 — Фінальний реліз InternetShop_PRO v1.0: повністю готовий production-проєкт
 
 ## Поточний блок (наступний крок)
 
-- ✅ **Урок 72 — Performance**: performance-check.sh, db-performance.sql, 35 tests.
-- ➡️ **Наступний: Урок 73 — Logging & monitoring** (structured logs, errors, health checks, monitoring).
+- ✅ **Урок 73 — Logging & monitoring**: logging.sh, health-check-full.sh, logrotate, journald, 39 tests.
+- ➡️ **Наступний: Урок 75 — Final GitHub** (README, screenshots, architecture diagram, installation, API docs, .env.example).
 
 ## Конвенції проєкту
 
