@@ -5,11 +5,11 @@
 ## Останнє оновлення
 
 - Дата: 2026-08-20
-- Стан: **Урок 64 завершений**. Production Docker:
-  64: backend multi-stage build (builder + production, requirements-prod.txt, --prefix install), frontend hardening (--ignore-scripts, rm default.conf, chown), docker-compose.prod.yml (restart:always, json-file logging, resource limits, redis maxmemory, POSTGRES_PASSWORD required), 46 production tests.
-  **525 backend тестів** + **82 frontend тестів**. Build ~338 KB gzip ~103 KB.
+- Стан: **Урок 65 завершений**. Server setup:
+  65: deploy/server-setup.sh (Docker, UFW, fail2ban, unattended-upgrades, app user), deploy/firewall.sh (deny incoming, allow 22/80/443), deploy/ssh-setup.sh (no root, key-only, hardening), deploy/nginx/internetshop.conf (SSL, HSTS, reverse proxy), deploy/nginx/api-proxy.conf (upstream keepalive), 62 deploy tests.
+  **587 backend тестів** + **82 frontend тестів**.
 - **Як продовжити (наступного разу):** прочитай цей файл → `git log --oneline` →
-  **Блок 14 — Deploy**: Урок 65 — Server: VPS, Linux, SSH, firewall.
+  **Урок 66 — Deploy backend**: FastAPI у production.
 - Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`
 - PostgreSQL: user=postgres, password=dmytro53239, host=localhost:5432, db=internetshop
 
@@ -120,7 +120,7 @@
 
 ### 🚀 Блок 14. Deploy
 
-- [ ] Урок 65 — Server: VPS, Linux, SSH, firewall
+- [x] Урок 65 — Server: VPS, Linux, SSH, firewall
 - [ ] Урок 66 — Deploy backend: FastAPI у production
 - [ ] Урок 67 — Deploy frontend: frontend → production
 - [ ] Урок 68 — Domain + HTTPS: domain, DNS, SSL, reverse proxy
@@ -138,8 +138,8 @@
 
 ## Поточний блок (наступний крок)
 
-- ✅ **Блок 13 — Docker (Уроки 61-64)** завершений. 177 Docker тестів.
-- ➡️ **Наступний: Блок 14 — Deploy (Уроки 65-70)**: Server, Backend, Frontend, Domain, Nginx, Production DB.
+- ✅ **Урок 65 — Server setup**: deploy scripts, firewall, SSH, nginx, 62 tests.
+- ➡️ **Наступний: Урок 66 — Deploy backend**: FastAPI у production.
 
 ## Конвенції проєкту
 
