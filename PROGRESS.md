@@ -5,11 +5,11 @@
 ## Останнє оновлення
 
 - Дата: 2026-08-20
-- Стан: **Урок 74 завершений**. CI/CD:
-  74: ci.yml (backend pytest + frontend build, postgres/redis services), deploy.yml (SSH deploy, docker compose, alembic, health check), notify.yml (Telegram), dependabot.yml (pip/npm/actions weekly), 53 CI tests.
-  **942 backend тестів** + **82 frontend тестів**.
+- Стан: **Урок 71 завершений**. Production audit:
+  71: audit-security.sh (SSH, firewall, ports, secrets, .env, failed logins), audit-db.sh (connections, size, table sizes, bloat, indexes, Redis), audit.sh (full audit, disk/memory/uptime), 54 audit tests.
+  **996 backend тестів** + **82 frontend тестів**.
 - **Як продовжити (наступного разу):** прочитай цей файл → `git log --oneline` →
-  **Урок 71 — Production audit**: security, database, API, frontend, Docker, logs.
+  **Урок 72 — Performance**: SQL queries, indexes, N+1, caching, response time.
 - Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`
 
 ## Roadmap (76 уроків)
@@ -128,7 +128,7 @@
 
 ### 🏁 Блок 15. Фінал
 
-- [ ] Урок 71 — Production audit: security, database, API, frontend, Docker, logs
+- [x] Урок 71 — Production audit: security, database, API, frontend, Docker, logs
 - [ ] Урок 72 — Performance: SQL queries, indexes, N+1, caching, response time
 - [ ] Урок 73 — Logging & monitoring: structured logs, errors, health checks, monitoring
 - [x] Урок 74 — CI/CD: GitHub Actions (git push → Tests → Lint → Build → Deploy)
@@ -137,8 +137,8 @@
 
 ## Поточний блок (наступний крок)
 
-- ✅ **Урок 74 — CI/CD**: GitHub Actions workflows, auto-deploy, notifications, dependabot, 53 tests.
-- ➡️ **Наступний: Урок 71 — Production audit** (security, database, API, frontend, Docker, logs).
+- ✅ **Урок 71 — Production audit**: security, DB, Docker, full audit, 54 tests.
+- ➡️ **Наступний: Урок 72 — Performance** (SQL queries, indexes, N+1, caching, response time).
 
 ## Конвенції проєкту
 
