@@ -18,7 +18,7 @@ services:
     volumes:
       - redisdata:/data
       - ./deploy/redis-prod.conf:/etc/redis/redis.conf:ro
-    command: redis-server /etc/redis/redis.conf
+    command: redis-server /etc/redis/redis.conf --maxmemory 256mb --maxmemory-policy allkeys-lru
     logging:
       driver: json-file
       options:

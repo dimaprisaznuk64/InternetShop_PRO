@@ -102,7 +102,7 @@ describe("AdminCategoriesPage", () => {
   });
 
   it("shows empty state when no categories", async () => {
-    vi.mocked(categoriesApi.list).mockResolvedValue({ categories: [], total: 0 });
+    vi.mocked(categoriesApi.list).mockResolvedValue({ categories: [] });
 
     render(
       <MemoryRouter>

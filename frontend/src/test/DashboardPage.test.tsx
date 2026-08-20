@@ -11,11 +11,11 @@ const mockStats = {
   total_orders: 340,
   total_revenue: "12499.50",
   total_reviews: 67,
-  average_rating: "4.30",
+  average_rating: 4.30,
 };
 
 const mockOrders = { orders: [], total: 0 };
-const mockProducts = { products: [], total: 0 };
+const mockProducts = { products: [], total: 0, limit: 20, offset: 0 };
 
 vi.mock("../api", () => ({
   adminApi: {

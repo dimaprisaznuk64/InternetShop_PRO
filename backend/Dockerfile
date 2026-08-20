@@ -22,6 +22,7 @@ COPY --from=builder /install /usr/local
 COPY alembic.ini .
 COPY alembic/ alembic/
 COPY app/ app/
+COPY entrypoint.sh .
 
 RUN chmod +x /app/entrypoint.sh 2>/dev/null; \
     mkdir -p /app/uploads && chown -R appuser:appuser /app
