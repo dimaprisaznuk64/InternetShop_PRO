@@ -4,12 +4,12 @@
 
 ## Останнє оновлення
 
-- Дата: 2026-08-19
-- Стан: **Урок 60 завершений**. Secure configuration:
-  60: config security — SECRET_KEY validator (warns on default, rejects <16 chars), DATABASE_URL validator (warns on default creds), CORS_ORIGINS/ALLOWED_HOSTS з .env, is_production property, generate_secret_key() utility, 24 config tests.
-  **349 backend тестів** + **82 frontend тестів**. Build ~338 KB gzip ~103 KB.
+- Дата: 2026-08-20
+- Стан: **Урок 61 завершений**. Docker basics:
+  61: backend/Dockerfile (Python 3.13-slim, non-root user, uvicorn), frontend/Dockerfile (multi-stage: node:22-alpine build + nginx:1.27-alpine), nginx.conf (SPA routing, API proxy to backend, gzip, static caching), .dockerignore for both, 44 Docker tests.
+  **393 backend тестів** + **82 frontend тестів**. Build ~338 KB gzip ~103 KB.
 - **Як продовжити (наступного разу):** прочитай цей файл → `git log --oneline` →
-  **Блок 13 — Docker**: Dockerfile, Docker Compose, volumes, networks.
+  **Урок 62 — Docker Compose**: FastAPI + PostgreSQL + Redis + Frontend.
 - Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`
 - PostgreSQL: user=postgres, password=dmytro53239, host=localhost:5432, db=internetshop
 
@@ -113,7 +113,7 @@
 
 ### 🐳 Блок 13. Docker
 
-- [ ] Урок 61 — Docker basics: image, container, Dockerfile
+- [x] Урок 61 — Docker basics: image, container, Dockerfile
 - [ ] Урок 62 — Docker Compose: FastAPI + PostgreSQL + Redis + Frontend
 - [ ] Урок 63 — Volumes & networks: database persistence, networking, service communication
 - [ ] Урок 64 — Production Docker: multi-stage builds, non-root user, оптимізація image
@@ -138,7 +138,8 @@
 
 ## Поточний блок (наступний крок)
 
-- ✅ **Урок 60 — Secure configuration**: secrets validation, CORS from env, production settings.
+- ✅ **Урок 61 — Docker basics**: backend/frontend Dockerfiles, nginx, .dockerignore, 44 tests.
+- ➡️ **Наступний: Урок 62 — Docker Compose**: FastAPI + PostgreSQL + Redis + Frontend.
 
 ## Конвенції проєкту
 
