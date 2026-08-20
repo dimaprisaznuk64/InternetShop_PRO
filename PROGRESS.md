@@ -5,11 +5,11 @@
 ## Останнє оновлення
 
 - Дата: 2026-08-20
-- Стан: **Урок 71 завершений**. Production audit:
-  71: audit-security.sh (SSH, firewall, ports, secrets, .env, failed logins), audit-db.sh (connections, size, table sizes, bloat, indexes, Redis), audit.sh (full audit, disk/memory/uptime), 54 audit tests.
-  **996 backend тестів** + **82 frontend тестів**.
+- Стан: **Урок 72 завершений**. Performance:
+  72: performance-check.sh (API response time, cache hit ratio, slow queries, bloat, Redis hit rate, Docker stats), db-performance.sql (index audit, unused indexes, bloat, slow queries via pg_stat_statements, cache hit ratio, long running queries), 35 performance tests.
+  **1031 backend тестів** + **82 frontend тестів**.
 - **Як продовжити (наступного разу):** прочитай цей файл → `git log --oneline` →
-  **Урок 72 — Performance**: SQL queries, indexes, N+1, caching, response time.
+  **Урок 73 — Logging & monitoring**: structured logs, errors, health checks, monitoring.
 - Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`
 
 ## Roadmap (76 уроків)
@@ -129,7 +129,7 @@
 ### 🏁 Блок 15. Фінал
 
 - [x] Урок 71 — Production audit: security, database, API, frontend, Docker, logs
-- [ ] Урок 72 — Performance: SQL queries, indexes, N+1, caching, response time
+- [x] Урок 72 — Performance: SQL queries, indexes, N+1, caching, response time
 - [ ] Урок 73 — Logging & monitoring: structured logs, errors, health checks, monitoring
 - [x] Урок 74 — CI/CD: GitHub Actions (git push → Tests → Lint → Build → Deploy)
 - [ ] Урок 75 — Final GitHub: README, screenshots, architecture diagram, installation, API documentation, .env.example
@@ -137,8 +137,8 @@
 
 ## Поточний блок (наступний крок)
 
-- ✅ **Урок 71 — Production audit**: security, DB, Docker, full audit, 54 tests.
-- ➡️ **Наступний: Урок 72 — Performance** (SQL queries, indexes, N+1, caching, response time).
+- ✅ **Урок 72 — Performance**: performance-check.sh, db-performance.sql, 35 tests.
+- ➡️ **Наступний: Урок 73 — Logging & monitoring** (structured logs, errors, health checks, monitoring).
 
 ## Конвенції проєкту
 
