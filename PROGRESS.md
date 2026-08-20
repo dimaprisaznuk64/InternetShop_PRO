@@ -5,11 +5,11 @@
 ## Останнє оновлення
 
 - Дата: 2026-08-20
-- Стан: **Урок 67 завершений**. Deploy frontend:
-  67: deploy-frontend.sh (build image, static files, copy to nginx, reload), build-frontend.sh (local build with test+lint), re-validated nginx.conf + Dockerfile for deploy context, 64 frontend deploy tests.
-  **705 backend тестів** + **82 frontend тестів**.
+- Стан: **Урок 68 завершений**. Domain + HTTPS:
+  68: ssl-setup.sh (Let's Encrypt certbot webroot, nginx SSL config generation, auto-renewal), dns-check.sh (A record, www, multi-NS propagation check), nginx SSL hardening (TLS 1.2+, HSTS, strong ciphers, session cache), HTTP→HTTPS redirect, 51 domain tests.
+  **756 backend тестів** + **82 frontend тестів**.
 - **Як продовжити (наступного разу):** прочитай цей файл → `git log --oneline` →
-  **Урок 68 — Domain + HTTPS**: domain, DNS, SSL, reverse proxy.
+  **Урок 69 — Nginx**: Internet → Nginx → Frontend / API.
 - Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`
 
 ## Roadmap (76 уроків)
@@ -122,7 +122,7 @@
 - [x] Урок 65 — Server: VPS, Linux, SSH, firewall
 - [x] Урок 66 — Deploy backend: FastAPI у production
 - [x] Урок 67 — Deploy frontend: frontend → production
-- [ ] Урок 68 — Domain + HTTPS: domain, DNS, SSL, reverse proxy
+- [x] Урок 68 — Domain + HTTPS: domain, DNS, SSL, reverse proxy
 - [ ] Урок 69 — Nginx: Internet → Nginx → Frontend / API
 - [ ] Урок 70 — Production PostgreSQL / Redis: нормальна конфігурація prod-середовища
 
@@ -137,8 +137,8 @@
 
 ## Поточний блок (наступний крок)
 
-- ✅ **Урок 67 — Deploy frontend**: deploy/build scripts, nginx configs, 64 tests.
-- ➡️ **Наступний: Урок 68 — Domain + HTTPS**: domain, DNS, SSL, reverse proxy.
+- ✅ **Урок 68 — Domain + HTTPS**: SSL, DNS, Let's Encrypt, 51 tests.
+- ➡️ **Наступний: Урок 69 — Nginx**: Internet → Nginx → Frontend / API.
 
 ## Конвенції проєкту
 
