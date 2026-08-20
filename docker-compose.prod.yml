@@ -3,6 +3,10 @@ services:
     restart: always
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env.docker}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./deploy/postgres-prod.conf:/etc/postgresql/postgresql.conf:ro
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
     logging:
       driver: json-file
       options:
@@ -11,7 +15,10 @@ services:
 
   redis:
     restart: always
-    command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redisdata:/data
+      - ./deploy/redis-prod.conf:/etc/redis/redis.conf:ro
+    command: redis-server /etc/redis/redis.conf
     logging:
       driver: json-file
       options:
@@ -45,3 +52,17 @@ services:
         limits:
           memory: 128M
           cpus: "0.5"
+
+networks:
+  backend-net:
+    driver: bridge
+  frontend-net:
+    driver: bridge
+
+volumes:
+  pgdata:
+    driver: local
+  redisdata:
+    driver: local
+  uploads:
+    driver: local

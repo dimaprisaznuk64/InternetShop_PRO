@@ -5,11 +5,11 @@
 ## Останнє оновлення
 
 - Дата: 2026-08-20
-- Стан: **Урок 69 завершений**. Nginx:
-  69: nginx-main.conf (worker auto, epoll, gzip, rate limit zones, upstream least_conn, security headers, proxy defaults), internetshop.conf (SSL, OCSP, HSTS preload, rate limits api/login/general, hidden files deny, IPv6), nginx-security.sh (server_tokens off, Permissions-Policy), 72 nginx tests.
-  **828 backend тестів** + **82 frontend тестів**.
+- Стан: **Урок 70 завершений**. Production DB:
+  70: postgres-prod.conf (shared_buffers 256MB, work_mem 4MB, WAL tuning, logging collector, autovacuum), redis-prod.conf (256mb maxmemory, allkeys-lru, AOF + RDB, slow log), docker-compose.prod.yml (custom config mounting, restart:always, resource limits), monitor-db.sh (connections, DB size, Redis memory), 61 prod tests.
+  **889 backend тестів** + **82 frontend тестів**.
 - **Як продовжити (наступного разу):** прочитай цей файл → `git log --oneline` →
-  **Урок 70 — Production PostgreSQL / Redis**: нормальна конфігурація prod-середовища.
+  **Урок 71 — Automated Deploy CI/CD**: GitHub Actions, auto-deploy.
 - Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`
 
 ## Roadmap (76 уроків)
@@ -124,7 +124,7 @@
 - [x] Урок 67 — Deploy frontend: frontend → production
 - [x] Урок 68 — Domain + HTTPS: domain, DNS, SSL, reverse proxy
 - [x] Урок 69 — Nginx: Internet → Nginx → Frontend / API
-- [ ] Урок 70 — Production PostgreSQL / Redis: нормальна конфігурація prod-середовища
+- [x] Урок 70 — Production PostgreSQL / Redis: нормальна конфігурація prod-середовища
 
 ### 🏁 Блок 15. Фінал
 
@@ -137,8 +137,8 @@
 
 ## Поточний блок (наступний крок)
 
-- ✅ **Урок 69 — Nginx**: main config, rate limiting, upstream, security, 72 tests.
-- ➡️ **Наступний: Урок 70 — Production PostgreSQL / Redis**.
+- ✅ **Урок 70 — Production PostgreSQL / Redis**: custom configs, AOF/RDB, monitoring, 61 tests.
+- ➡️ **Наступний: Урок 71 — Automated Deploy CI/CD**.
 
 ## Конвенції проєкту
 
