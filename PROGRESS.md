@@ -5,11 +5,11 @@
 ## Останнє оновлення
 
 - Дата: 2026-08-20
-- Стан: **Урок 66 завершений**. Deploy backend:
-  66: deploy-backend.sh (git pull, build, migrate, restart, health check loop), backup-db.sh (pg_dump gzip, keep last 7), health-check.sh (backend/frontend/docker), .env.prod.example (placeholders, DEBUG=false), 54 deploy backend tests.
-  **641 backend тестів** + **82 frontend тестів**.
+- Стан: **Урок 67 завершений**. Deploy frontend:
+  67: deploy-frontend.sh (build image, static files, copy to nginx, reload), build-frontend.sh (local build with test+lint), re-validated nginx.conf + Dockerfile for deploy context, 64 frontend deploy tests.
+  **705 backend тестів** + **82 frontend тестів**.
 - **Як продовжити (наступного разу):** прочитай цей файл → `git log --oneline` →
-  **Урок 67 — Deploy frontend**: frontend → production.
+  **Урок 68 — Domain + HTTPS**: domain, DNS, SSL, reverse proxy.
 - Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`
 
 ## Roadmap (76 уроків)
@@ -121,7 +121,7 @@
 
 - [x] Урок 65 — Server: VPS, Linux, SSH, firewall
 - [x] Урок 66 — Deploy backend: FastAPI у production
-- [ ] Урок 67 — Deploy frontend: frontend → production
+- [x] Урок 67 — Deploy frontend: frontend → production
 - [ ] Урок 68 — Domain + HTTPS: domain, DNS, SSL, reverse proxy
 - [ ] Урок 69 — Nginx: Internet → Nginx → Frontend / API
 - [ ] Урок 70 — Production PostgreSQL / Redis: нормальна конфігурація prod-середовища
@@ -137,8 +137,8 @@
 
 ## Поточний блок (наступний крок)
 
-- ✅ **Урок 66 — Deploy backend**: deploy, backup, health check, env prod, 54 tests.
-- ➡️ **Наступний: Урок 67 — Deploy frontend**: frontend → production.
+- ✅ **Урок 67 — Deploy frontend**: deploy/build scripts, nginx configs, 64 tests.
+- ➡️ **Наступний: Урок 68 — Domain + HTTPS**: domain, DNS, SSL, reverse proxy.
 
 ## Конвенції проєкту
 
