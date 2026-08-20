@@ -83,15 +83,25 @@ class TestBackendDockerfileCMD:
     @pytest.fixture(autouse=True)
     def load(self):
         self.content = read_file(os.path.join(BACKEND_DIR, "Dockerfile"))
+        entrypoint_path = os.path.join(BACKEND_DIR, "entrypoint.sh")
+        self.entrypoint = read_file(entrypoint_path) if os.path.isfile(entrypoint_path) else ""
 
-    def test_cmd_uses_uvicorn(self):
-        assert "uvicorn" in self.content
+    def test_starts_uvicorn(self):
+        combined = self.content + self.entrypoint
+        assert "uvicorn" in combined
 
-    def test_cmd_binds_to_0_0_0_0(self):
-        assert "0.0.0.0" in self.content
+    def test_binds_to_0_0_0_0(self):
+        combined = self.content + self.entrypoint
+        assert "0.0.0.0" in combined
 
-    def test_cmd_port_8000(self):
-        assert "8000" in self.content
+    def test_port_8000(self):
+        combined = self.content + self.entrypoint
+        assert "8000" in combined
+
+    def test_has_entrypoint_or_cmd(self):
+        has_entrypoint = "ENTRYPOINT" in self.content
+        has_cmd = "CMD" in self.content
+        assert has_entrypoint or has_cmd
 
 
 # ─── Frontend Dockerfile ───────────────────────────────────────────

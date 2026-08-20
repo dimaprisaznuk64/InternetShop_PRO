@@ -5,11 +5,11 @@
 ## Останнє оновлення
 
 - Дата: 2026-08-20
-- Стан: **Урок 61 завершений**. Docker basics:
-  61: backend/Dockerfile (Python 3.13-slim, non-root user, uvicorn), frontend/Dockerfile (multi-stage: node:22-alpine build + nginx:1.27-alpine), nginx.conf (SPA routing, API proxy to backend, gzip, static caching), .dockerignore for both, 44 Docker tests.
-  **393 backend тестів** + **82 frontend тестів**. Build ~338 KB gzip ~103 KB.
+- Стан: **Урок 62 завершений**. Docker Compose:
+  62: docker-compose.yml (4 сервіси: postgres:16-alpine, redis:7-alpine, backend, frontend), healthchecks, depends_on condition:service_healthy, named volumes (pgdata, redisdata, uploads), entrypoint.sh (wait-for-db + alembic migrate + uvicorn), .env.docker, 50 compose tests.
+  **443 backend тестів** + **82 frontend тестів**. Build ~338 KB gzip ~103 KB.
 - **Як продовжити (наступного разу):** прочитай цей файл → `git log --oneline` →
-  **Урок 62 — Docker Compose**: FastAPI + PostgreSQL + Redis + Frontend.
+  **Урок 63 — Volumes & networks**: database persistence, networking, service communication.
 - Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`
 - PostgreSQL: user=postgres, password=dmytro53239, host=localhost:5432, db=internetshop
 
@@ -114,7 +114,7 @@
 ### 🐳 Блок 13. Docker
 
 - [x] Урок 61 — Docker basics: image, container, Dockerfile
-- [ ] Урок 62 — Docker Compose: FastAPI + PostgreSQL + Redis + Frontend
+- [x] Урок 62 — Docker Compose: FastAPI + PostgreSQL + Redis + Frontend
 - [ ] Урок 63 — Volumes & networks: database persistence, networking, service communication
 - [ ] Урок 64 — Production Docker: multi-stage builds, non-root user, оптимізація image
 
@@ -138,8 +138,8 @@
 
 ## Поточний блок (наступний крок)
 
-- ✅ **Урок 61 — Docker basics**: backend/frontend Dockerfiles, nginx, .dockerignore, 44 tests.
-- ➡️ **Наступний: Урок 62 — Docker Compose**: FastAPI + PostgreSQL + Redis + Frontend.
+- ✅ **Урок 62 — Docker Compose**: 4 сервіси, healthchecks, volumes, entrypoint.
+- ➡️ **Наступний: Урок 63 — Volumes & networks**: persistence, networking, service communication.
 
 ## Конвенції проєкту
 
