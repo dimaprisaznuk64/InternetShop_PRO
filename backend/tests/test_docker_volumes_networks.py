@@ -6,6 +6,8 @@ import os
 import pytest
 import yaml
 
+from tests.conftest import load_compose_yaml
+
 
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 COMPOSE_PATH = os.path.join(PROJECT_ROOT, "docker-compose.yml")
@@ -19,7 +21,7 @@ def read_file(path: str) -> str:
 @pytest.fixture(scope="module")
 def compose() -> dict:
     with open(COMPOSE_PATH, encoding="utf-8") as f:
-        return yaml.safe_load(f)
+        return load_compose_yaml(f)
 
 
 @pytest.fixture(scope="module")

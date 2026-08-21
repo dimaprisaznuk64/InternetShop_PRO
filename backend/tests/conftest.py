@@ -134,3 +134,28 @@ def admin_headers(admin_token: str) -> dict:
 @pytest.fixture
 def manager_headers(manager_token: str) -> dict:
     return {"Authorization": f"Bearer {manager_token}"}
+
+
+def load_compose_yaml(source) -> dict:
+    """Load a Docker Compose file from a path or open file object,
+    tolerating compose-specific YAML tags like !override and !reset
+    (valid for docker compose, unknown to PyYAML)."""
+    import yaml
+
+    class ComposeLoader(yaml.SafeLoader):
+        pass
+
+    def _compose_tag(loader, tag_suffix, node):
+        if isinstance(node, yaml.ScalarNode):
+            return loader.construct_scalar(node)
+        if isinstance(node, yaml.SequenceNode):
+            return loader.construct_sequence(node)
+        if isinstance(node, yaml.MappingNode):
+            return loader.construct_mapping(node)
+        return None
+
+    ComposeLoader.add_multi_constructor("!", _compose_tag)
+    if hasattr(source, "read"):
+        return yaml.load(source.read(), Loader=ComposeLoader)
+    with open(source, encoding="utf-8") as f:
+        return yaml.load(f, Loader=ComposeLoader)

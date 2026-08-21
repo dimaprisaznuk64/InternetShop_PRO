@@ -7,6 +7,8 @@ import re
 import pytest
 import yaml
 
+from tests.conftest import load_compose_yaml
+
 
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 DEPLOY_DIR = os.path.join(PROJECT_ROOT, "deploy")
@@ -258,7 +260,7 @@ class TestComposeFrontendService:
     @pytest.fixture(autouse=True)
     def load(self):
         with open(COMPOSE_PATH, encoding="utf-8") as f:
-            self.compose = yaml.safe_load(f)
+            self.compose = load_compose_yaml(f)
 
     def test_frontend_service_exists(self):
         assert "frontend" in self.compose["services"]

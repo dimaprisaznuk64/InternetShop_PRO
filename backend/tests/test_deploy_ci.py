@@ -7,6 +7,8 @@ import re
 import pytest
 import yaml
 
+from tests.conftest import load_compose_yaml
+
 
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 GITHUB_DIR = os.path.join(PROJECT_ROOT, ".github")
@@ -20,7 +22,7 @@ def read_file(path: str) -> str:
 
 def load_yaml(path: str) -> dict:
     with open(path, encoding="utf-8") as f:
-        return yaml.safe_load(f)
+        return load_compose_yaml(f)
 
 
 # ─── File existence ────────────────────────────────────────────────

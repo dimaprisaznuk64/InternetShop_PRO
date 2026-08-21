@@ -4,7 +4,8 @@ Full-stack e-commerce platform: FastAPI + PostgreSQL + Redis + Celery on the bac
 
 > Built as a production-grade learning project — 76 structured lessons from architecture to final release.
 
-![status](https://img.shields.io/badge/tests-1071%20backend%20%2B%2082%20frontend-brightgreen)
+![status](https://img.shields.io/badge/tests-1087%20backend%20%2B%2082%20frontend-brightgreen)
+![version](https://img.shields.io/badge/version-1.0.0-blue)
 ![python](https://img.shields.io/badge/python-3.12+-blue)
 ![fastapi](https://img.shields.io/badge/FastAPI-0.1xx-009688)
 ![react](https://img.shields.io/badge/react-19-61dafb)
@@ -18,14 +19,16 @@ Full-stack e-commerce platform: FastAPI + PostgreSQL + Redis + Celery on the bac
 - Cart with stock validation, race-condition-safe checkout (row locking)
 - Orders with full lifecycle: `pending → paid → processing → shipped → completed / cancelled`
 - Payments: provider integration, webhooks with HMAC signature verification, idempotency
-- Favorites, reviews with purchase verification & moderation, promo codes (percentage / fixed, expiry, usage limits)
+- Favorites, reviews with verified-purchase badge & moderation, promo codes (percentage / fixed, expiry, usage limits, min order amount)
 - Delivery methods & shipping cost calculation
 
 **Accounts & Security**
-- JWT auth: access + refresh tokens, `jti`, token blacklist, token-type validation
+- JWT auth: access + refresh tokens, `jti`, token blacklist, token-type validation, refresh rotation with reuse detection
 - RBAC: user / manager / admin
-- Rate limiting, security headers (CSP, HSTS), CORS allow-list
+- Rate limiting (login 5/min, register 3/min, password change 3/5min, 100/min default)
+- Security headers (CSP, HSTS), CORS allow-list
 - OWASP basics covered: SQL injection, XSS, CSRF, IDOR
+- Payment webhooks fail-closed in production without a configured secret
 
 **Admin panel**
 - Dashboard with statistics (sales, revenue, popular products)
@@ -187,20 +190,23 @@ cd backend && pytest
 cd frontend && npm test
 ```
 
-Current status: **1071 backend + 82 frontend tests passing.**
+Current status: **1087 backend + 82 frontend tests passing.**
 
 ## Screenshots
 
-> Place screenshots in `docs/screenshots/` and they will appear here.
-
-| Storefront | Admin |
+| Home | Catalog |
 |---|---|
-| ![catalog](docs/screenshots/catalog.png) | ![admin](docs/screenshots/admin.png) |
+| ![home](docs/screenshots/home.png) | ![catalog](docs/screenshots/catalog.png) |
+
+| Product | Login |
+|---|---|
+| ![product](docs/screenshots/product.png) | ![login](docs/screenshots/login.png) |
 
 ## Project Status
 
 - [x] Lessons 1–74: architecture, catalog, cart, orders, payments, admin, frontend, Redis/Celery, testing, security, Docker, deploy, performance, logging, CI/CD
-- [ ] Lesson 75–76: final documentation & release v1.0
+- [x] Lesson 75: full manual QA pass + bugfix round (promo checkout, webhook hardening, verified reviews) + final documentation
+- [x] Lesson 76: release v1.0.0
 
 ## License
 

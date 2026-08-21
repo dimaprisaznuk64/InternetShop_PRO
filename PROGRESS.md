@@ -5,24 +5,26 @@
 ## Останнє оновлення
 
 - Дата: 2026-08-21
-- Стан: **Урок 75 (частина 1): повний ручний прогін + багфікси**.
-  Прогнано руками через API: реєстрація/логін/RBAC, каталог, пошук/фільтри, кошик,
-  промокод, checkout, оплата/webhook, favorites, reviews, notifications, адмінка,
-  refresh-ротація, security headers, frontend :3000.
-  Знайдено і виправлено 4 баги:
-  1. checkout ігнорував promo_code → валідація (active/expiry/max_uses/min_amount),
-     знижка в orders.discount (нова колонка, міграція 002), used_count++ під row-lock
-  2. WEBHOOK_SECRET не був заданий у .env.example/.env.docker → доданий;
-     у prod (DEBUG=false) без секрету webhook fail-closed
-  3. webhook без idempotency → повторний виклик не шле дублі email/нотифікацій
-  4. reviews без перевірки покупки → is_verified_purchase (нова колонка, міграція 002)
-  Плюс: вирівняно моделі з БД — DateTime(timezone=True) на всіх часових колонках
-  (наївні моделі ламали checkout на живому Postgres після utcnow-фікса; тести на
-  SQLite це не ловили). Виправлений передіснуючий тест test_custom_credentials_no_warning.
+- Стан: **Уроки 75–76 ЗАВЕРШЕНІ. InternetShop_PRO v1.0.0 🚀**
+  Урок 75: повний ручний прогін через API (19 блоків) + багфікси + prod-compose
+  верифікація + скріншоти + README фінал.
+  Урок 76: version 1.0.0, фінальний коміт, тег v1.0.0.
+  Знайдено і виправлено 7 проблем разом:
+  1. checkout ігнорував promo_code → валідація + orders.discount (міграція 002) + used_count++ під row-lock
+  2. WEBHOOK_SECRET не був заданий → доданий в env-приклади; у prod fail-closed
+  3. webhook без idempotency → guard проти дублів email/нотифікацій
+  4. reviews без перевірки покупки → is_verified_purchase (міграція 002)
+  5. моделі DateTime без timezone → 500 на живому Postgres; вирівняно з timestamptz БД
+  6. redis-prod.conf: неіснуюча директива auto-aof-rewrite-size → min-size;
+     protected-mode блокував Docker-мережу → no + порти postgres/redis не публікуються в прод (!override [])
+  7. DATABASE_URL мав окремий пароль від POSTGRES_PASSWORD → тепер збирається compose з POSTGRES_*
+     змінних (одне джерело правди); entrypoint.sh exec "$@" + CMD у Dockerfile — celery worker/beat
+     реально запускались як uvicorn; celery healthcheck через inspect ping
+  Прод-верифікація: rate limit 429 після 5 логінів, HSTS, webhook fail-closed,
+  redis connected, celery connected, frontend 200.
   **1087 backend тестів** + **82 frontend тести**.
-- **Як продовжити (наступного разу):** прочитай цей файл → `git log --oneline` →
-  **Урок 75 (частина 2)**: README фіналізувати (чернетка вже є), скріншоти в docs/screenshots/,
-  prod-compose перевірка (rate limit при DEBUG=false, celery worker/beat), потім Урок 76.
+- **Як продовжити:** проєкт готовий до публікації. GitHub: створити репо →
+  `git remote add origin <url>` → `git push -u origin master --tags` (власнор).
 - Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`
 
 ## Roadmap (76 уроків)
@@ -145,15 +147,13 @@
 - [x] Урок 72 — Performance: SQL queries, indexes, N+1, caching, response time
 - [x] Урок 73 — Logging & monitoring: structured logs, errors, health checks, monitoring
 - [x] Урок 74 — CI/CD: GitHub Actions (git push → Tests → Lint → Build → Deploy)
-- [ ] Урок 75 — Final GitHub: README, screenshots, architecture diagram, installation, API documentation, .env.example
-- [ ] Урок 76 — Фінальний реліз InternetShop_PRO v1.0: повністю готовий production-проєкт
+- [x] Урок 75 — Final GitHub: README, architecture diagram, installation, API docs, .env.example, скріншоти, повний ручний QA-прогін
+- [x] Урок 76 — Фінальний реліз InternetShop_PRO v1.0: повністю готовий production-проєкт
 
 ## Поточний блок (наступний крок)
 
-- ✅ **Урок 75 (частина 1)**: ручний прогін всього проєкту + 4 багфікси (promo checkout,
-  webhook secret/idempotency, verified reviews) + tz-фікси моделей, міграція 002.
-- ➡️ **Наступний: Урок 75 (частина 2)** — фіналізація README, скріншоти, prod-compose
-  перевірка, потім **Урок 76 — Final Release**.
+- ✅ **Уроки 1–76 завершені. v1.0.0.**
+- ➡️ **Залишилось тільки:** створити репо на GitHub і запушити (власнор, команди в PROGRESS).
 
 ## Конвенції проєкту
 

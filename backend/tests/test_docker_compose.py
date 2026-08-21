@@ -23,8 +23,8 @@ def read_file(path: str) -> str:
 
 @pytest.fixture(scope="module")
 def compose() -> dict:
-    with open(COMPOSE_PATH, encoding="utf-8") as f:
-        return yaml.safe_load(f)
+    from tests.conftest import load_compose_yaml
+    return load_compose_yaml(COMPOSE_PATH)
 
 
 @pytest.fixture(scope="module")
@@ -242,8 +242,11 @@ class TestEntrypoint:
         assert "alembic" in content and "upgrade" in content
 
     def test_starts_uvicorn(self):
+        # uvicorn is the image CMD; entrypoint execs whatever command it receives
+        dockerfile = read_file(DOCKERFILE_BACKEND)
+        assert "uvicorn" in dockerfile
         content = read_file(ENTRYPOINT)
-        assert "uvicorn" in content
+        assert 'exec "$@"' in content
 
     def test_set_e(self):
         content = read_file(ENTRYPOINT)

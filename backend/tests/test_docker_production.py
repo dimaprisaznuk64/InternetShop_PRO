@@ -190,8 +190,8 @@ class TestComposeProdOverride:
     @pytest.fixture(autouse=True)
     def load(self):
         self.content = read_file(COMPOSE_PROD_PATH)
-        with open(COMPOSE_PROD_PATH, encoding="utf-8") as f:
-            self.compose = yaml.safe_load(f)
+        from tests.conftest import load_compose_yaml
+        self.compose = load_compose_yaml(COMPOSE_PROD_PATH)
 
     def test_file_exists(self):
         assert os.path.isfile(COMPOSE_PROD_PATH)

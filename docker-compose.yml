@@ -40,6 +40,9 @@ services:
     restart: unless-stopped
     env_file:
       - .env.docker
+    environment:
+      # Single source of truth for DB credentials: built from POSTGRES_* vars
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-internetshop}
     ports:
       - "${BACKEND_PORT:-8000}:8000"
     depends_on:
@@ -80,6 +83,8 @@ services:
     restart: unless-stopped
     env_file:
       - .env.docker
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-internetshop}
     depends_on:
       postgres:
         condition: service_healthy
@@ -96,6 +101,8 @@ services:
     restart: unless-stopped
     env_file:
       - .env.docker
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-internetshop}
     depends_on:
       redis:
         condition: service_healthy
