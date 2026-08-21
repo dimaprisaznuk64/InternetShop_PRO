@@ -258,3 +258,199 @@ async def test_user_cannot_update_status(client, db_session):
         headers=headers,
     )
     assert response.status_code == 403
+
+
+async def _create_promo(db_session: AsyncSession, code="PROMO10", discount_type="percentage",
+                        discount_value=10, min_order_amount=None, max_uses=None,
+                        expires_at=None, is_active=True, used_count=0):
+    from app.models.promo import PromoCode
+    promo = PromoCode(
+        code=code,
+        discount_type=discount_type,
+        discount_value=discount_value,
+        min_order_amount=min_order_amount,
+        max_uses=max_uses,
+        expires_at=expires_at,
+        is_active=is_active,
+        used_count=used_count,
+    )
+    db_session.add(promo)
+    await db_session.commit()
+    await db_session.refresh(promo)
+    return promo
+
+
+@pytest.mark.asyncio
+async def test_checkout_applies_percentage_promo(client, db_session):
+    token = await _user_token(db_session)
+    headers = {"Authorization": f"Bearer {token}"}
+    prod_id = await _setup_product(db_session, stock=10, price=50.00)
+    await _create_promo(db_session, code="TAKE20", discount_type="percentage", discount_value=20)
+
+    await _add_to_cart(client, headers, prod_id, qty=2)
+
+    response = await client.post(
+        "/api/orders/checkout",
+        json={"promo_code": "TAKE20"},
+        headers=headers,
+    )
+    assert response.status_code == 201
+    data = response.json()
+    assert data["discount"] == "20.00"
+    assert data["total"] == "80.00"
+
+
+@pytest.mark.asyncio
+async def test_checkout_applies_fixed_promo(client, db_session):
+    token = await _user_token(db_session)
+    headers = {"Authorization": f"Bearer {token}"}
+    prod_id = await _setup_product(db_session, stock=10, price=50.00)
+    await _create_promo(db_session, code="FLAT30", discount_type="fixed", discount_value=30)
+
+    await _add_to_cart(client, headers, prod_id, qty=2)
+
+    response = await client.post(
+        "/api/orders/checkout",
+        json={"promo_code": "FLAT30"},
+        headers=headers,
+    )
+    assert response.status_code == 201
+    data = response.json()
+    assert data["discount"] == "30.00"
+    assert data["total"] == "70.00"
+
+
+@pytest.mark.asyncio
+async def test_checkout_fixed_promo_cannot_go_negative(client, db_session):
+    token = await _user_token(db_session)
+    headers = {"Authorization": f"Bearer {token}"}
+    prod_id = await _setup_product(db_session, stock=10, price=50.00)
+    await _create_promo(db_session, code="HUGE500", discount_type="fixed", discount_value=500)
+
+    await _add_to_cart(client, headers, prod_id, qty=1)
+
+    response = await client.post(
+        "/api/orders/checkout",
+        json={"promo_code": "HUGE500"},
+        headers=headers,
+    )
+    assert response.status_code == 201
+    data = response.json()
+    assert data["total"] == "0.00"
+    assert data["discount"] == "50.00"
+
+
+@pytest.mark.asyncio
+async def test_checkout_promo_increments_used_count(client, db_session):
+    from sqlalchemy import select
+    from app.models.promo import PromoCode
+    token = await _user_token(db_session)
+    headers = {"Authorization": f"Bearer {token}"}
+    prod_id = await _setup_product(db_session, stock=10, price=50.00)
+    promo = await _create_promo(db_session, code="COUNTME", discount_type="fixed", discount_value=5)
+
+    await _add_to_cart(client, headers, prod_id, qty=1)
+    response = await client.post(
+        "/api/orders/checkout",
+        json={"promo_code": "COUNTME"},
+        headers=headers,
+    )
+    assert response.status_code == 201
+
+    result = await db_session.execute(select(PromoCode).where(PromoCode.code == "COUNTME"))
+    refreshed = result.scalar_one()
+    assert refreshed.used_count == 1
+
+
+@pytest.mark.asyncio
+async def test_checkout_rejects_expired_promo(client, db_session):
+    from datetime import datetime, UTC
+    token = await _user_token(db_session)
+    headers = {"Authorization": f"Bearer {token}"}
+    prod_id = await _setup_product(db_session, stock=10, price=50.00)
+    await _create_promo(db_session, code="OLDIE", discount_type="percentage",
+                        discount_value=50, expires_at=datetime(2020, 1, 1, tzinfo=UTC))
+
+    await _add_to_cart(client, headers, prod_id, qty=1)
+
+    response = await client.post(
+        "/api/orders/checkout",
+        json={"promo_code": "OLDIE"},
+        headers=headers,
+    )
+    assert response.status_code == 400
+    assert "expired" in response.json()["detail"]
+
+
+@pytest.mark.asyncio
+async def test_checkout_rejects_inactive_promo(client, db_session):
+    token = await _user_token(db_session)
+    headers = {"Authorization": f"Bearer {token}"}
+    prod_id = await _setup_product(db_session, stock=10, price=50.00)
+    await _create_promo(db_session, code="DEAD", discount_type="percentage",
+                        discount_value=50, is_active=False)
+
+    await _add_to_cart(client, headers, prod_id, qty=1)
+
+    response = await client.post(
+        "/api/orders/checkout",
+        json={"promo_code": "DEAD"},
+        headers=headers,
+    )
+    assert response.status_code == 400
+    assert "inactive" in response.json()["detail"]
+
+
+@pytest.mark.asyncio
+async def test_checkout_rejects_exhausted_promo(client, db_session):
+    token = await _user_token(db_session)
+    headers = {"Authorization": f"Bearer {token}"}
+    prod_id = await _setup_product(db_session, stock=10, price=50.00)
+    await _create_promo(db_session, code="SPENT", discount_type="percentage",
+                        discount_value=50, max_uses=1, used_count=1)
+
+    await _add_to_cart(client, headers, prod_id, qty=1)
+
+    response = await client.post(
+        "/api/orders/checkout",
+        json={"promo_code": "SPENT"},
+        headers=headers,
+    )
+    assert response.status_code == 400
+    assert "limit" in response.json()["detail"]
+
+
+@pytest.mark.asyncio
+async def test_checkout_rejects_promo_below_min_order(client, db_session):
+    token = await _user_token(db_session)
+    headers = {"Authorization": f"Bearer {token}"}
+    prod_id = await _setup_product(db_session, stock=10, price=50.00)
+    await _create_promo(db_session, code="BIGONLY", discount_type="percentage",
+                        discount_value=10, min_order_amount=1000)
+
+    await _add_to_cart(client, headers, prod_id, qty=1)
+
+    response = await client.post(
+        "/api/orders/checkout",
+        json={"promo_code": "BIGONLY"},
+        headers=headers,
+    )
+    assert response.status_code == 400
+    assert "at least" in response.json()["detail"]
+
+
+@pytest.mark.asyncio
+async def test_checkout_unknown_promo_rejected(client, db_session):
+    token = await _user_token(db_session)
+    headers = {"Authorization": f"Bearer {token}"}
+    prod_id = await _setup_product(db_session, stock=10, price=50.00)
+
+    await _add_to_cart(client, headers, prod_id, qty=1)
+
+    response = await client.post(
+        "/api/orders/checkout",
+        json={"promo_code": "GHOST"},
+        headers=headers,
+    )
+    assert response.status_code == 400
+    assert "not found" in response.json()["detail"]

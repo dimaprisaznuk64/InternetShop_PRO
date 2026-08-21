@@ -5,6 +5,7 @@ from decimal import Decimal
 from typing import Optional
 from sqlalchemy import String, Enum, ForeignKey, Numeric
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+import sqlalchemy as sa
 from app.database import Base
 
 
@@ -32,7 +33,7 @@ class Payment(Base):
     provider_payment_id: Mapped[Optional[str]] = mapped_column(
         String(255), nullable=True
     )
-    created_at: Mapped[datetime] = mapped_column(
+    created_at: Mapped[datetime] = mapped_column(sa.DateTime(timezone=True), 
         default=lambda: datetime.now(UTC)
     )
 

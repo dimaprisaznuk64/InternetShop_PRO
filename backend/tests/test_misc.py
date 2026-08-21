@@ -231,3 +231,80 @@ async def test_user_cannot_create_promo(client, db_session):
         headers=headers,
     )
     assert resp.status_code == 403
+
+
+@pytest.mark.asyncio
+async def test_review_verified_purchase_flag(client, db_session):
+    from app.models.order import Order, OrderItem, OrderStatus
+    token = await _user_token(db_session)
+    headers = {"Authorization": f"Bearer {token}"}
+    prod_id = await _setup_product(db_session)
+
+    order = Order(
+        user_id="misc-user-id",
+        status=OrderStatus.completed,
+        total=50.00,
+    )
+    db_session.add(order)
+    await db_session.flush()
+    db_session.add(OrderItem(
+        order_id=order.id,
+        product_id=prod_id,
+        quantity=1,
+        price=50.00,
+    ))
+    await db_session.commit()
+
+    resp = await client.post(
+        "/api/reviews/",
+        json={"product_id": prod_id, "rating": 5, "text": "Bought it, love it"},
+        headers=headers,
+    )
+    assert resp.status_code == 201
+    assert resp.json()["is_verified_purchase"] is True
+
+
+@pytest.mark.asyncio
+async def test_review_unverified_without_purchase(client, db_session):
+    token = await _user_token(db_session)
+    headers = {"Authorization": f"Bearer {token}"}
+    prod_id = await _setup_product(db_session)
+
+    resp = await client.post(
+        "/api/reviews/",
+        json={"product_id": prod_id, "rating": 4, "text": "No purchase"},
+        headers=headers,
+    )
+    assert resp.status_code == 201
+    assert resp.json()["is_verified_purchase"] is False
+
+
+@pytest.mark.asyncio
+async def test_review_cancelled_order_not_verified(client, db_session):
+    from app.models.order import Order, OrderItem, OrderStatus
+    token = await _user_token(db_session)
+    headers = {"Authorization": f"Bearer {token}"}
+    prod_id = await _setup_product(db_session)
+
+    order = Order(
+        user_id="misc-user-id",
+        status=OrderStatus.cancelled,
+        total=50.00,
+    )
+    db_session.add(order)
+    await db_session.flush()
+    db_session.add(OrderItem(
+        order_id=order.id,
+        product_id=prod_id,
+        quantity=1,
+        price=50.00,
+    ))
+    await db_session.commit()
+
+    resp = await client.post(
+        "/api/reviews/",
+        json={"product_id": prod_id, "rating": 3},
+        headers=headers,
+    )
+    assert resp.status_code == 201
+    assert resp.json()["is_verified_purchase"] is False

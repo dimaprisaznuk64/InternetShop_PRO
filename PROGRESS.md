@@ -4,12 +4,25 @@
 
 ## Останнє оновлення
 
-- Дата: 2026-08-20
-- Стан: **Урок 73 завершений**. Logging & monitoring:
-  73: logging.sh (logrotate daily+compress, journald 500M, nginx log rotation), health-check-full.sh (API, PostgreSQL, Redis, Frontend, Nginx, Docker containers, disk space), 39 logging tests.
-  **1070 backend тестів** + **82 frontend тестів**.
+- Дата: 2026-08-21
+- Стан: **Урок 75 (частина 1): повний ручний прогін + багфікси**.
+  Прогнано руками через API: реєстрація/логін/RBAC, каталог, пошук/фільтри, кошик,
+  промокод, checkout, оплата/webhook, favorites, reviews, notifications, адмінка,
+  refresh-ротація, security headers, frontend :3000.
+  Знайдено і виправлено 4 баги:
+  1. checkout ігнорував promo_code → валідація (active/expiry/max_uses/min_amount),
+     знижка в orders.discount (нова колонка, міграція 002), used_count++ під row-lock
+  2. WEBHOOK_SECRET не був заданий у .env.example/.env.docker → доданий;
+     у prod (DEBUG=false) без секрету webhook fail-closed
+  3. webhook без idempotency → повторний виклик не шле дублі email/нотифікацій
+  4. reviews без перевірки покупки → is_verified_purchase (нова колонка, міграція 002)
+  Плюс: вирівняно моделі з БД — DateTime(timezone=True) на всіх часових колонках
+  (наївні моделі ламали checkout на живому Postgres після utcnow-фікса; тести на
+  SQLite це не ловили). Виправлений передіснуючий тест test_custom_credentials_no_warning.
+  **1087 backend тестів** + **82 frontend тести**.
 - **Як продовжити (наступного разу):** прочитай цей файл → `git log --oneline` →
-  **Урок 75 — Final GitHub**: README, screenshots, architecture diagram, installation, API docs, .env.example.
+  **Урок 75 (частина 2)**: README фіналізувати (чернетка вже є), скріншоти в docs/screenshots/,
+  prod-compose перевірка (rate limit при DEBUG=false, celery worker/beat), потім Урок 76.
 - Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`
 
 ## Roadmap (76 уроків)
@@ -137,8 +150,10 @@
 
 ## Поточний блок (наступний крок)
 
-- ✅ **Урок 73 — Logging & monitoring**: logging.sh, health-check-full.sh, logrotate, journald, 39 tests.
-- ➡️ **Наступний: Урок 75 — Final GitHub** (README, screenshots, architecture diagram, installation, API docs, .env.example).
+- ✅ **Урок 75 (частина 1)**: ручний прогін всього проєкту + 4 багфікси (promo checkout,
+  webhook secret/idempotency, verified reviews) + tz-фікси моделей, міграція 002.
+- ➡️ **Наступний: Урок 75 (частина 2)** — фіналізація README, скріншоти, prod-compose
+  перевірка, потім **Урок 76 — Final Release**.
 
 ## Конвенції проєкту
 

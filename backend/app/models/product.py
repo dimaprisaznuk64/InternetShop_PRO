@@ -23,10 +23,10 @@ class Product(Base):
     category_id: Mapped[str] = mapped_column(String(36), ForeignKey("categories.id"))
     brand: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, server_default=sa.text("true"))
-    created_at: Mapped[datetime] = mapped_column(
+    created_at: Mapped[datetime] = mapped_column(sa.DateTime(timezone=True), 
         default=lambda: datetime.now(UTC)
     )
-    updated_at: Mapped[datetime] = mapped_column(
+    updated_at: Mapped[datetime] = mapped_column(sa.DateTime(timezone=True), 
         default=lambda: datetime.now(UTC),
         onupdate=lambda: datetime.now(UTC),
     )

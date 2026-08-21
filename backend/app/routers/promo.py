@@ -49,7 +49,13 @@ async def create_promo_code(
     if existing.scalar_one_or_none():
         raise AlreadyExistsError("Promo code already exists")
 
-    promo = PromoCode(**data.model_dump())
+    payload = data.model_dump()
+    if payload.get("expires_at") is not None:
+        exp = payload["expires_at"]
+        if exp.tzinfo is not None:
+            payload["expires_at"] = exp.astimezone(timezone.utc).replace(tzinfo=None)
+
+    promo = PromoCode(**payload)
     db.add(promo)
     await db.commit()
     await db.refresh(promo)

@@ -4,6 +4,7 @@ from sqlalchemy import select
 from app.database import get_db
 from app.models.review import Review
 from app.models.product import Product
+from app.models.order import Order, OrderItem, OrderStatus
 from app.schemas.review import ReviewCreate, ReviewResponse, ReviewListResponse
 from app.utils.dependencies import get_current_user, require_admin
 from app.utils.exceptions import NotFoundError, AlreadyExistsError, BadRequestError
@@ -13,6 +14,27 @@ router = APIRouter(prefix="/api/reviews", tags=["reviews"])
 
 REVIEWS_CACHE_PREFIX = "reviews"
 REVIEWS_TTL = 120  # 2 min
+
+VERIFIED_PURCHASE_STATUSES = (
+    OrderStatus.paid,
+    OrderStatus.processing,
+    OrderStatus.shipped,
+    OrderStatus.completed,
+)
+
+
+async def _has_verified_purchase(db: AsyncSession, user_id: str, product_id: str) -> bool:
+    result = await db.execute(
+        select(OrderItem.id)
+        .join(Order, OrderItem.order_id == Order.id)
+        .where(
+            Order.user_id == user_id,
+            OrderItem.product_id == product_id,
+            Order.status.in_(VERIFIED_PURCHASE_STATUSES),
+        )
+        .limit(1)
+    )
+    return result.scalar_one_or_none() is not None
 
 
 @router.get("/product/{product_id}", response_model=ReviewListResponse)
@@ -61,6 +83,7 @@ async def create_review(
         product_id=data.product_id,
         rating=data.rating,
         text=data.text,
+        is_verified_purchase=await _has_verified_purchase(db, current_user.id, data.product_id),
     )
     db.add(review)
     await db.commit()

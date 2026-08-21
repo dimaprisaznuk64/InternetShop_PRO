@@ -25,6 +25,7 @@ class OrderResponse(BaseModel):
     id: str
     status: str
     total: str
+    discount: str = "0.00"
     delivery_method: Optional[str]
     delivery_address: Optional[str]
     notes: Optional[str]

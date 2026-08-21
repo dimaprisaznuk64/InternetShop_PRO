@@ -15,6 +15,7 @@ class ReviewResponse(BaseModel):
     rating: int
     text: Optional[str]
     is_moderated: bool
+    is_verified_purchase: bool = False
 
     model_config = {"from_attributes": True}
 

@@ -42,7 +42,10 @@ class TestDatabaseURLValidation:
         import warnings
         with warnings.catch_warnings():
             warnings.simplefilter("error")
-            s = Settings(DATABASE_URL="postgresql+asyncpg://myuser:mypass@localhost:5432/test")
+            s = Settings(
+                DATABASE_URL="postgresql+asyncpg://myuser:mypass@localhost:5432/test",
+                SECRET_KEY="a" * 32,
+            )
             assert "myuser" in s.DATABASE_URL
 
 

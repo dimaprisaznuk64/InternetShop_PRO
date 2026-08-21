@@ -2,11 +2,14 @@ from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
 from sqlalchemy.orm import selectinload
+from datetime import datetime, timezone
+from decimal import Decimal
 from app.database import get_db
 from app.models.user import User
 from app.models.cart import Cart, CartItem
 from app.models.product import Product
 from app.models.order import Order, OrderItem, OrderStatus
+from app.models.promo import PromoCode
 from app.schemas.order import (
     CheckoutRequest,
     OrderResponse,
@@ -37,12 +40,33 @@ def _serialize_order(order: Order) -> OrderResponse:
         id=order.id,
         status=order.status.value if hasattr(order.status, 'value') else order.status,
         total=f"{float(order.total):.2f}",
+        discount=f"{float(order.discount or 0):.2f}",
         delivery_method=order.delivery_method,
         delivery_address=order.delivery_address,
         notes=order.notes,
         items=items,
         created_at=order.created_at.isoformat(),
     )
+
+
+def _validate_promo(promo: PromoCode, subtotal: float) -> None:
+    if not promo.is_active:
+        raise BadRequestError("Promo code is inactive")
+
+    if promo.expires_at:
+        exp = promo.expires_at
+        if exp.tzinfo is None:
+            exp = exp.replace(tzinfo=timezone.utc)
+        if exp < datetime.now(timezone.utc):
+            raise BadRequestError("Promo code has expired")
+
+    if promo.max_uses is not None and promo.used_count >= promo.max_uses:
+        raise BadRequestError("Promo code usage limit reached")
+
+    if promo.min_order_amount is not None and subtotal < float(promo.min_order_amount):
+        raise BadRequestError(
+            f"Order total must be at least {float(promo.min_order_amount):.2f} for this promo code"
+        )
 
 
 @router.post("/checkout", response_model=OrderResponse, status_code=status.HTTP_201_CREATED)
@@ -86,9 +110,31 @@ async def checkout(
             price=product.price,
         ))
 
+    discount = Decimal("0.00")
+    promo = None
+    if data.promo_code:
+        result = await db.execute(
+            select(PromoCode).where(PromoCode.code == data.promo_code).with_for_update()
+        )
+        promo = result.scalar_one_or_none()
+        if not promo:
+            raise BadRequestError("Promo code not found")
+
+        _validate_promo(promo, total)
+
+        if promo.discount_type.value == "percentage":
+            discount = (Decimal(str(total)) * promo.discount_value / Decimal("100"))
+        else:
+            discount = promo.discount_value
+
+        discount = min(discount, Decimal(str(total)))
+        promo.used_count += 1
+
     order = Order(
         user_id=current_user.id,
-        total=total,
+        total=Decimal(str(total)) - discount,
+        discount=discount,
+        promo_code_id=promo.id if promo else None,
         delivery_method=data.delivery_method,
         delivery_address=data.delivery_address,
         notes=data.notes,

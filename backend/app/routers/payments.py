@@ -134,6 +134,9 @@ async def payment_webhook(
 ):
     from app.models.user import User
 
+    if not settings.WEBHOOK_SECRET and settings.is_production:
+        raise BadRequestError("Webhook secret is not configured")
+
     if settings.WEBHOOK_SECRET:
         if not x_webhook_signature:
             raise BadRequestError("Missing webhook signature")
@@ -148,6 +151,17 @@ async def payment_webhook(
     payment = result.scalar_one_or_none()
     if not payment:
         raise NotFoundError("Payment not found")
+
+    target_status = {
+        "success": PaymentStatus.success,
+        "failed": PaymentStatus.failed,
+        "refunded": PaymentStatus.refunded,
+    }.get(data.status)
+    if target_status is None:
+        raise BadRequestError(f"Unknown webhook status: {data.status}")
+
+    if payment.status == target_status:
+        return {"status": "ok", "idempotent": True}
 
     order_result = await db.execute(select(Order).where(Order.id == payment.order_id))
     order = order_result.scalar_one_or_none()

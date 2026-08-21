@@ -4,6 +4,7 @@ from datetime import datetime, UTC
 from typing import Optional
 from sqlalchemy import String, Text, Enum, ForeignKey, Boolean
 from sqlalchemy.orm import Mapped, mapped_column
+import sqlalchemy as sa
 from app.database import Base
 
 
@@ -33,6 +34,6 @@ class Notification(Base):
     message: Mapped[str] = mapped_column(Text)
     is_read: Mapped[bool] = mapped_column(Boolean, default=False, server_default="false")
     metadata_json: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(
+    created_at: Mapped[datetime] = mapped_column(sa.DateTime(timezone=True), 
         default=lambda: datetime.now(UTC)
     )

@@ -3,6 +3,7 @@ from datetime import datetime, UTC
 from typing import Optional
 from sqlalchemy import String, ForeignKey, Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+import sqlalchemy as sa
 from app.database import Base
 
 
@@ -15,10 +16,10 @@ class Cart(Base):
     user_id: Mapped[str] = mapped_column(
         String(36), ForeignKey("users.id", ondelete="CASCADE"), unique=True
     )
-    created_at: Mapped[datetime] = mapped_column(
+    created_at: Mapped[datetime] = mapped_column(sa.DateTime(timezone=True), 
         default=lambda: datetime.now(UTC)
     )
-    updated_at: Mapped[datetime] = mapped_column(
+    updated_at: Mapped[datetime] = mapped_column(sa.DateTime(timezone=True), 
         default=lambda: datetime.now(UTC),
         onupdate=lambda: datetime.now(UTC),
     )

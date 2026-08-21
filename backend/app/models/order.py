@@ -4,6 +4,7 @@ from datetime import datetime, UTC
 from decimal import Decimal
 from typing import Optional
 from sqlalchemy import String, Text, Enum, ForeignKey, Integer, Numeric
+import sqlalchemy as sa
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.database import Base
 
@@ -30,16 +31,19 @@ class Order(Base):
         Enum(OrderStatus), default=OrderStatus.pending
     )
     total: Mapped[Decimal] = mapped_column(Numeric(10, 2))
+    discount: Mapped[Decimal] = mapped_column(
+        Numeric(10, 2), default=Decimal("0.00"), server_default=sa.text("0")
+    )
     delivery_method: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
     delivery_address: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
     promo_code_id: Mapped[Optional[str]] = mapped_column(
         String(36), ForeignKey("promo_codes.id"), nullable=True
     )
     notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(
+    created_at: Mapped[datetime] = mapped_column(sa.DateTime(timezone=True), 
         default=lambda: datetime.now(UTC)
     )
-    updated_at: Mapped[datetime] = mapped_column(
+    updated_at: Mapped[datetime] = mapped_column(sa.DateTime(timezone=True), 
         default=lambda: datetime.now(UTC),
         onupdate=lambda: datetime.now(UTC),
     )
