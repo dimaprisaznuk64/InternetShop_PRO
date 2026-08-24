@@ -78,8 +78,8 @@ async def create_payment(
         email_service.send_payment_confirmation,
         current_user.email, order.id, f"${float(order.total):.2f}",
     )
-    notification_service.create(
-        current_user.id, "order_paid",
+    await notification_service.create(
+        db, current_user.id, "order_paid",
         "Payment received",
         f"Payment of ${float(order.total):.2f} received for order #{order.id[:8]}.",
         {"order_id": order.id, "payment_id": payment.id},
@@ -178,8 +178,8 @@ async def payment_webhook(
                     email_service.send_payment_confirmation,
                     order_user.email, order.id, f"${float(order.total):.2f}",
                 )
-                notification_service.create(
-                    order_user.id, "order_paid",
+                await notification_service.create(
+                    db, order_user.id, "order_paid",
                     "Payment confirmed",
                     f"Payment of ${float(order.total):.2f} confirmed for order #{order.id[:8]}.",
                     {"order_id": order.id, "payment_id": payment.id},
@@ -194,8 +194,8 @@ async def payment_webhook(
                     email_service.send_payment_failed,
                     order_user.email, order.id,
                 )
-                notification_service.create(
-                    order_user.id, "payment_failed",
+                await notification_service.create(
+                    db, order_user.id, "payment_failed",
                     "Payment failed",
                     f"Payment failed for order #{order.id[:8]}.",
                     {"order_id": order.id, "payment_id": payment.id},

@@ -83,8 +83,7 @@ api.interceptors.response.use(
       try {
         const { data } = await axios.post(
           `${API_BASE}/api/auth/refresh`,
-          null,
-          { params: { token: refreshToken } }
+          { refresh_token: refreshToken }
         );
         setTokens(data.access_token, data.refresh_token);
         processQueue(null, data.access_token);
@@ -109,3 +108,15 @@ api.interceptors.response.use(
 
 export { API_BASE, getAccessToken, getRefreshToken, setTokens, clearTokens };
 export default api;
+
+// ─── Error helper — extract backend `detail` from AxiosError ──────
+export function getApiErrorMessage(err: unknown, fallback = "Something went wrong"): string {
+  if (axios.isAxiosError(err)) {
+    const data: unknown = err.response?.data;
+    if (data && typeof data === "object" && "detail" in data) {
+      const detail = (data as { detail: unknown }).detail;
+      if (typeof detail === "string" && detail) return detail;
+    }
+  }
+  return fallback;
+}

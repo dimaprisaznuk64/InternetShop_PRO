@@ -20,6 +20,9 @@ class CartItemResponse(BaseModel):
     product_name: str
     product_price: str
     product_sku: str
+    product_image: Optional[str] = None
+    product_stock: int = 0
+    variant_name: Optional[str] = None
     line_total: str
 
     model_config = {"from_attributes": True}

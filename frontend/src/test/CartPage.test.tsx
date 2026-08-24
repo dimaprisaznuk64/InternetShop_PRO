@@ -7,30 +7,20 @@ import { AuthProvider } from "../contexts/AuthContext";
 
 const mockCart = {
   id: "c1",
-  user_id: "u1",
+  items_count: 2,
   items: [
     {
       id: "item1",
-      cart_id: "c1",
       product_id: "p1",
       variant_id: null,
       quantity: 2,
-      product: {
-        id: "p1",
-        name: "Test Product",
-        slug: "test",
-        description: null,
-        price: "25.00",
-        sku: "T001",
-        stock: 10,
-        category_id: "cat1",
-        brand: null,
-        is_active: true,
-        created_at: "2026-01-01T00:00:00Z",
-        updated_at: "2026-01-01T00:00:00Z",
-        images: [],
-        variants: [],
-      },
+      product_name: "Test Product",
+      product_price: "25.00",
+      product_sku: "T001",
+      product_image: null,
+      product_stock: 10,
+      variant_name: null,
+      line_total: "50.00",
     },
   ],
   subtotal: "50.00",
@@ -70,9 +60,9 @@ describe("CartPage", () => {
   it("shows empty cart message when cart is empty", async () => {
     vi.mocked(cartApi.get).mockResolvedValue({
       id: "c1",
-      user_id: "u1",
+      items_count: 0,
       items: [],
-      subtotal: "0",
+      subtotal: "0.00",
     });
 
     render(

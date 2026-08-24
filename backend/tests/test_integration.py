@@ -308,7 +308,7 @@ class TestFullPurchaseFlow:
         # 4. User adds to cart
         add = await _add_cart(client, h, prod_id, qty=3)
         assert add.status_code == 201
-        assert add.json()["line_total"] == "450.00"
+        assert add.json()["items"][0]["line_total"] == "450.00"
 
         # 5. User views cart
         cart = await client.get("/api/cart/", headers=h)

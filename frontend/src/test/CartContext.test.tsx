@@ -16,30 +16,20 @@ const mockUser = {
 
 const mockCart = {
   id: "c1",
-  user_id: "u1",
+  items_count: 2,
   items: [
     {
       id: "item1",
-      cart_id: "c1",
       product_id: "p1",
       variant_id: null,
       quantity: 2,
-      product: {
-        id: "p1",
-        name: "Widget",
-        slug: "widget",
-        description: null,
-        price: "19.99",
-        sku: "W001",
-        stock: 10,
-        category_id: "cat1",
-        brand: null,
-        is_active: true,
-        created_at: "2026-01-01T00:00:00Z",
-        updated_at: "2026-01-01T00:00:00Z",
-        images: [],
-        variants: [],
-      },
+      product_name: "Widget",
+      product_price: "19.99",
+      product_sku: "W001",
+      product_image: null,
+      product_stock: 10,
+      variant_name: null,
+      line_total: "39.98",
     },
   ],
   subtotal: "39.98",
@@ -139,13 +129,14 @@ describe("CartContext", () => {
     expect(cartApi.updateItem).toHaveBeenCalledWith("item1", { quantity: 3 });
   });
 
-  it("removeItem calls cartApi and updates cart", async () => {
+  it("removeItem calls cartApi and refetches cart", async () => {
     vi.mocked(getAccessToken).mockReturnValue("token");
     vi.mocked(authApi.me).mockResolvedValue(mockUser);
-    vi.mocked(cartApi.get).mockResolvedValue(mockCart);
-
-    const emptyCart = { ...mockCart, items: [], subtotal: "0" };
-    vi.mocked(cartApi.removeItem).mockResolvedValue(emptyCart);
+    const emptyCart = { ...mockCart, items: [], items_count: 0, subtotal: "0.00" };
+    vi.mocked(cartApi.get)
+      .mockResolvedValueOnce(mockCart)
+      .mockResolvedValueOnce(emptyCart);
+    vi.mocked(cartApi.removeItem).mockResolvedValue(undefined as never);
 
     const { result } = renderHook(() => useCart(), { wrapper });
     await waitFor(() => expect(result.current.cart).toEqual(mockCart));

@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { adminApi } from "../../../api";
+import { getApiErrorMessage } from "../../../api/client";
 import type { PromoCode, PromoCodeCreate } from "../../../types";
 
 export function AdminPromoPage() {
@@ -65,7 +66,7 @@ export function AdminPromoPage() {
       setShowModal(false);
       fetchPromoCodes();
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Create failed";
+      const msg = getApiErrorMessage(err, "Create failed");
       setFormError(msg);
     } finally {
       setSaving(false);

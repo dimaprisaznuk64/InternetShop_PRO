@@ -51,69 +51,82 @@ class TestEmailService:
 
 
 class TestNotificationService:
-    def test_create_and_get(self, notif_svc):
-        notif = notif_svc.create("user-1", "welcome", "Welcome!", "Hello there!")
+    @pytest.mark.asyncio
+    async def test_create_and_get(self, notif_svc, db_session):
+        notif = await notif_svc.create(db_session, "user-1", "welcome", "Welcome!", "Hello there!")
         assert notif["user_id"] == "user-1"
         assert notif["type"] == "welcome"
         assert notif["is_read"] is False
 
-        notifs = notif_svc.get_by_user("user-1")
+        notifs = await notif_svc.get_by_user(db_session, "user-1")
         assert len(notifs) == 1
         assert notifs[0]["id"] == notif["id"]
 
-    def test_get_empty(self, notif_svc):
-        notifs = notif_svc.get_by_user("nonexistent")
+    @pytest.mark.asyncio
+    async def test_get_empty(self, notif_svc, db_session):
+        notifs = await notif_svc.get_by_user(db_session, "nonexistent")
         assert notifs == []
 
-    def test_unread_only(self, notif_svc):
-        n1 = notif_svc.create("user-1", "welcome", "Welcome", "Hello")
-        n2 = notif_svc.create("user-1", "system", "System", "Update")
-        notif_svc.mark_read("user-1", n1["id"])
+    @pytest.mark.asyncio
+    async def test_unread_only(self, notif_svc, db_session):
+        n1 = await notif_svc.create(db_session, "user-1", "welcome", "Welcome", "Hello")
+        n2 = await notif_svc.create(db_session, "user-1", "system", "System", "Update")
+        await notif_svc.mark_read(db_session, "user-1", n1["id"])
 
-        unread = notif_svc.get_by_user("user-1", unread_only=True)
+        unread = await notif_svc.get_by_user(db_session, "user-1", unread_only=True)
         assert len(unread) == 1
         assert unread[0]["id"] == n2["id"]
 
-    def test_mark_read(self, notif_svc):
-        n = notif_svc.create("user-1", "welcome", "Welcome", "Hello")
-        result = notif_svc.mark_read("user-1", n["id"])
+    @pytest.mark.asyncio
+    async def test_mark_read(self, notif_svc, db_session):
+        n = await notif_svc.create(db_session, "user-1", "welcome", "Welcome", "Hello")
+        result = await notif_svc.mark_read(db_session, "user-1", n["id"])
         assert result is True
-        assert notif_svc.get_by_user("user-1")[0]["is_read"] is True
+        notifs = await notif_svc.get_by_user(db_session, "user-1")
+        assert notifs[0]["is_read"] is True
 
-    def test_mark_read_not_found(self, notif_svc):
-        result = notif_svc.mark_read("user-1", "nonexistent")
+    @pytest.mark.asyncio
+    async def test_mark_read_not_found(self, notif_svc, db_session):
+        result = await notif_svc.mark_read(db_session, "user-1", "nonexistent")
         assert result is False
 
-    def test_mark_all_read(self, notif_svc):
-        notif_svc.create("user-1", "welcome", "W1", "M1")
-        notif_svc.create("user-1", "system", "W2", "M2")
-        count = notif_svc.mark_all_read("user-1")
+    @pytest.mark.asyncio
+    async def test_mark_all_read(self, notif_svc, db_session):
+        await notif_svc.create(db_session, "user-1", "welcome", "W1", "M1")
+        await notif_svc.create(db_session, "user-1", "system", "W2", "M2")
+        count = await notif_svc.mark_all_read(db_session, "user-1")
         assert count == 2
-        assert notif_svc.get_unread_count("user-1") == 0
+        assert await notif_svc.get_unread_count(db_session, "user-1") == 0
 
-    def test_delete(self, notif_svc):
-        n = notif_svc.create("user-1", "welcome", "Welcome", "Hello")
-        result = notif_svc.delete("user-1", n["id"])
+    @pytest.mark.asyncio
+    async def test_delete(self, notif_svc, db_session):
+        n = await notif_svc.create(db_session, "user-1", "welcome", "Welcome", "Hello")
+        result = await notif_svc.delete(db_session, "user-1", n["id"])
         assert result is True
-        assert len(notif_svc.get_by_user("user-1")) == 0
+        assert len(await notif_svc.get_by_user(db_session, "user-1")) == 0
 
-    def test_delete_not_found(self, notif_svc):
-        result = notif_svc.delete("user-1", "nonexistent")
+    @pytest.mark.asyncio
+    async def test_delete_not_found(self, notif_svc, db_session):
+        result = await notif_svc.delete(db_session, "user-1", "nonexistent")
         assert result is False
 
-    def test_get_unread_count(self, notif_svc):
-        notif_svc.create("user-1", "welcome", "W1", "M1")
-        notif_svc.create("user-1", "system", "W2", "M2")
-        assert notif_svc.get_unread_count("user-1") == 2
+    @pytest.mark.asyncio
+    async def test_get_unread_count(self, notif_svc, db_session):
+        await notif_svc.create(db_session, "user-1", "welcome", "W1", "M1")
+        await notif_svc.create(db_session, "user-1", "system", "W2", "M2")
+        assert await notif_svc.get_unread_count(db_session, "user-1") == 2
 
-    def test_multiple_users(self, notif_svc):
-        notif_svc.create("user-1", "welcome", "W1", "M1")
-        notif_svc.create("user-2", "system", "W2", "M2")
-        assert len(notif_svc.get_by_user("user-1")) == 1
-        assert len(notif_svc.get_by_user("user-2")) == 1
+    @pytest.mark.asyncio
+    async def test_multiple_users(self, notif_svc, db_session):
+        await notif_svc.create(db_session, "user-1", "welcome", "W1", "M1")
+        await notif_svc.create(db_session, "user-2", "system", "W2", "M2")
+        assert len(await notif_svc.get_by_user(db_session, "user-1")) == 1
+        assert len(await notif_svc.get_by_user(db_session, "user-2")) == 1
 
-    def test_notification_with_metadata(self, notif_svc):
-        n = notif_svc.create(
+    @pytest.mark.asyncio
+    async def test_notification_with_metadata(self, notif_svc, db_session):
+        n = await notif_svc.create(
+            db_session,
             "user-1", "order_created", "Order", "Placed",
             {"order_id": "abc-123", "total": 99.99},
         )

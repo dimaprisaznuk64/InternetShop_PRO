@@ -164,8 +164,8 @@ async def checkout(
         email_service.send_order_confirmation,
         current_user.email, order.id, f"${float(order.total):.2f}",
     )
-    notification_service.create(
-        current_user.id, "order_created",
+    await notification_service.create(
+        db, current_user.id, "order_created",
         "Order placed",
         f"Your order #{order.id[:8]} for ${float(order.total):.2f} has been placed.",
         {"order_id": order.id},
@@ -278,8 +278,8 @@ async def update_order_status(
             email_service.send_order_status_change,
             order_user.email, order.id, status_label,
         )
-        notification_service.create(
-            order_user.id, f"order_{data.status}",
+        await notification_service.create(
+            db, order_user.id, f"order_{data.status}",
             f"Order status: {status_label}",
             f"Your order #{order.id[:8]} is now {status_label}.",
             {"order_id": order.id, "status": data.status},

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+import { getApiErrorMessage } from "../../api/client";
 
 export function RegisterPage() {
   const { register } = useAuth();
@@ -31,8 +32,8 @@ export function RegisterPage() {
     try {
       await register(email, username, password);
       navigate("/");
-    } catch {
-      setError("Registration failed — email or username may already be taken");
+    } catch (err: unknown) {
+      setError(getApiErrorMessage(err, "Registration failed — email or username may already be taken"));
     } finally {
       setLoading(false);
     }

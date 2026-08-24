@@ -70,8 +70,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
   };
 
   const removeItem = async (itemId: string) => {
-    const data = await cartApi.removeItem(itemId);
-    setCart(data);
+    await cartApi.removeItem(itemId);
+    await fetchCart();
   };
 
   const clear = async () => {

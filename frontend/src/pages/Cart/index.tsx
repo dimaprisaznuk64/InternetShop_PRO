@@ -39,8 +39,8 @@ export function CartPage() {
         {cart.items.map((item) => (
           <div key={item.id} className="cart-item">
             <Link to={`/catalog/${item.product_id}`} className="cart-item__image">
-              {item.product?.images?.[0]?.url ? (
-                <img src={item.product.images[0].url} alt={item.product?.name ?? ""} />
+              {item.product_image ? (
+                <img src={item.product_image} alt={item.product_name} />
               ) : (
                 <div className="cart-item__placeholder">No image</div>
               )}
@@ -48,25 +48,25 @@ export function CartPage() {
 
             <div className="cart-item__details">
               <Link to={`/catalog/${item.product_id}`} className="cart-item__name">
-                {item.product?.name ?? item.product_id}
+                {item.product_name}
               </Link>
-              {item.variant && (
-                <span className="cart-item__variant">{item.variant.name}</span>
+              {item.variant_name && (
+                <span className="cart-item__variant">{item.variant_name}</span>
               )}
               <span className="cart-item__sku">
-                SKU: {item.product?.sku ?? "—"}
+                SKU: {item.product_sku}
               </span>
             </div>
 
             <div className="cart-item__price">
-              ${Number(item.product?.price ?? 0).toFixed(2)}
+              ${Number(item.product_price).toFixed(2)}
             </div>
 
             <div className="cart-item__quantity">
               <input
                 type="number"
                 min={1}
-                max={item.product?.stock ?? 999}
+                max={item.product_stock}
                 value={item.quantity}
                 onChange={(e) =>
                   updateItem(item.id, Number(e.target.value))
@@ -75,7 +75,7 @@ export function CartPage() {
             </div>
 
             <div className="cart-item__total">
-              ${(Number(item.product?.price ?? 0) * item.quantity).toFixed(2)}
+              ${Number(item.line_total).toFixed(2)}
             </div>
 
             <button

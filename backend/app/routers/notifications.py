@@ -1,4 +1,6 @@
 from fastapi import APIRouter, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
+from app.database import get_db
 from app.utils.dependencies import get_current_user
 from app.services.background import notification_service, task_manager, cleanup_service
 from pydantic import BaseModel
@@ -15,7 +17,7 @@ class NotificationResponse(BaseModel):
     message: str
     is_read: bool
     metadata: Optional[dict] = None
-    created_at: str
+    created_at: str | None = None
 
 
 class NotificationListResponse(BaseModel):
@@ -28,9 +30,10 @@ class NotificationListResponse(BaseModel):
 async def list_notifications(
     unread_only: bool = False,
     current_user=Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
 ):
-    notifs = notification_service.get_by_user(current_user.id, unread_only)
-    unread = notification_service.get_unread_count(current_user.id)
+    notifs = await notification_service.get_by_user(db, current_user.id, unread_only)
+    unread = await notification_service.get_unread_count(db, current_user.id)
     return NotificationListResponse(
         notifications=[NotificationResponse(**n) for n in notifs],
         total=len(notifs),
@@ -42,8 +45,9 @@ async def list_notifications(
 async def mark_notification_read(
     notification_id: str,
     current_user=Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
 ):
-    found = notification_service.mark_read(current_user.id, notification_id)
+    found = await notification_service.mark_read(db, current_user.id, notification_id)
     if not found:
         return {"error": "Notification not found"}
     return {"status": "ok"}
@@ -52,8 +56,9 @@ async def mark_notification_read(
 @router.post("/read-all")
 async def mark_all_read(
     current_user=Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
 ):
-    count = notification_service.mark_all_read(current_user.id)
+    count = await notification_service.mark_all_read(db, current_user.id)
     return {"marked_read": count}
 
 
@@ -61,8 +66,9 @@ async def mark_all_read(
 async def delete_notification(
     notification_id: str,
     current_user=Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
 ):
-    found = notification_service.delete(current_user.id, notification_id)
+    found = await notification_service.delete(db, current_user.id, notification_id)
     if not found:
         return {"error": "Notification not found"}
     return {"status": "ok"}

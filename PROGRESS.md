@@ -4,27 +4,32 @@
 
 ## Останнє оновлення
 
-- Дата: 2026-08-21
-- Стан: **Уроки 75–76 ЗАВЕРШЕНІ. InternetShop_PRO v1.0.0 🚀**
-  Урок 75: повний ручний прогін через API (19 блоків) + багфікси + prod-compose
-  верифікація + скріншоти + README фінал.
-  Урок 76: version 1.0.0, фінальний коміт, тег v1.0.0.
-  Знайдено і виправлено 7 проблем разом:
-  1. checkout ігнорував promo_code → валідація + orders.discount (міграція 002) + used_count++ під row-lock
-  2. WEBHOOK_SECRET не був заданий → доданий в env-приклади; у prod fail-closed
-  3. webhook без idempotency → guard проти дублів email/нотифікацій
-  4. reviews без перевірки покупки → is_verified_purchase (міграція 002)
-  5. моделі DateTime без timezone → 500 на живому Postgres; вирівняно з timestamptz БД
-  6. redis-prod.conf: неіснуюча директива auto-aof-rewrite-size → min-size;
-     protected-mode блокував Docker-мережу → no + порти postgres/redis не публікуються в прод (!override [])
-  7. DATABASE_URL мав окремий пароль від POSTGRES_PASSWORD → тепер збирається compose з POSTGRES_*
-     змінних (одне джерело правди); entrypoint.sh exec "$@" + CMD у Dockerfile — celery worker/beat
-     реально запускались як uvicorn; celery healthcheck через inspect ping
-  Прод-верифікація: rate limit 429 після 5 логінів, HSTS, webhook fail-closed,
-  redis connected, celery connected, frontend 200.
-  **1087 backend тестів** + **82 frontend тести**.
-- **Як продовжити:** проєкт готовий до публікації. GitHub: створити репо →
-  `git remote add origin <url>` → `git push -u origin master --tags` (власнор).
+- Дата: 2026-08-24
+- Стан: **Post-release bugfix round v1.0.x. 9 фіксів за зовнішнім аудитом.**
+  Критичні:
+  1. Кошик: POST/PUT /api/cart/items тепер повертають ПОВНИЙ CartResponse (а не один item) +
+     поля product_image/product_stock/variant_name; прибраний N+1 (пакетне завантаження
+     продуктів/зображень/варіантів); фронт (типи, CartPage, CartContext) переведений на плоский
+     контракт; removeItem/clear роблять refetch замість setCart(204 empty).
+  2. Refresh token: фронт шле JSON body {refresh_token} замість query-param (client.ts + auth.ts).
+  3. DELETE /api/profile: явне каскадне прибирання payments→order_items→orders→reviews→favorites→
+     notifications→carts→cart_items перед видаленням юзера; глобальний IntegrityError handler → 409.
+  Високі/середні:
+  4. Username uniqueness у register + update_profile → AlreadyExistsError (409).
+  5. sort_by whitelist (created_at/updated_at/name/price/stock/brand) — інше значення не падає в getattr.
+  6. TrustedHostMiddleware підключений, якщо ALLOWED_HOSTS != "*".
+  7. Фронт: getApiErrorMessage() читає err.response.data.detail → юзер бачить текст бекенда.
+  8. Notifications → PostgreSQL: NotificationService переписаний на async DB-backed (модель
+     Notification нарешті використовується); CleanupService реально чистить прочитані >30 днів;
+     НОВА МІГРАЦІЯ 003_add_notifications_table (таблиці не існувало на живому PG!).
+  9. README: 1071→1087, "ILIKE + full-text" → чесний ILIKE-only.
+  Тести: **1087 backend** (оновлені test_cart/test_owasp/test_integration/test_business_logic/
+  test_background) + **82 frontend** (оновлені Cart mocks). tsc + oxlint чисто.
+  Жива верифікація: register 201, welcome notification у БД, refresh JSON body OK,
+  POST /api/cart/items повертає повний кошик, health: redis+celery connected, frontend 200.
+- **Як продовжити:** з-поміж відкладених: Celery Beat healthcheck (inspect ping не валідний для beat),
+  Redis-based token blacklist + rate limiter, expires_at → DateTime(timezone=True) + міграція,
+  review policy рішення (блокувати без покупки чи ні), simulated email у README.
 - Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`
 
 ## Roadmap (76 уроків)

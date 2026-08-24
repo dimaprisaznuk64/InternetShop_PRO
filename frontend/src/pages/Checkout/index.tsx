@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ordersApi, promoApi } from "../../api";
+import { getApiErrorMessage } from "../../api/client";
 import { useCart } from "../../contexts/CartContext";
 
 export function CheckoutPage() {
@@ -46,8 +47,7 @@ export function CheckoutPage() {
       });
       navigate("/orders");
     } catch (err: unknown) {
-      const msg =
-        err instanceof Error ? err.message : "Checkout failed";
+      const msg = getApiErrorMessage(err, "Checkout failed");
       setError(msg);
     } finally {
       setLoading(false);

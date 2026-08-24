@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+import { getApiErrorMessage } from "../../api/client";
 
 export function LoginPage() {
   const { login } = useAuth();
@@ -21,8 +22,8 @@ export function LoginPage() {
     try {
       await login(email, password);
       navigate(from, { replace: true });
-    } catch {
-      setError("Invalid email or password");
+    } catch (err: unknown) {
+      setError(getApiErrorMessage(err, "Invalid email or password"));
     } finally {
       setLoading(false);
     }

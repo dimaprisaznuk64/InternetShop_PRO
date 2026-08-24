@@ -83,7 +83,16 @@ async def list_products(
     if brand:
         stmt = stmt.where(Product.brand.ilike(f"%{brand}%"))
 
-    sort_column = getattr(Product, sort_by, Product.created_at)
+    allowed_sort_fields = {
+        "created_at",
+        "updated_at",
+        "name",
+        "price",
+        "stock",
+        "brand",
+    }
+    sort_field = sort_by if sort_by in allowed_sort_fields else "created_at"
+    sort_column = getattr(Product, sort_field)
     if sort_order == "asc":
         stmt = stmt.order_by(sort_column.asc())
     else:

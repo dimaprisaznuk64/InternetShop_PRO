@@ -153,18 +153,22 @@ export interface ProductVariantUpdate {
 // ─── Cart ──────────────────────────────────────────────────────────
 export interface CartItem {
   id: string;
-  cart_id: string;
   product_id: string;
   variant_id: string | null;
   quantity: number;
-  product?: Product;
-  variant?: ProductVariant;
+  product_name: string;
+  product_price: string;
+  product_sku: string;
+  product_image?: string | null;
+  product_stock: number;
+  variant_name?: string | null;
+  line_total: string;
 }
 
 export interface Cart {
   id: string;
-  user_id: string;
   items: CartItem[];
+  items_count: number;
   subtotal: string;
 }
 

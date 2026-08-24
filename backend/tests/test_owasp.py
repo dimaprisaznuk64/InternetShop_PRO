@@ -213,7 +213,7 @@ class TestIDOR_Cart:
         resp1 = await client.post("/api/cart/items", json={
             "product_id": "prod-ct1", "quantity": 1,
         }, headers=_h(t1))
-        item_id = resp1.json()["id"]
+        item_id = resp1.json()["items"][0]["id"]
 
         resp2 = await client.put(f"/api/cart/items/{item_id}",
             json={"quantity": 5}, headers=_h(t2),
@@ -233,7 +233,7 @@ class TestIDOR_Notifications:
         t1 = await _register_user(client, db_session, "u-nf1", "nf1@test.com")
         t2 = await _register_user(client, db_session, "u-nf2", "nf2@test.com")
 
-        n = notification_service.create("u-nf1", "test", "Title", "Message")
+        n = await notification_service.create(db_session, "u-nf1", "system", "Title", "Message")
 
         resp = await client.delete(f"/api/notifications/{n['id']}", headers=_h(t2))
         data = resp.json()

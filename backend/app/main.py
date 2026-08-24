@@ -1,5 +1,8 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
+from fastapi.responses import JSONResponse
+from sqlalchemy.exc import IntegrityError
 from contextlib import asynccontextmanager
 from app.config import get_settings
 from app.cache import init_redis, close_redis, get_redis
@@ -37,7 +40,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="Internet Shop PRO",
     description="Full-featured e-commerce API",
-    version="1.0.0",
+    version="1.0.1",
     debug=settings.DEBUG,
     lifespan=lifespan,
 )
@@ -51,6 +54,12 @@ app.add_middleware(
 )
 app.add_middleware(SecurityHeadersMiddleware)
 app.add_middleware(RateLimitMiddleware)
+
+if settings.ALLOWED_HOSTS.strip() != "*":
+    app.add_middleware(
+        TrustedHostMiddleware,
+        allowed_hosts=settings.allowed_hosts_list,
+    )
 
 app.include_router(auth_router)
 app.include_router(profile_router)
@@ -66,6 +75,14 @@ app.include_router(reviews_router)
 app.include_router(promo_router)
 app.include_router(admin_router)
 app.include_router(notifications_router)
+
+
+@app.exception_handler(IntegrityError)
+async def integrity_error_handler(request: Request, exc: IntegrityError):
+    return JSONResponse(
+        status_code=409,
+        content={"detail": "Operation conflicts with existing data"},
+    )
 
 
 @app.get("/health")

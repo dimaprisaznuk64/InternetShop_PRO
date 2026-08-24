@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from jose import JWTError
 from app.database import get_db
 from app.schemas.user import UserRegister, UserLogin, UserResponse, TokenResponse, RefreshRequest
-from app.repositories.user_repo import get_user_by_email, get_user_by_id, create_user
+from app.repositories.user_repo import get_user_by_email, get_user_by_username, get_user_by_id, create_user
 from app.utils.security import (
     hash_password,
     verify_password,
@@ -28,12 +28,16 @@ async def register(data: UserRegister, db: AsyncSession = Depends(get_db)):
     if existing:
         raise AlreadyExistsError("User with this email already exists")
 
+    existing_username = await get_user_by_username(db, data.username)
+    if existing_username:
+        raise AlreadyExistsError("User with this username already exists")
+
     hashed = hash_password(data.password)
     user = await create_user(db, data.email, data.username, hashed)
 
     await task_manager.submit(email_service.send_welcome, data.email, data.username)
-    notification_service.create(
-        user.id, "welcome", "Welcome!",
+    await notification_service.create(
+        db, user.id, "welcome", "Welcome!",
         f"Hello {data.username}, welcome to Internet Shop PRO!",
     )
 

@@ -5,7 +5,7 @@ Full-stack e-commerce platform: FastAPI + PostgreSQL + Redis + Celery on the bac
 > Built as a production-grade learning project — 76 structured lessons from architecture to final release.
 
 ![status](https://img.shields.io/badge/tests-1087%20backend%20%2B%2082%20frontend-brightgreen)
-![version](https://img.shields.io/badge/version-1.0.0-blue)
+![version](https://img.shields.io/badge/version-1.0.1-blue)
 ![python](https://img.shields.io/badge/python-3.12+-blue)
 ![fastapi](https://img.shields.io/badge/FastAPI-0.1xx-009688)
 ![react](https://img.shields.io/badge/react-19-61dafb)
@@ -15,7 +15,7 @@ Full-stack e-commerce platform: FastAPI + PostgreSQL + Redis + Celery on the bac
 
 **Storefront**
 - Catalog: categories / subcategories, products, images, variants (e.g. iPhone Black 128GB / White 256GB)
-- Search (ILIKE + full-text), filters (category, price, stock, brand), sorting & pagination
+- Search by name, SKU and description using PostgreSQL `ILIKE`, filters (category, price, stock, brand), sorting & pagination
 - Cart with stock validation, race-condition-safe checkout (row locking)
 - Orders with full lifecycle: `pending → paid → processing → shipped → completed / cancelled`
 - Payments: provider integration, webhooks with HMAC signature verification, idempotency
@@ -98,7 +98,7 @@ backend/app/
 | Database | PostgreSQL 16, Redis 7 |
 | Async jobs | Celery (worker + beat) |
 | Frontend | React 19, TypeScript, Vite, React Router 7, Axios |
-| Testing | Pytest (1071 tests), Vitest + Testing Library (82 tests) |
+| Testing | Pytest (1087 tests), Vitest + Testing Library (82 tests) |
 | DevOps | Docker Compose, Nginx, GitHub Actions, bash deploy scripts |
 
 ## Quick Start (Docker)

@@ -4,7 +4,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 from app.database import get_db
 from app.models.cart import Cart, CartItem
-from app.models.product import Product
+from app.models.product import Product, ProductVariant
 from app.schemas.cart import (
     CartItemAdd,
     CartItemUpdate,
@@ -31,14 +31,54 @@ async def _get_or_create_cart(user_id: str, db: AsyncSession) -> Cart:
 async def _build_cart_response(cart: Cart, db: AsyncSession) -> CartResponse:
     await db.refresh(cart, ["items"])
 
-    items = []
-    subtotal = 0
+    if not cart.items:
+        return CartResponse(
+            id=cart.id,
+            items=[],
+            items_count=0,
+            subtotal="0.00",
+        )
+
+    product_ids = {item.product_id for item in cart.items}
+    variant_ids = {
+        item.variant_id for item in cart.items if item.variant_id is not None
+    }
+
+    result = await db.execute(
+        select(Product)
+        .where(Product.id.in_(product_ids))
+        .options(selectinload(Product.images))
+    )
+    products_by_id = {p.id: p for p in result.scalars().all()}
+
+    variants_by_id: dict[str, ProductVariant] = {}
+    if variant_ids:
+        result = await db.execute(
+            select(ProductVariant).where(ProductVariant.id.in_(variant_ids))
+        )
+        variants_by_id = {v.id: v for v in result.scalars().all()}
+
+    items: list[CartItemResponse] = []
+    subtotal = 0.0
 
     for item in cart.items:
-        result = await db.execute(select(Product).where(Product.id == item.product_id))
-        product = result.scalar_one_or_none()
+        product = products_by_id.get(item.product_id)
         if not product:
             continue
+
+        image_url = next(
+            (img.url for img in sorted(
+                product.images,
+                key=lambda i: (not i.is_primary, i.position),
+            )),
+            None,
+        )
+
+        variant = (
+            variants_by_id.get(item.variant_id)
+            if item.variant_id is not None
+            else None
+        )
 
         price = float(product.price)
         line_total = price * item.quantity
@@ -52,6 +92,9 @@ async def _build_cart_response(cart: Cart, db: AsyncSession) -> CartResponse:
             product_name=product.name,
             product_price=str(product.price),
             product_sku=product.sku,
+            product_image=image_url,
+            product_stock=product.stock,
+            variant_name=variant.name if variant else None,
             line_total=f"{line_total:.2f}",
         ))
 
@@ -72,7 +115,7 @@ async def get_cart(
     return await _build_cart_response(cart, db)
 
 
-@router.post("/items", response_model=CartItemResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/items", response_model=CartResponse, status_code=status.HTTP_201_CREATED)
 async def add_to_cart(
     data: CartItemAdd,
     current_user=Depends(get_current_user),
@@ -116,22 +159,10 @@ async def add_to_cart(
     await db.commit()
     await db.refresh(item)
 
-    price = float(product.price)
-    line_total = price * item.quantity
-
-    return CartItemResponse(
-        id=item.id,
-        product_id=item.product_id,
-        variant_id=item.variant_id,
-        quantity=item.quantity,
-        product_name=product.name,
-        product_price=str(product.price),
-        product_sku=product.sku,
-        line_total=f"{line_total:.2f}",
-    )
+    return await _build_cart_response(cart, db)
 
 
-@router.put("/items/{item_id}", response_model=CartItemResponse)
+@router.put("/items/{item_id}", response_model=CartResponse)
 async def update_cart_item(
     item_id: str,
     data: CartItemUpdate,
@@ -160,19 +191,7 @@ async def update_cart_item(
     await db.commit()
     await db.refresh(item)
 
-    price = float(product.price)
-    line_total = price * item.quantity
-
-    return CartItemResponse(
-        id=item.id,
-        product_id=item.product_id,
-        variant_id=item.variant_id,
-        quantity=item.quantity,
-        product_name=product.name,
-        product_price=str(product.price),
-        product_sku=product.sku,
-        line_total=f"{line_total:.2f}",
-    )
+    return await _build_cart_response(cart, db)
 
 
 @router.delete("/items/{item_id}", status_code=status.HTTP_204_NO_CONTENT)

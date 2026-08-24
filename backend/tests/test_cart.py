@@ -62,8 +62,9 @@ async def test_add_to_cart(client, db_session):
     )
     assert response.status_code == 201
     data = response.json()
-    assert data["quantity"] == 2
-    assert data["line_total"] == "50.00"
+    assert data["items"][0]["quantity"] == 2
+    assert data["items"][0]["line_total"] == "50.00"
+    assert data["items_count"] == 2
 
     cart_resp = await client.get("/api/cart/", headers=headers)
     assert cart_resp.json()["items_count"] == 2
@@ -78,7 +79,8 @@ async def test_add_to_cart_increments(client, db_session):
     await client.post("/api/cart/items", json={"product_id": prod_id, "quantity": 1}, headers=headers)
     response = await client.post("/api/cart/items", json={"product_id": prod_id, "quantity": 3}, headers=headers)
     assert response.status_code == 201
-    assert response.json()["quantity"] == 4
+    assert response.json()["items"][0]["quantity"] == 4
+    assert response.json()["items_count"] == 4
 
 
 @pytest.mark.asyncio
@@ -104,7 +106,7 @@ async def test_update_cart_item(client, db_session):
         json={"product_id": prod_id, "quantity": 1},
         headers=headers,
     )
-    item_id = add_resp.json()["id"]
+    item_id = add_resp.json()["items"][0]["id"]
 
     response = await client.put(
         f"/api/cart/items/{item_id}",
@@ -112,8 +114,8 @@ async def test_update_cart_item(client, db_session):
         headers=headers,
     )
     assert response.status_code == 200
-    assert response.json()["quantity"] == 5
-    assert response.json()["line_total"] == "125.00"
+    assert response.json()["items"][0]["quantity"] == 5
+    assert response.json()["items"][0]["line_total"] == "125.00"
 
 
 @pytest.mark.asyncio
@@ -126,7 +128,7 @@ async def test_remove_cart_item(client, db_session):
         json={"product_id": prod_id, "quantity": 2},
         headers=headers,
     )
-    item_id = add_resp.json()["id"]
+    item_id = add_resp.json()["items"][0]["id"]
 
     response = await client.delete(f"/api/cart/items/{item_id}", headers=headers)
     assert response.status_code == 204

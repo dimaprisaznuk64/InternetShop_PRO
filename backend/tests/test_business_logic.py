@@ -232,7 +232,7 @@ class TestStockValidation:
         h = {"Authorization": f"Bearer {token}"}
         prod_id = await _make_product(db_session, stock=5)
         add_resp = await _add_to_cart(client, h, prod_id, qty=1)
-        item_id = add_resp.json()["id"]
+        item_id = add_resp.json()["items"][0]["id"]
         resp = await client.put(
             f"/api/cart/items/{item_id}",
             json={"quantity": 10},

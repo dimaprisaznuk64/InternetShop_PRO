@@ -24,9 +24,7 @@ export const authApi = {
 
   refresh: (refreshToken: string) =>
     api
-      .post<TokenResponse>("/api/auth/refresh", null, {
-        params: { token: refreshToken },
-      })
+      .post<TokenResponse>("/api/auth/refresh", { refresh_token: refreshToken })
       .then((r) => r.data),
 
   me: () =>

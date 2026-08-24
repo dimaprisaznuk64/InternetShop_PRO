@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { adminApi, categoriesApi } from "../../../api";
+import { getApiErrorMessage } from "../../../api/client";
 import type { Category, CategoryCreate, CategoryUpdate } from "../../../types";
 
 export function AdminCategoriesPage() {
@@ -71,7 +72,7 @@ export function AdminCategoriesPage() {
       setShowModal(false);
       fetchCategories();
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Save failed";
+      const msg = getApiErrorMessage(err, "Save failed");
       setFormError(msg);
     } finally {
       setSaving(false);

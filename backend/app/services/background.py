@@ -93,68 +93,132 @@ class EmailService:
 
 
 class NotificationService:
-    """In-memory notification store (replaced by DB in production)."""
+    """DB-backed notification store (PostgreSQL via SQLAlchemy)."""
 
-    def __init__(self):
-        self._notifications: dict[str, list[dict]] = {}
+    @staticmethod
+    def _serialize(notif) -> dict:
+        metadata = None
+        if notif.metadata_json:
+            try:
+                metadata = json.loads(notif.metadata_json)
+            except (TypeError, ValueError):
+                metadata = None
+        ntype = (
+            notif.type.value if hasattr(notif.type, "value") else notif.type
+        )
+        return {
+            "id": notif.id,
+            "user_id": notif.user_id,
+            "type": ntype,
+            "title": notif.title,
+            "message": notif.message,
+            "is_read": notif.is_read,
+            "metadata": metadata,
+            "created_at": (
+                notif.created_at.isoformat() if notif.created_at else None
+            ),
+        }
 
-    def create(
+    async def create(
         self,
+        db,
         user_id: str,
         ntype: str,
         title: str,
         message: str,
         metadata: Optional[dict] = None,
     ) -> dict:
-        import uuid
+        from app.models.notification import Notification, NotificationType
 
-        notif = {
-            "id": str(uuid.uuid4()),
-            "user_id": user_id,
-            "type": ntype,
-            "title": title,
-            "message": message,
-            "is_read": False,
-            "metadata": metadata,
-            "created_at": datetime.now(UTC).isoformat(),
-        }
-        self._notifications.setdefault(user_id, []).append(notif)
+        try:
+            ntype_enum = NotificationType(ntype)
+        except ValueError:
+            ntype_enum = NotificationType.system
+
+        notif = Notification(
+            user_id=user_id,
+            type=ntype_enum,
+            title=title,
+            message=message,
+            metadata_json=json.dumps(metadata) if metadata else None,
+        )
+        db.add(notif)
+        await db.commit()
+        await db.refresh(notif)
         logger.info("NOTIFICATION → %s | %s: %s", user_id, ntype, title)
-        return notif
+        return self._serialize(notif)
 
-    def get_by_user(
-        self, user_id: str, unread_only: bool = False
+    async def get_by_user(
+        self, db, user_id: str, unread_only: bool = False
     ) -> list[dict]:
-        notifs = self._notifications.get(user_id, [])
+        from sqlalchemy import select
+        from app.models.notification import Notification
+
+        stmt = select(Notification).where(Notification.user_id == user_id)
         if unread_only:
-            return [n for n in notifs if not n["is_read"]]
-        return notifs
+            stmt = stmt.where(Notification.is_read.is_(False))
+        stmt = stmt.order_by(Notification.created_at.desc())
+        result = await db.execute(stmt)
+        return [self._serialize(n) for n in result.scalars().all()]
 
-    def mark_read(self, user_id: str, notification_id: str) -> bool:
-        for n in self._notifications.get(user_id, []):
-            if n["id"] == notification_id:
-                n["is_read"] = True
-                return True
-        return False
+    async def get_unread_count(self, db, user_id: str) -> int:
+        from sqlalchemy import select, func
+        from app.models.notification import Notification
 
-    def mark_all_read(self, user_id: str) -> int:
-        count = 0
-        for n in self._notifications.get(user_id, []):
-            if not n["is_read"]:
-                n["is_read"] = True
-                count += 1
-        return count
+        result = await db.execute(
+            select(func.count())
+            .select_from(Notification)
+            .where(
+                Notification.user_id == user_id,
+                Notification.is_read.is_(False),
+            )
+        )
+        return result.scalar_one()
 
-    def delete(self, user_id: str, notification_id: str) -> bool:
-        notifs = self._notifications.get(user_id, [])
-        for i, n in enumerate(notifs):
-            if n["id"] == notification_id:
-                notifs.pop(i)
-                return True
-        return False
+    async def mark_read(self, db, user_id: str, notification_id: str) -> bool:
+        from sqlalchemy import select
+        from app.models.notification import Notification
 
-    def get_unread_count(self, user_id: str) -> int:
-        return len([n for n in self._notifications.get(user_id, []) if not n["is_read"]])
+        result = await db.execute(
+            select(Notification).where(
+                Notification.id == notification_id,
+                Notification.user_id == user_id,
+            )
+        )
+        notif = result.scalar_one_or_none()
+        if not notif:
+            return False
+        notif.is_read = True
+        await db.commit()
+        return True
+
+    async def mark_all_read(self, db, user_id: str) -> int:
+        from sqlalchemy import update
+        from app.models.notification import Notification
+
+        result = await db.execute(
+            update(Notification)
+            .where(
+                Notification.user_id == user_id,
+                Notification.is_read.is_(False),
+            )
+            .values(is_read=True)
+        )
+        await db.commit()
+        return result.rowcount or 0
+
+    async def delete(self, db, user_id: str, notification_id: str) -> bool:
+        from sqlalchemy import delete as sa_delete
+        from app.models.notification import Notification
+
+        result = await db.execute(
+            sa_delete(Notification).where(
+                Notification.id == notification_id,
+                Notification.user_id == user_id,
+            )
+        )
+        await db.commit()
+        return (result.rowcount or 0) > 0
 
 
 class BackgroundTaskManager:
@@ -315,8 +379,23 @@ class CleanupService:
         }
 
         # Cleanup old read notifications (> 30 days)
-        # This is a placeholder — in production, use DB queries
-        result["notifications_cleaned"] = 0
+        try:
+            from sqlalchemy import delete
+            from app.database import async_session
+            from app.models.notification import Notification
+
+            cutoff = datetime.now(UTC) - timedelta(days=30)
+            async with async_session() as session:
+                db_result = await session.execute(
+                    delete(Notification).where(
+                        Notification.is_read.is_(True),
+                        Notification.created_at < cutoff,
+                    )
+                )
+                await session.commit()
+                result["notifications_cleaned"] = db_result.rowcount or 0
+        except Exception as e:
+            logger.warning("Notification cleanup failed: %s", e)
 
         self._cleanup_log.append(result)
         if len(self._cleanup_log) > 100:
