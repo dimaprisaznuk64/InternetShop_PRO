@@ -52,8 +52,11 @@ async def create_promo_code(
     payload = data.model_dump()
     if payload.get("expires_at") is not None:
         exp = payload["expires_at"]
-        if exp.tzinfo is not None:
-            payload["expires_at"] = exp.astimezone(timezone.utc).replace(tzinfo=None)
+        if exp.tzinfo is None:
+            exp = exp.replace(tzinfo=timezone.utc)
+        else:
+            exp = exp.astimezone(timezone.utc)
+        payload["expires_at"] = exp
 
     promo = PromoCode(**payload)
     db.add(promo)

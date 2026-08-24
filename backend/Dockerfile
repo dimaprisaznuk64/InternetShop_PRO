@@ -20,6 +20,7 @@ RUN addgroup --system appuser && adduser --system --ingroup appuser appuser
 COPY --from=builder /install /usr/local
 
 COPY alembic.ini .
+COPY pyproject.toml .
 COPY alembic/ alembic/
 COPY app/ app/
 COPY entrypoint.sh .

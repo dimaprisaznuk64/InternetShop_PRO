@@ -265,6 +265,18 @@ class BackgroundTaskManager:
         self._workers.clear()
         logger.info("Background task manager stopped")
 
+    async def _ensure_fallback_workers(self):
+        """Start asyncio workers on demand (e.g. Celery is up but the
+        submitted callable has no mapped Celery task)."""
+        if not self._workers:
+            for i in range(self._max_workers):
+                worker = asyncio.create_task(self._worker(f"worker-{i}"))
+                self._workers.append(worker)
+            logger.info(
+                "Background task manager started %d asyncio workers (fallback)",
+                self._max_workers,
+            )
+
     async def submit(
         self, func: Callable, *args, **kwargs
     ) -> str:
@@ -285,7 +297,8 @@ class BackgroundTaskManager:
                 except Exception as e:
                     logger.warning("Celery submit failed, falling back to asyncio: %s", e)
 
-        # Fallback to asyncio queue
+        # Fallback to asyncio queue (workers started lazily)
+        await self._ensure_fallback_workers()
         await self._queue.put((task_id, func, args, kwargs))
         return task_id
 

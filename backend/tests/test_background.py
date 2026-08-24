@@ -1,11 +1,24 @@
 import pytest
 import asyncio
+import time
 from app.services.background import (
     EmailService,
     NotificationService,
     BackgroundTaskManager,
     CleanupService,
 )
+
+
+async def _wait_for_status(mgr, task_id, status: str, timeout: float = 5.0):
+    """Poll task result instead of relying on a fixed sleep (CI-safe)."""
+    deadline = time.monotonic() + timeout
+    result = None
+    while time.monotonic() < deadline:
+        result = mgr.get_result(task_id)
+        if result is not None and result.status == status:
+            return result
+        await asyncio.sleep(0.05)
+    return result
 
 
 @pytest.fixture
@@ -144,9 +157,8 @@ class TestBackgroundTaskManager:
             return x * 2
 
         task_id = await mgr.submit(dummy, 5)
-        await asyncio.sleep(0.5)
+        result = await _wait_for_status(mgr, task_id, "completed")
 
-        result = mgr.get_result(task_id)
         assert result is not None
         assert result.status == "completed"
         assert result.result == 10
@@ -162,9 +174,8 @@ class TestBackgroundTaskManager:
             raise ValueError("boom")
 
         task_id = await mgr.submit(failing)
-        await asyncio.sleep(0.5)
+        result = await _wait_for_status(mgr, task_id, "failed")
 
-        result = mgr.get_result(task_id)
         assert result is not None
         assert result.status == "failed"
         assert "boom" in result.error

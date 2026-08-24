@@ -5,31 +5,32 @@
 ## Останнє оновлення
 
 - Дата: 2026-08-24
-- Стан: **Post-release bugfix round v1.0.x. 9 фіксів за зовнішнім аудитом.**
-  Критичні:
-  1. Кошик: POST/PUT /api/cart/items тепер повертають ПОВНИЙ CartResponse (а не один item) +
-     поля product_image/product_stock/variant_name; прибраний N+1 (пакетне завантаження
-     продуктів/зображень/варіантів); фронт (типи, CartPage, CartContext) переведений на плоский
-     контракт; removeItem/clear роблять refetch замість setCart(204 empty).
-  2. Refresh token: фронт шле JSON body {refresh_token} замість query-param (client.ts + auth.ts).
-  3. DELETE /api/profile: явне каскадне прибирання payments→order_items→orders→reviews→favorites→
-     notifications→carts→cart_items перед видаленням юзера; глобальний IntegrityError handler → 409.
-  Високі/середні:
-  4. Username uniqueness у register + update_profile → AlreadyExistsError (409).
-  5. sort_by whitelist (created_at/updated_at/name/price/stock/brand) — інше значення не падає в getattr.
-  6. TrustedHostMiddleware підключений, якщо ALLOWED_HOSTS != "*".
-  7. Фронт: getApiErrorMessage() читає err.response.data.detail → юзер бачить текст бекенда.
-  8. Notifications → PostgreSQL: NotificationService переписаний на async DB-backed (модель
-     Notification нарешті використовується); CleanupService реально чистить прочитані >30 днів;
-     НОВА МІГРАЦІЯ 003_add_notifications_table (таблиці не існувало на живому PG!).
-  9. README: 1071→1087, "ILIKE + full-text" → чесний ILIKE-only.
-  Тести: **1087 backend** (оновлені test_cart/test_owasp/test_integration/test_business_logic/
-  test_background) + **82 frontend** (оновлені Cart mocks). tsc + oxlint чисто.
-  Жива верифікація: register 201, welcome notification у БД, refresh JSON body OK,
-  POST /api/cart/items повертає повний кошик, health: redis+celery connected, frontend 200.
-- **Як продовжити:** з-поміж відкладених: Celery Beat healthcheck (inspect ping не валідний для beat),
-  Redis-based token blacklist + rate limiter, expires_at → DateTime(timezone=True) + міграція,
-  review policy рішення (блокувати без покупки чи ні), simulated email у README.
+- Стан: **Фінальний production-polish v1.0.1. Чеклист аудиту закритий повністю.**
+  1. expires_at → sa.DateTime(timezone=True) (модель promo.py); create промокода тримає tz-aware
+      UTC; міграція 004_promo_expires_at_timestamptz (ALTER ... USING ... AT TIME ZONE 'UTC')
+      застосована до живого PG — колонка тепер `timestamp with time zone`, alembic current = 004.
+  2. Celery Beat healthcheck: /proc/[0-9]*/cmdline перевірка живого процесу (точний збіг аргументу
+      b'beat', healthcheck сам себе не зловживає) у docker-compose.prod.yml; у живому merged-стеку
+      beat/worker/frontend/backend/postgres/redis — ВСІ healthy.
+  3. Review policy зафіксована в README як свідома модель: відгуки дозволені будь-якому
+      авторизованому, покупець отримує бейдж Verified Purchase.
+  4. Прод-hardening: /docs, /redoc, /openapi.json вимкнені при DEBUG=false (main.py).
+  5. background.py: submit() ліниво стартує asyncio-fallback воркерів, якщо Celery доступний,
+      але колбек не має мапінгу на Celery-таску (раніше задача зависала в pending назавжди);
+      test_background переписаний на polling _wait_for_status замість sleep(0.5).
+  Верифікація:
+  - Backend suite на хості: **1087 passed** (~2.5 хв).
+  - Backend suite У DOCKER (fresh prod-image + tests скопійовані всередину): **365/365 app-logic
+    green** (env для тестів: DEBUG=true ALLOWED_HOSTS='*' WEBHOOK_SECRET=''); решта 722 тести
+    deploy/docker читають файли репозиторію з хоста і зелені на хості (в image їх немає by design).
+    ВАЖЛИВО: pyproject.toml (asyncio_mode=auto) тепер COPY в image, інакше pytest-asyncio strict
+    ламає async-фікстури.
+  - Frontend: **82 passed**, tsc чисто, oxlint чисто (2 відомих fast-refresh warnings).
+  - DEBUG=false smoke: /health 200 (redis+celery connected), webhook без HMAC → 400 fail-closed,
+    security headers (nosniff/DENY/CSP/HSTS) присутні, docs/openapi/redoc → 404.
+  - Скріншоти docs/screenshots (4 PNG) на місці, підключені в README.
+- Рішення по відкладеному (v1.1.0): Redis-based token blacklist + rate limiter; simulated email.
+- **Як продовжити:** створити репо на GitHub і запушити; далі v1.1.0 (blacklist/rate limiter/email).
 - Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`
 
 ## Roadmap (76 уроків)

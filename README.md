@@ -19,7 +19,9 @@ Full-stack e-commerce platform: FastAPI + PostgreSQL + Redis + Celery on the bac
 - Cart with stock validation, race-condition-safe checkout (row locking)
 - Orders with full lifecycle: `pending → paid → processing → shipped → completed / cancelled`
 - Payments: provider integration, webhooks with HMAC signature verification, idempotency
-- Favorites, reviews with verified-purchase badge & moderation, promo codes (percentage / fixed, expiry, usage limits, min order amount)
+- Favorites, reviews & moderation. Review policy: any registered user may post a
+  review; purchases are detected automatically and shown as a **Verified Purchase** badge
+- Promo codes (percentage / fixed, expiry, usage limits, min order amount)
 - Delivery methods & shipping cost calculation
 
 **Accounts & Security**

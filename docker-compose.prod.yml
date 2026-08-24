@@ -85,8 +85,11 @@ services:
     environment:
       - DEBUG=false
     command: celery -A app.celery_app beat -l info
+    # Beat has no network endpoint to ping (inspect ping probes workers).
+    # Instead: assert a real beat process exists (standalone argv element,
+    # so the healthcheck's own shell cannot false-positive).
     healthcheck:
-      test: ["CMD-SHELL", "celery -A app.celery_app inspect ping"]
+      test: ["CMD-SHELL", "python -c \"import glob; assert any(a == b'beat' for f in glob.glob('/proc/[0-9]*/cmdline') for a in open(f,'rb').read().split(b'\\x00'))\""]
       interval: 30s
       timeout: 10s
       retries: 3

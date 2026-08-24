@@ -37,11 +37,18 @@ async def lifespan(app: FastAPI):
     await close_redis()
 
 
+_docs = "/docs" if settings.DEBUG else None
+_redoc = "/redoc" if settings.DEBUG else None
+_openapi = "/openapi.json" if settings.DEBUG else None
+
 app = FastAPI(
     title="Internet Shop PRO",
     description="Full-featured e-commerce API",
     version="1.0.1",
     debug=settings.DEBUG,
+    docs_url=_docs,
+    redoc_url=_redoc,
+    openapi_url=_openapi,
     lifespan=lifespan,
 )
 
