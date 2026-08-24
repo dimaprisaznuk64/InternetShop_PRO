@@ -1,19 +1,20 @@
 name: Deploy
 
+# Template for a real VPS. Runs MANUALLY until SERVER_* secrets exist
+# (repo Settings -> Environments -> production). To re-enable auto-deploy
+# after CI, add back:
+#   workflow_run:
+#     workflows: ["CI"]
+#     types: [completed]
+#     branches: [master]
 on:
-  workflow_run:
-    workflows: ["CI"]
-    types:
-      - completed
-    branches: [main, master]
-
   workflow_dispatch:
 
 jobs:
   deploy:
     name: Deploy to Production
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
+    if: ${{ github.event_name == 'workflow_dispatch' }}
     environment: production
 
     steps:
