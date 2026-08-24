@@ -25,7 +25,7 @@ Full-stack e-commerce platform: FastAPI + PostgreSQL + Redis + Celery on the bac
 - Delivery methods & shipping cost calculation
 
 **Accounts & Security**
-- JWT auth: access + refresh tokens, `jti`, token blacklist, token-type validation, refresh rotation with reuse detection
+- JWT auth: access + refresh tokens, `jti`, refresh-token blacklist (in-process, single instance; Redis-backed — у плані v1.1.0), token-type validation, refresh rotation with reuse detection
 - RBAC: user / manager / admin
 - Rate limiting (login 5/min, register 3/min, password change 3/5min, 100/min default)
 - Security headers (CSP, HSTS), CORS allow-list

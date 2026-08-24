@@ -5,30 +5,31 @@
 ## Останнє оновлення
 
 - Дата: 2026-08-24
-- Стан: **Фінальний production-polish v1.0.1. Чеклист аудиту закритий повністю.**
-  1. expires_at → sa.DateTime(timezone=True) (модель promo.py); create промокода тримає tz-aware
-      UTC; міграція 004_promo_expires_at_timestamptz (ALTER ... USING ... AT TIME ZONE 'UTC')
-      застосована до живого PG — колонка тепер `timestamp with time zone`, alembic current = 004.
-  2. Celery Beat healthcheck: /proc/[0-9]*/cmdline перевірка живого процесу (точний збіг аргументу
-      b'beat', healthcheck сам себе не зловживає) у docker-compose.prod.yml; у живому merged-стеку
-      beat/worker/frontend/backend/postgres/redis — ВСІ healthy.
-  3. Review policy зафіксована в README як свідома модель: відгуки дозволені будь-якому
-      авторизованому, покупець отримує бейдж Verified Purchase.
-  4. Прод-hardening: /docs, /redoc, /openapi.json вимкнені при DEBUG=false (main.py).
-  5. background.py: submit() ліниво стартує asyncio-fallback воркерів, якщо Celery доступний,
-      але колбек не має мапінгу на Celery-таску (раніше задача зависала в pending назавжди);
-      test_background переписаний на polling _wait_for_status замість sleep(0.5).
-  Верифікація:
-  - Backend suite на хості: **1087 passed** (~2.5 хв).
-  - Backend suite У DOCKER (fresh prod-image + tests скопійовані всередину): **365/365 app-logic
-    green** (env для тестів: DEBUG=true ALLOWED_HOSTS='*' WEBHOOK_SECRET=''); решта 722 тести
-    deploy/docker читають файли репозиторію з хоста і зелені на хості (в image їх немає by design).
-    ВАЖЛИВО: pyproject.toml (asyncio_mode=auto) тепер COPY в image, інакше pytest-asyncio strict
-    ламає async-фікстури.
-  - Frontend: **82 passed**, tsc чисто, oxlint чисто (2 відомих fast-refresh warnings).
-  - DEBUG=false smoke: /health 200 (redis+celery connected), webhook без HMAC → 400 fail-closed,
-    security headers (nosniff/DENY/CSP/HSTS) присутні, docs/openapi/redoc → 404.
-  - Скріншоти docs/screenshots (4 PNG) на місці, підключені в README.
+- Стан: **RELEASE v1.0.1. Фінальна перевірка пройдена повністю.**
+  Фінальний чеклист перед тегом:
+  1. Production compose (DEBUG=false): postgres/redis/backend/celery-worker/celery-beat/frontend
+      (= nginx 1.27, статика + api-proxy) — ВСІ healthy. Пофікшено IPv4 healthcheck фронта
+      (busybox wget резолвить localhost у ::1, а nginx слухає лише 0.0.0.0 → wget 127.0.0.1).
+  2. Повний suite У DOCKER/production-подібному середовищі:
+      - backend **1087 passed** у прод-образі (git archive → /repo, щоб infra-тести бачили
+        compose/nginx/env файли; env прогону: DEBUG=true ALLOWED_HOSTS='*' WEBHOOK_SECRET='');
+      - frontend **82 passed** у node:22-alpine контейнері;
+      - дубль на хості: backend 1087, frontend 82, tsc + oxlint чисто.
+  3. E2E smoke проти живого прод-стеку (backend/scripts/smoke_e2e.py): register → login → me →
+      duplicate-register 409 → catalog → product detail → ILIKE search → admin login → promo
+      create (з tz-aware expires_at) → promo apply → cart add (повний контракт) → checkout з
+      промо → payment create → webhook БЕЗ підпису 400 fail-closed → webhook з HMAC 200 →
+      order status=paid → webhook з поганим підписом 400 → review create → reviews list
+      (модерація by design) → notifications [welcome, order_created, order_paid] → logout 204 →
+      reuse refresh-токена після logout відхилено (400). РЕЗУЛЬТАТ: ALL STEPS PASSED.
+  Знайдено й пофікшено під час фіналу:
+  - promo.py модель: created_at БЕЗ явного sa.DateTime(timezone=True) → SQLAlchemy виводив
+    naive тип → asyncpg DataError на живому PG (SQLite приховував!). Тепер усі datetime-колонки
+    всіх моделей мають явний timezone=True (авто-перевірка grep).
+  - frontend/Dockerfile healthcheck → http://127.0.0.1/ (IPv4).
+  - README: blacklist чесно названий in-process (Redis-backed → v1.1.0).
+  Інструменти: scripts/smoke_e2e.py — відтворюваний smoke (env: WEBHOOK_SECRET, ADMIN_EMAIL,
+  ADMIN_PASSWORD); rate limiter на register — реальний захист, між прогонами чекати ~1 хв.
 - Рішення по відкладеному (v1.1.0): Redis-based token blacklist + rate limiter; simulated email.
 - **Як продовжити:** створити репо на GitHub і запушити; далі v1.1.0 (blacklist/rate limiter/email).
 - Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`

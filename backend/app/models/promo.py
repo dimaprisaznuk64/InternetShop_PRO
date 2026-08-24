@@ -33,5 +33,6 @@ class PromoCode(Base):
     )
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, server_default=sa.text("true"))
     created_at: Mapped[datetime] = mapped_column(
-        default=lambda: datetime.now(UTC)
+        sa.DateTime(timezone=True),
+        default=lambda: datetime.now(UTC),
     )
