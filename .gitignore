@@ -27,6 +27,12 @@ logs/
 .pytest_cache/
 .ruff_cache/
 *.db
+*.sqlite
+*.sqlite3
+
+# Node (root-level safety; frontend has its own entries)
+node_modules/
+dist/
 
 # Uploads
 uploads/
@@ -37,3 +43,7 @@ frontend/node_modules/
 frontend/dist/
 frontend/.env
 frontend/.env.local
+
+# Frontend coverage / build caches (safety)
+frontend/coverage/
+*.tsbuildinfo

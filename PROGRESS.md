@@ -5,7 +5,13 @@
 ## Останнє оновлення
 
 - Дата: 2026-08-24 (post-release hygiene)
-- Стан: **v1.0.1 + security-hygiene фікси після зовнішнього аудиту GitHub.**
+- Стан: **v1.0.1 + security-hygiene фікси + автоматизований release-check.**
+  0. НОВЕ: `release-check.ps1` + `RELEASE_CHECKLIST.md` — стандарт релізу за алгоритмом
+      власника проєкту: forbidden files → secret scan → branch → версії → pytest/vitest/
+      tsc/lint/build → docker compose config (dev+prod). Вердикт GREEN/RED.
+      Запуск: `powershell -ExecutionPolicy Bypass -File release-check.ps1 [-SkipTests]`.
+      Повний прогін на поточному стані: GREEN (1087 backend, frontend 4кроки, compose ок).
+      PS5.1-ньюанс: скрипт мусить бути UTF-8 з BOM; нативні команди під Continue-EAP.
   1. `.env.docker` прибраний з git (залишений локально); замість нього в репо
       `.env.docker.example` — шаблон з плейсхолдерами. .gitignore: `!.env.docker`
       → `!.env.docker.example`. README Quick Start: `cp .env.docker.example .env.docker`.
