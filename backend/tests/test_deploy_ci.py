@@ -146,17 +146,19 @@ class TestDeployWorkflow:
                 return val if isinstance(val, dict) else {}
         return {}
 
-    def test_triggers_on_workflow_run(self):
+    def test_manual_until_vps_secrets_exist(self):
+        # auto-deploy stays OFF until SERVER_* secrets / a real VPS exist;
+        # the commented-out workflow_run block documents how to enable it
         on = self._get_on()
-        assert "workflow_run" in on
+        assert "workflow_dispatch" in on
+        assert "workflow_run" not in on
 
     def test_triggers_on_dispatch(self):
         on = self._get_on()
         assert "workflow_dispatch" in on
 
-    def test_depends_on_ci(self):
-        wr = self._get_on().get("workflow_run", {})
-        assert "CI" in wr.get("workflows", [])
+    def test_auto_deploy_option_documented(self):
+        assert "workflow_run" in self.content
 
     def test_has_deploy_job(self):
         jobs = self.wf.get("jobs", {})
@@ -207,13 +209,14 @@ class TestNotifyWorkflow:
                 return val if isinstance(val, dict) else {}
         return {}
 
-    def test_triggers_on_workflow_run(self):
+    def test_manual_until_telegram_secrets_exist(self):
+        # Notify is manual for now: needs TELEGRAM_* secrets and a real Deploy run
         on = self._get_on()
-        assert "workflow_run" in on
+        assert "workflow_dispatch" in on
+        assert "workflow_run" not in on
 
-    def test_depends_on_deploy(self):
-        wr = self._get_on().get("workflow_run", {})
-        assert "Deploy" in wr.get("workflows", [])
+    def test_documents_deploy_dependency(self):
+        assert "Deploy" in self.content
 
     def test_has_telegram_step(self):
         assert "telegram" in self.content.lower()

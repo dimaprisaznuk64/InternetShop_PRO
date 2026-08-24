@@ -51,6 +51,8 @@ jobs:
           REDIS_URL: redis://localhost:6379/0
         run: |
           cd backend
+          # infra tests read ./.env.docker (git-ignored); validate the template instead
+          cp ../.env.docker.example ../.env.docker
           python -m pytest tests -q --tb=short -p no:cacheprovider
 
   frontend:
