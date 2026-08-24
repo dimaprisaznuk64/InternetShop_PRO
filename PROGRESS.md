@@ -4,35 +4,46 @@
 
 ## Останнє оновлення
 
-- Дата: 2026-08-24
-- Стан: **RELEASE v1.0.1. Фінальна перевірка пройдена повністю.**
-  Фінальний чеклист перед тегом:
-  1. Production compose (DEBUG=false): postgres/redis/backend/celery-worker/celery-beat/frontend
-      (= nginx 1.27, статика + api-proxy) — ВСІ healthy. Пофікшено IPv4 healthcheck фронта
-      (busybox wget резолвить localhost у ::1, а nginx слухає лише 0.0.0.0 → wget 127.0.0.1).
-  2. Повний suite У DOCKER/production-подібному середовищі:
-      - backend **1087 passed** у прод-образі (git archive → /repo, щоб infra-тести бачили
-        compose/nginx/env файли; env прогону: DEBUG=true ALLOWED_HOSTS='*' WEBHOOK_SECRET='');
-      - frontend **82 passed** у node:22-alpine контейнері;
-      - дубль на хості: backend 1087, frontend 82, tsc + oxlint чисто.
-  3. E2E smoke проти живого прод-стеку (backend/scripts/smoke_e2e.py): register → login → me →
-      duplicate-register 409 → catalog → product detail → ILIKE search → admin login → promo
-      create (з tz-aware expires_at) → promo apply → cart add (повний контракт) → checkout з
-      промо → payment create → webhook БЕЗ підпису 400 fail-closed → webhook з HMAC 200 →
-      order status=paid → webhook з поганим підписом 400 → review create → reviews list
-      (модерація by design) → notifications [welcome, order_created, order_paid] → logout 204 →
-      reuse refresh-токена після logout відхилено (400). РЕЗУЛЬТАТ: ALL STEPS PASSED.
-  Знайдено й пофікшено під час фіналу:
-  - promo.py модель: created_at БЕЗ явного sa.DateTime(timezone=True) → SQLAlchemy виводив
-    naive тип → asyncpg DataError на живому PG (SQLite приховував!). Тепер усі datetime-колонки
-    всіх моделей мають явний timezone=True (авто-перевірка grep).
-  - frontend/Dockerfile healthcheck → http://127.0.0.1/ (IPv4).
-  - README: blacklist чесно названий in-process (Redis-backed → v1.1.0).
-  Інструменти: scripts/smoke_e2e.py — відтворюваний smoke (env: WEBHOOK_SECRET, ADMIN_EMAIL,
-  ADMIN_PASSWORD); rate limiter на register — реальний захист, між прогонами чекати ~1 хв.
+- Дата: 2026-08-24 (post-release hygiene)
+- Стан: **v1.0.1 + security-hygiene фікси після зовнішнього аудиту GitHub.**
+  1. `.env.docker` прибраний з git (залишений локально); замість нього в репо
+      `.env.docker.example` — шаблон з плейсхолдерами. .gitignore: `!.env.docker`
+      → `!.env.docker.example`. README Quick Start: `cp .env.docker.example .env.docker`.
+  2. deploy.yml: `git pull origin main` → `master` (default branch); notify.yml
+      "Branch: main" → "master". Тригери й так покривали master.
+  НЮАНС для майбутніх прогонів: infra-тести читають PROJECT_ROOT/.env.docker,
+  якого більше немає в git — перед повним suite-ом У DOCKER скопіюй локальний
+  `.env.docker` у /repo (`docker cp`). На хості все працює як було.
 - Рішення по відкладеному (v1.1.0): Redis-based token blacklist + rate limiter; simulated email.
-- **Як продовжити:** створити репо на GitHub і запушити; далі v1.1.0 (blacklist/rate limiter/email).
+- **Як продовжити:** проєкт опублікований: github.com/dimaprisaznuk64/InternetShop_PRO.
+  Далі v1.1.0 (blacklist/rate limiter/email) за бажанням.
 - Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`
+
+### Реліз v1.0.1 — фінальна перевірка (того ж дня)
+
+1. Production compose (DEBUG=false): postgres/redis/backend/celery-worker/celery-beat/frontend
+    (= nginx 1.27, статика + api-proxy) — ВСІ healthy. Пофікшено IPv4 healthcheck фронта
+    (busybox wget резолвить localhost у ::1, а nginx слухає лише 0.0.0.0 → wget 127.0.0.1).
+2. Повний suite У DOCKER/production-подібному середовищі:
+    - backend **1087 passed** у прод-образі (git archive → /repo, щоб infra-тести бачили
+      compose/nginx/env файли; env прогону: DEBUG=true ALLOWED_HOSTS='*' WEBHOOK_SECRET='');
+    - frontend **82 passed** у node:22-alpine контейнері;
+    - дубль на хості: backend 1087, frontend 82, tsc + oxlint чисто.
+3. E2E smoke проти живого прод-стеку (backend/scripts/smoke_e2e.py): register → login → me →
+    duplicate-register 409 → catalog → product detail → ILIKE search → admin login → promo
+    create (з tz-aware expires_at) → promo apply → cart add (повний контракт) → checkout з
+    промо → payment create → webhook БЕЗ підпису 400 fail-closed → webhook з HMAC 200 →
+    order status=paid → webhook з поганим підписом 400 → review create → reviews list
+    (модерація by design) → notifications [welcome, order_created, order_paid] → logout 204 →
+    reuse refresh-токена після logout відхилено (400). РЕЗУЛЬТАТ: ALL STEPS PASSED.
+Знайдено й пофікшено під час фіналу:
+- promo.py модель: created_at БЕЗ явного sa.DateTime(timezone=True) → SQLAlchemy виводив
+  naive тип → asyncpg DataError на живому PG (SQLite приховував!). Тепер усі datetime-колонки
+  всіх моделей мають явний timezone=True (авто-перевірка grep).
+- frontend/Dockerfile healthcheck → http://127.0.0.1/ (IPv4).
+- README: blacklist чесно названий in-process (Redis-backed → v1.1.0).
+Інструменти: scripts/smoke_e2e.py — відтворюваний smoke (env: WEBHOOK_SECRET, ADMIN_EMAIL,
+ADMIN_PASSWORD); rate limiter на register — реальний захист, між прогонами чекати ~1 хв.
 
 ## Roadmap (76 уроків)
 

@@ -5,7 +5,7 @@
 .env
 .env.*
 !.env.example
-!.env.docker
+!.env.docker.example
 
 # Python cache
 __pycache__/

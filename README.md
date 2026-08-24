@@ -109,7 +109,9 @@ backend/app/
 git clone https://github.com/<your-username>/InternetShop_PRO.git
 cd InternetShop_PRO
 
-# .env.docker already contains local dev defaults — customize if needed
+# create your env from the template (git-ignored, holds local secrets)
+cp .env.docker.example .env.docker
+
 docker compose up --build
 ```
 

@@ -18,6 +18,6 @@ jobs:
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           message: |
             🚀 Deploy ${{ github.event.workflow_run.conclusion }}
-            Branch: main
+            Branch: master
             Commit: ${{ github.event.workflow_run.head_commit.message }}
             Time: ${{ github.event.workflow_run.updated_at }}
