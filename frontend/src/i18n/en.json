@@ -122,5 +122,13 @@
     "no_data": "No data",
     "language": "Language",
     "theme": "Theme"
+  },
+  "footer": {
+    "description": "Your trusted tech store. Smartphones, laptops, audio — best prices and fast delivery.",
+    "new_arrivals": "New Arrivals",
+    "popular": "Popular",
+    "support": "Support",
+    "shipping": "Free shipping from 2000 UAH",
+    "rights": "All rights reserved."
   }
 }

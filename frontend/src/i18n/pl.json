@@ -122,5 +122,13 @@
     "no_data": "Brak danych",
     "language": "Jezyk",
     "theme": "Motyw"
+  },
+  "footer": {
+    "description": "Twoj zaufany sklep elektroniczny. Smartfony, laptowy, audio — najlepsze ceny i szybka dostawa.",
+    "new_arrivals": "Nowosci",
+    "popular": "Popularne",
+    "support": "Wsparcie",
+    "shipping": "Darmowa dostawa od 2000 zl",
+    "rights": "Wszelkie prawa zastrzezone."
   }
 }

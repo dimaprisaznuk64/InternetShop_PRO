@@ -4,52 +4,37 @@
 
 ## Останнє оновлення
 
-- Дата: 2026-08-24 (post-release hygiene)
-- Стан: **v1.0.1 + security-hygiene фікси + автоматизований release-check.**
-  0. НОВЕ: `release-check.ps1` + `RELEASE_CHECKLIST.md` — стандарт релізу за алгоритмом
-      власника проєкту: forbidden files → secret scan → branch → версії → pytest/vitest/
-      tsc/lint/build → docker compose config (dev+prod). Вердикт GREEN/RED.
-      Запуск: `powershell -ExecutionPolicy Bypass -File release-check.ps1 [-SkipTests]`.
-      Повний прогін на поточному стані: GREEN (1087 backend, frontend 4кроки, compose ок).
-      PS5.1-ньюанс: скрипт мусить бути UTF-8 з BOM; нативні команди під Continue-EAP.
-  1. `.env.docker` прибраний з git (залишений локально); замість нього в репо
-      `.env.docker.example` — шаблон з плейсхолдерами. .gitignore: `!.env.docker`
-      → `!.env.docker.example`. README Quick Start: `cp .env.docker.example .env.docker`.
-  2. deploy.yml: `git pull origin main` → `master` (default branch); notify.yml
-      "Branch: main" → "master". Тригери й так покривали master.
-  НЮАНС для майбутніх прогонів: infra-тести читають PROJECT_ROOT/.env.docker,
-  якого більше немає в git — перед повним suite-ом У DOCKER скопіюй локальний
-  `.env.docker` у /repo (`docker cp`). На хості все працює як було.
-- Рішення по відкладеному (v1.1.0): Redis-based token blacklist + rate limiter; simulated email.
-- **Як продовжити:** проєкт опублікований: github.com/dimaprisaznuk64/InternetShop_PRO.
-  Далі v1.1.0 (blacklist/rate limiter/email) за бажанням.
+- Дата: 2026-08-25
+- Стан: **UI Redesign — Phase 2 завершено.**
 - Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`
 
-### Реліз v1.0.1 — фінальна перевірка (того ж дня)
+### UI Redesign Phases
 
-1. Production compose (DEBUG=false): postgres/redis/backend/celery-worker/celery-beat/frontend
-    (= nginx 1.27, статика + api-proxy) — ВСІ healthy. Пофікшено IPv4 healthcheck фронта
-    (busybox wget резолвить localhost у ::1, а nginx слухає лише 0.0.0.0 → wget 127.0.0.1).
-2. Повний suite У DOCKER/production-подібному середовищі:
-    - backend **1087 passed** у прод-образі (git archive → /repo, щоб infra-тести бачили
-      compose/nginx/env файли; env прогону: DEBUG=true ALLOWED_HOSTS='*' WEBHOOK_SECRET='');
-    - frontend **82 passed** у node:22-alpine контейнері;
-    - дубль на хості: backend 1087, frontend 82, tsc + oxlint чисто.
-3. E2E smoke проти живого прод-стеку (backend/scripts/smoke_e2e.py): register → login → me →
-    duplicate-register 409 → catalog → product detail → ILIKE search → admin login → promo
-    create (з tz-aware expires_at) → promo apply → cart add (повний контракт) → checkout з
-    промо → payment create → webhook БЕЗ підпису 400 fail-closed → webhook з HMAC 200 →
-    order status=paid → webhook з поганим підписом 400 → review create → reviews list
-    (модерація by design) → notifications [welcome, order_created, order_paid] → logout 204 →
-    reuse refresh-токена після logout відхилено (400). РЕЗУЛЬТАТ: ALL STEPS PASSED.
-Знайдено й пофікшено під час фіналу:
-- promo.py модель: created_at БЕЗ явного sa.DateTime(timezone=True) → SQLAlchemy виводив
-  naive тип → asyncpg DataError на живому PG (SQLite приховував!). Тепер усі datetime-колонки
-  всіх моделей мають явний timezone=True (авто-перевірка grep).
-- frontend/Dockerfile healthcheck → http://127.0.0.1/ (IPv4).
-- README: blacklist чесно названий in-process (Redis-backed → v1.1.0).
-Інструменти: scripts/smoke_e2e.py — відтворюваний smoke (env: WEBHOOK_SECRET, ADMIN_EMAIL,
-ADMIN_PASSWORD); rate limiter на register — реальний захист, між прогонами чекати ~1 хв.
+| Phase | Статус | Опис |
+|-------|--------|------|
+| 0 | ✅ | Критичні баги (ProductResponse, ReviewResponse, selectinload, CheckoutPage) |
+| 1 | ✅ | Design System — tokens.css, globals.css, UI components, i18n, hooks |
+| 2 | ✅ | Header / Navigation — desktop header, mobile hamburger, user dropdown, language, theme, footer |
+| 3 | ⬜ | Homepage |
+| 4 | ⬜ | Catalog + Search + Filters |
+| 5 | ⬜ | Product page |
+| 6 | ⬜ | Cart + Cart Drawer |
+| 7 | ⬜ | Checkout |
+| 8 | ⬜ | Auth (Login / Register) |
+| 9 | ⬜ | Profile / Orders / Favorites |
+| 10 | ⬜ | Admin |
+| 11-15 | ⬜ | i18n, Dark mode, Animations, Responsive, Polish |
+
+### Що змінено в Phase 2:
+- **Header.tsx** — повний redesign: desktop nav, search, language switcher, theme toggle, user dropdown, mobile hamburger menu
+- **Header.css** — glassmorphism header, scroll behavior, dropdown animations, mobile menu
+- **Footer.tsx/.css** — новий footer з 3-колоночною сіткою
+- **Layout.tsx** — оновлено (новий Header + Footer)
+- **index.css** — видалено старі header/footer стили, legacy vars тепер посилаються на design tokens
+- **globals.css** — додано `.app` стилі
+- **Переклади** — додано footer ключі en/uk/pl
+
+## Roadmap (76 уроків)
 
 ## Roadmap (76 уроків)
 

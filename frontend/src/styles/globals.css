@@ -68,6 +68,13 @@ input, select, textarea { font: inherit; }
   color: var(--color-accent-text);
 }
 
+/* --- App Shell --- */
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
 /* --- Container --- */
 .container {
   width: 100%;
