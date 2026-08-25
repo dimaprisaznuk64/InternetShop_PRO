@@ -1,11 +1,16 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { Heart, ShoppingCart, Star, ChevronRight, Minus, Plus, Check } from "lucide-react";
 import { productsApi, reviewsApi, favoritesApi } from "../../api";
 import { useAuth } from "../../contexts/AuthContext";
 import { useCart } from "../../contexts/CartContext";
 import type { Product, Review, ProductVariant } from "../../types";
+import { PageLoader } from "../../components/ui/Spinner";
+import "./Product.css";
 
 export function ProductPage() {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
   const { addItem } = useCart();
@@ -35,21 +40,14 @@ export function ProductPage() {
         if (productData.variants?.length) {
           setSelectedVariant(productData.variants[0]);
         }
-        setIsFavorite(
-          favData.favorites.some((f) => f.product_id === productData.id)
-        );
+        setIsFavorite(favData.favorites.some((f) => f.product_id === productData.id));
       })
       .catch(console.error)
       .finally(() => setLoading(false));
   }, [id, user]);
 
-  const currentPrice = selectedVariant
-    ? Number(selectedVariant.price)
-    : Number(product?.price ?? 0);
-  const currentStock = selectedVariant
-    ? selectedVariant.stock
-    : product?.stock ?? 0;
-  const currentSku = selectedVariant ? selectedVariant.sku : product?.sku ?? "";
+  const currentPrice = selectedVariant ? Number(selectedVariant.price) : Number(product?.price ?? 0);
+  const currentStock = selectedVariant ? selectedVariant.stock : product?.stock ?? 0;
 
   const handleAddToCart = async () => {
     if (!product) return;
@@ -65,11 +63,8 @@ export function ProductPage() {
   const handleToggleFavorite = async () => {
     if (!product) return;
     try {
-      if (isFavorite) {
-        await favoritesApi.remove(product.id);
-      } else {
-        await favoritesApi.add(product.id);
-      }
+      if (isFavorite) await favoritesApi.remove(product.id);
+      else await favoritesApi.add(product.id);
       setIsFavorite(!isFavorite);
     } catch (err) {
       console.error("Failed to toggle favorite", err);
@@ -80,11 +75,7 @@ export function ProductPage() {
     e.preventDefault();
     if (!id) return;
     try {
-      const review = await reviewsApi.create({
-        product_id: id,
-        rating,
-        text: reviewText || undefined,
-      });
+      const review = await reviewsApi.create({ product_id: id, rating, text: reviewText || undefined });
       setReviews((prev) => [...prev, review]);
       setReviewText("");
       setRating(5);
@@ -93,60 +84,51 @@ export function ProductPage() {
     }
   };
 
-  const averageRating =
-    reviews.length > 0
-      ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
-      : null;
+  const averageRating = reviews.length > 0
+    ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+    : null;
 
-  const handleVariantSelect = useCallback(
-    (variant: ProductVariant) => {
-      setSelectedVariant(variant);
-      setQuantity(1);
-    },
-    []
-  );
+  const handleVariantSelect = useCallback((variant: ProductVariant) => {
+    setSelectedVariant(variant);
+    setQuantity(1);
+  }, []);
 
-  if (loading) return <p>Loading...</p>;
-  if (!product) return <p>Product not found.</p>;
+  if (loading) return <PageLoader />;
+  if (!product) return <div className="product-page__error">Product not found</div>;
 
-  const sortedImages = [...(product.images ?? [])].sort(
-    (a, b) => a.position - b.position
-  );
+  const sortedImages = [...(product.images ?? [])].sort((a, b) => a.position - b.position);
 
   return (
-    <div className="product-page">
+    <div className="product-page container">
+      {/* Breadcrumbs */}
       <nav className="breadcrumb">
-        <Link to="/">Home</Link>
-        <span>/</span>
-        <Link to="/catalog">Catalog</Link>
+        <Link to="/">{t("nav.home")}</Link>
+        <ChevronRight size={14} />
+        <Link to="/catalog">{t("nav.catalog")}</Link>
         {product.category && (
           <>
-            <span>/</span>
-            <Link to={`/catalog?category_id=${product.category.id}`}>
-              {product.category.name}
-            </Link>
+            <ChevronRight size={14} />
+            <Link to={`/catalog?category_id=${product.category.id}`}>{product.category.name}</Link>
           </>
         )}
-        <span>/</span>
-        <span>{product.name}</span>
+        <ChevronRight size={14} />
+        <span className="breadcrumb__current">{product.name}</span>
       </nav>
 
       <div className="product-page__content">
-        <div className="product-page__images">
+        {/* Images */}
+        <div className="product-page__gallery">
           {sortedImages.length > 0 ? (
             <>
               <div className="product-page__main-image">
-                <img
-                  src={sortedImages[selectedImage]?.url}
-                  alt={product.name}
-                />
+                <img src={sortedImages[selectedImage]?.url} alt={product.name} />
               </div>
               {sortedImages.length > 1 && (
                 <div className="product-page__thumbnails">
                   {sortedImages.map((img, i) => (
                     <button
                       key={img.id}
-                      className={`product-page__thumb ${i === selectedImage ? "active" : ""}`}
+                      className={`product-page__thumb ${i === selectedImage ? "product-page__thumb--active" : ""}`}
                       onClick={() => setSelectedImage(i)}
                     >
                       <img src={img.url} alt={`Photo ${i + 1}`} />
@@ -156,83 +138,87 @@ export function ProductPage() {
               )}
             </>
           ) : (
-            <div className="product-page__placeholder">No images</div>
+            <div className="product-page__no-image">{"\u{1F4F1}"}</div>
           )}
         </div>
 
-        <div className="product-page__details">
-          <h1>{product.name}</h1>
-          {product.brand && <p className="brand">{product.brand}</p>}
+        {/* Details */}
+        <div className="product-page__info">
+          {product.brand && <span className="product-page__brand">{product.brand}</span>}
+          <h1 className="product-page__name">{product.name}</h1>
 
           {averageRating !== null && (
             <div className="product-page__rating">
-              <span className="stars">
+              <div className="product-page__stars">
                 {[1, 2, 3, 4, 5].map((n) => (
-                  <span key={n} className={n <= Math.round(averageRating) ? "star filled" : "star"}>
-                    ★
-                  </span>
+                  <Star key={n} size={16} className={n <= Math.round(averageRating) ? "star-filled" : "star-empty"} fill={n <= Math.round(averageRating) ? "currentColor" : "none"} />
                 ))}
-              </span>
-              <span className="rating-text">
-                {averageRating.toFixed(1)} ({reviews.length}{" "}
-                {reviews.length === 1 ? "review" : "reviews"})
+              </div>
+              <span className="product-page__rating-text">
+                {averageRating.toFixed(1)} ({reviews.length} {reviews.length === 1 ? "review" : "reviews"})
               </span>
             </div>
           )}
 
-          <p className="price">${currentPrice.toFixed(2)}</p>
-          <p className="sku">SKU: {currentSku}</p>
-          <p className="stock">
-            {currentStock > 0 ? `${currentStock} in stock` : "Out of stock"}
-          </p>
-          {product.description && <p className="description">{product.description}</p>}
+          <div className="product-page__price">{currentPrice.toLocaleString()} \u20B4</div>
 
+          <div className="product-page__meta">
+            <span>SKU: {product.sku}</span>
+            <span className={currentStock > 0 ? "stock--available" : "stock--unavailable"}>
+              {currentStock > 0 ? `${t("product.in_stock")} (${currentStock})` : t("product.out_of_stock")}
+            </span>
+          </div>
+
+          {product.description && (
+            <p className="product-page__desc">{product.description}</p>
+          )}
+
+          {/* Variants */}
           {product.variants?.length ? (
-            <div className="variants">
-              <h4>Variants</h4>
-              <div className="variants__list">
+            <div className="product-page__variants">
+              <h4 className="product-page__section-title">{t("product.variants")}</h4>
+              <div className="product-page__variant-list">
                 {product.variants.map((v) => (
                   <button
                     key={v.id}
-                    className={`variants__item ${selectedVariant?.id === v.id ? "active" : ""} ${v.stock === 0 ? "disabled" : ""}`}
+                    className={`variant-btn ${selectedVariant?.id === v.id ? "variant-btn--active" : ""} ${v.stock === 0 ? "variant-btn--disabled" : ""}`}
                     onClick={() => handleVariantSelect(v)}
                     disabled={v.stock === 0}
                   >
-                    <span className="variants__name">{v.name}</span>
-                    <span className="variants__price">
-                      ${Number(v.price).toFixed(2)}
-                    </span>
-                    <span className="variants__stock">
-                      {v.stock > 0 ? `${v.stock} left` : "Out"}
-                    </span>
+                    <span className="variant-btn__name">{v.name}</span>
+                    <span className="variant-btn__price">{Number(v.price).toLocaleString()} \u20B4</span>
                   </button>
                 ))}
               </div>
             </div>
           ) : null}
 
+          {/* Add to cart */}
           {currentStock > 0 && (
-            <div className="add-to-cart">
-              <input
-                type="number"
-                min={1}
-                max={currentStock}
-                value={quantity}
-                onChange={(e) => setQuantity(Number(e.target.value))}
-              />
-              <button
-                onClick={handleAddToCart}
-                className="btn btn--primary"
-              >
-                {addedToCart ? "Added!" : "Add to Cart"}
+            <div className="product-page__purchase">
+              <div className="product-page__quantity">
+                <button
+                  className="quantity-btn"
+                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  disabled={quantity <= 1}
+                >
+                  <Minus size={16} />
+                </button>
+                <span className="quantity-value">{quantity}</span>
+                <button
+                  className="quantity-btn"
+                  onClick={() => setQuantity(Math.min(currentStock, quantity + 1))}
+                  disabled={quantity >= currentStock}
+                >
+                  <Plus size={16} />
+                </button>
+              </div>
+              <button className="btn btn--primary btn--lg product-page__add-btn" onClick={handleAddToCart}>
+                {addedToCart ? <><Check size={18} /> {t("product.added")}</> : <><ShoppingCart size={18} /> {t("product.add_to_cart")}</>}
               </button>
               {user && (
-                <button
-                  onClick={handleToggleFavorite}
-                  className={`btn btn--icon ${isFavorite ? "favorited" : ""}`}
-                  title={isFavorite ? "Remove from favorites" : "Add to favorites"}
-                >
-                  {isFavorite ? "♥" : "♡"}
+                <button className={`product-page__fav-btn ${isFavorite ? "product-page__fav-btn--active" : ""}`} onClick={handleToggleFavorite}>
+                  <Heart size={20} fill={isFavorite ? "currentColor" : "none"} />
                 </button>
               )}
             </div>
@@ -240,55 +226,45 @@ export function ProductPage() {
         </div>
       </div>
 
-      <section className="reviews">
-        <h3>Reviews ({reviews.length})</h3>
+      {/* Reviews */}
+      <section className="product-page__reviews">
+        <h2 className="product-page__reviews-title">{t("product.reviews")} ({reviews.length})</h2>
 
         {user && (
           <form onSubmit={handleSubmitReview} className="review-form">
-            <label>
-              Rating:
-              <select
-                value={rating}
-                onChange={(e) => setRating(Number(e.target.value))}
-              >
-                {[5, 4, 3, 2, 1].map((n) => (
-                  <option key={n} value={n}>
-                    {n}
-                  </option>
+            <div className="review-form__rating">
+              <span>{t("product.rating")}:</span>
+              <div className="review-form__stars">
+                {[1, 2, 3, 4, 5].map((n) => (
+                  <button key={n} type="button" className={`review-form__star ${n <= rating ? "review-form__star--active" : ""}`} onClick={() => setRating(n)}>
+                    <Star size={20} fill={n <= rating ? "currentColor" : "none"} />
+                  </button>
                 ))}
-              </select>
-            </label>
-            <textarea
-              placeholder="Your review (optional)"
-              value={reviewText}
-              onChange={(e) => setReviewText(e.target.value)}
-            />
-            <button type="submit" className="btn btn--primary">
-              Submit Review
-            </button>
+              </div>
+            </div>
+            <textarea className="review-form__textarea" placeholder={t("product.write_review")} value={reviewText} onChange={(e) => setReviewText(e.target.value)} rows={3} />
+            <button type="submit" className="btn btn--primary btn--sm">{t("product.submit_review")}</button>
           </form>
         )}
 
         {reviews.length === 0 ? (
-          <p>No reviews yet.</p>
+          <p className="product-page__no-reviews">{t("product.no_reviews")}</p>
         ) : (
-          <ul className="reviews-list">
+          <div className="reviews-list">
             {reviews.map((review) => (
-              <li key={review.id}>
-                <div className="review-header">
-                  <span className="stars">
+              <div key={review.id} className="review-card">
+                <div className="review-card__header">
+                  <div className="review-card__stars">
                     {[1, 2, 3, 4, 5].map((n) => (
-                      <span key={n} className={n <= review.rating ? "star filled" : "star"}>
-                        ★
-                      </span>
+                      <Star key={n} size={14} className={n <= review.rating ? "star-filled" : "star-empty"} fill={n <= review.rating ? "currentColor" : "none"} />
                     ))}
-                  </span>
-                  <small>{new Date(review.created_at).toLocaleDateString()}</small>
+                  </div>
+                  <span className="review-card__date">{new Date(review.created_at).toLocaleDateString()}</span>
                 </div>
-                {review.text && <p>{review.text}</p>}
-              </li>
+                {review.text && <p className="review-card__text">{review.text}</p>}
+              </div>
             ))}
-          </ul>
+          </div>
         )}
       </section>
     </div>

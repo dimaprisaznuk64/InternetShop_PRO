@@ -24,6 +24,7 @@
 .main {
   min-height: calc(100vh - 64px);
   padding: var(--space-8) 0;
+  overflow-x: hidden;
 }
 
 /* ── Footer (styles now in Footer.css) ───────────────────────────── */
