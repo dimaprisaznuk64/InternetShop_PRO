@@ -1,8 +1,14 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { User, Calendar, Lock, CheckCircle, AlertCircle } from "lucide-react";
 import { profileApi } from "../../api";
 import type { UserResponse } from "../../types";
+import { PageLoader } from "../../components/ui/Spinner";
+import "./Profile.css";
 
 export function ProfilePage() {
+  const { t } = useTranslation();
   const [user, setUser] = useState<UserResponse | null>(null);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -13,123 +19,84 @@ export function ProfilePage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    profileApi
-      .get()
-      .then((data) => {
-        setUser(data);
-        setUsername(data.username);
-        setEmail(data.email);
-      })
+    profileApi.get()
+      .then((data) => { setUser(data); setUsername(data.username); setEmail(data.email); })
       .catch(console.error)
       .finally(() => setLoading(false));
   }, []);
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setMessage("");
+    e.preventDefault(); setError(""); setMessage("");
     try {
       const updated = await profileApi.update({ username, email });
       setUser(updated);
       setMessage("Profile updated!");
-    } catch {
-      setError("Failed to update profile");
-    }
+    } catch { setError("Failed to update profile"); }
   };
 
   const handleChangePassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setMessage("");
+    e.preventDefault(); setError(""); setMessage("");
     try {
-      await profileApi.changePassword({
-        current_password: currentPassword,
-        new_password: newPassword,
-      });
+      await profileApi.changePassword({ current_password: currentPassword, new_password: newPassword });
       setMessage("Password changed!");
-      setCurrentPassword("");
-      setNewPassword("");
-    } catch {
-      setError("Failed to change password — check current password");
-    }
+      setCurrentPassword(""); setNewPassword("");
+    } catch { setError("Failed to change password"); }
   };
 
-  if (loading) return <p>Loading profile...</p>;
-  if (!user) return <p>Failed to load profile.</p>;
+  if (loading) return <PageLoader />;
+  if (!user) return <div className="profile-page__error">Failed to load profile</div>;
+
+  const roleColors: Record<string, string> = { admin: "var(--color-danger)", manager: "var(--color-accent)", user: "var(--color-text-muted)" };
 
   return (
     <div className="profile-page">
-      <h1>Profile</h1>
-
-      <div className="profile-info">
-        <div className="profile-info__avatar">
-          {user.username.charAt(0).toUpperCase()}
-        </div>
-        <div className="profile-info__details">
-          <h2>{user.username}</h2>
-          <p className="profile-info__email">{user.email}</p>
-          <div className="profile-info__meta">
-            <span className="status-badge" style={{ backgroundColor: user.role === "admin" ? "#dc2626" : user.role === "manager" ? "#0275d8" : "#333" }}>
-              {user.role}
-            </span>
-            <span className="profile-info__date">
-              Member since {new Date(user.created_at).toLocaleDateString()}
-            </span>
+      <div className="profile-header">
+        <div className="profile-avatar">{user.username.charAt(0).toUpperCase()}</div>
+        <div>
+          <h1 className="profile-name">{user.username}</h1>
+          <p className="profile-email">{user.email}</p>
+          <div className="profile-meta">
+            <span className="profile-role" style={{ background: roleColors[user.role] || roleColors.user }}>{user.role}</span>
+            <span className="profile-date"><Calendar size={14} /> Member since {new Date(user.created_at).toLocaleDateString()}</span>
           </div>
         </div>
       </div>
 
-      <form onSubmit={handleUpdateProfile} className="profile-form">
-        <h3>Account Info</h3>
-        <label>
-          Username
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-        </label>
-        <label>
-          Email
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </label>
-        <button type="submit" className="btn btn--primary">
-          Update Profile
-        </button>
-      </form>
+      <div className="profile-nav">
+        <Link to="/orders" className="profile-nav__link">{t("nav.orders")}</Link>
+        <Link to="/favorites" className="profile-nav__link">{t("nav.favorites")}</Link>
+      </div>
 
-      <form onSubmit={handleChangePassword} className="profile-form">
-        <h3>Change Password</h3>
-        <label>
-          Current Password
-          <input
-            type="password"
-            value={currentPassword}
-            onChange={(e) => setCurrentPassword(e.target.value)}
-            required
-          />
-        </label>
-        <label>
-          New Password
-          <input
-            type="password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            required
-            minLength={6}
-          />
-        </label>
-        <button type="submit" className="btn btn--primary">
-          Change Password
-        </button>
-      </form>
+      <div className="profile-grid">
+        <form onSubmit={handleUpdateProfile} className="profile-card">
+          <h3 className="profile-card__title"><User size={18} /> {t("profile.edit_profile")}</h3>
+          <div className="profile-field">
+            <label className="profile-field__label">{t("auth.username")}</label>
+            <input type="text" className="profile-field__input" value={username} onChange={(e) => setUsername(e.target.value)} />
+          </div>
+          <div className="profile-field">
+            <label className="profile-field__label">{t("auth.email")}</label>
+            <input type="email" className="profile-field__input" value={email} onChange={(e) => setEmail(e.target.value)} />
+          </div>
+          <button type="submit" className="btn btn--primary btn--sm">{t("common.save")}</button>
+        </form>
 
-      {message && <p className="success">{message}</p>}
-      {error && <p className="error">{error}</p>}
+        <form onSubmit={handleChangePassword} className="profile-card">
+          <h3 className="profile-card__title"><Lock size={18} /> {t("profile.change_password")}</h3>
+          <div className="profile-field">
+            <label className="profile-field__label">{t("auth.password")}</label>
+            <input type="password" className="profile-field__input" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} required />
+          </div>
+          <div className="profile-field">
+            <label className="profile-field__label">{t("auth.confirm_password")}</label>
+            <input type="password" className="profile-field__input" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} required minLength={6} />
+          </div>
+          <button type="submit" className="btn btn--primary btn--sm">{t("common.save")}</button>
+        </form>
+      </div>
+
+      {message && <div className="profile-toast profile-toast--success"><CheckCircle size={14} /> {message}</div>}
+      {error && <div className="profile-toast profile-toast--error"><AlertCircle size={14} /> {error}</div>}
     </div>
   );
 }

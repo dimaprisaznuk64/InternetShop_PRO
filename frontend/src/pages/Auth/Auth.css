@@ -1,0 +1,131 @@
+.auth-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 200px);
+  padding: var(--space-8) var(--space-4);
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  padding: var(--space-8);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+}
+
+.auth-card__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-lg);
+  background: var(--color-accent-subtle);
+  color: var(--color-accent);
+  margin: 0 auto var(--space-4);
+}
+
+.auth-card__title {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: var(--space-1);
+}
+
+.auth-card__subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  text-align: center;
+  margin-bottom: var(--space-6);
+}
+
+.auth-card__footer {
+  text-align: center;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-top: var(--space-5);
+}
+
+.auth-card__footer a {
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+/* Form */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.auth-field__label {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.auth-field__input {
+  width: 100%;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.auth-field__input:focus {
+  border-color: var(--color-accent);
+}
+
+.auth-field__input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.auth-field__password {
+  position: relative;
+}
+
+.auth-field__password .auth-field__input {
+  padding-right: var(--space-10);
+}
+
+.auth-field__toggle {
+  position: absolute;
+  right: var(--space-3);
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  display: flex;
+  padding: var(--space-1);
+  transition: color 0.15s;
+}
+
+.auth-field__toggle:hover {
+  color: var(--color-text);
+}
+
+.auth-error {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-danger-subtle);
+  color: var(--color-danger);
+  font-size: var(--font-size-sm);
+}
