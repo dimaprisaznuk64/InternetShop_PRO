@@ -86,7 +86,16 @@
     "delivery_address": "Adres dostawy",
     "notes": "Uwagi",
     "place_order": "Zloz zamowienie",
-    "order_placed": "Zamowienie zlozone!"
+    "order_placed": "Zamowienie zlozone!",
+    "delivery_standard": "Standardowa dostawa",
+    "delivery_standard_desc": "2-5 dni roboczych",
+    "delivery_express": "Ekspresowa dostawa",
+    "delivery_express_desc": "1-2 dni robocze",
+    "delivery_pickup": "Odbior osobisty",
+    "delivery_pickup_desc": "Ze sklepu",
+    "address_placeholder": "Ulica, miasto, kod",
+    "notes_placeholder": "Opcjonalny komentarz...",
+    "discount_applied": "Znizke zastosowano: {{type}} — {{value}}"
   },
   "auth": {
     "login_title": "Witaj ponownie",

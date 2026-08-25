@@ -86,7 +86,16 @@
     "delivery_address": "Адреса доставки",
     "notes": "Коментар",
     "place_order": "Оформити замовлення",
-    "order_placed": "Замовлення успішно оформлено!"
+    "order_placed": "Замовлення успішно оформлено!",
+    "delivery_standard": "Стандартна доставка",
+    "delivery_standard_desc": "2-5 робочих днів",
+    "delivery_express": "Експрес-доставка",
+    "delivery_express_desc": "1-2 робочі дні",
+    "delivery_pickup": "Самовивіз",
+    "delivery_pickup_desc": "З магазину",
+    "address_placeholder": "Вулиця, місто, індекс",
+    "notes_placeholder": "Необовязковий коментар...",
+    "discount_applied": "Знижку застосовано: {{type}} — {{value}}"
   },
   "auth": {
     "login_title": "Вітаємо знову",

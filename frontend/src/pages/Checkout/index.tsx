@@ -77,9 +77,9 @@ export function CheckoutPage() {
             <h3 className="checkout-section__title">{t("checkout.delivery_method")}</h3>
             <div className="delivery-options">
               {[
-                { value: "standard", icon: <Truck size={20} />, label: "Standard Delivery", desc: "2-5 business days" },
-                { value: "express", icon: <Truck size={20} />, label: "Express Delivery", desc: "1-2 business days" },
-                { value: "pickup", icon: <Store size={20} />, label: "Pickup", desc: "From store" },
+                { value: "standard", icon: <Truck size={20} />, label: t("checkout.delivery_standard"), desc: t("checkout.delivery_standard_desc") },
+                { value: "express", icon: <Truck size={20} />, label: t("checkout.delivery_express"), desc: t("checkout.delivery_express_desc") },
+                { value: "pickup", icon: <Store size={20} />, label: t("checkout.delivery_pickup"), desc: t("checkout.delivery_pickup_desc") },
               ].map((opt) => (
                 <label key={opt.value} className={`delivery-option ${deliveryMethod === opt.value ? "delivery-option--active" : ""}`}>
                   <input type="radio" name="delivery" value={opt.value} checked={deliveryMethod === opt.value} onChange={(e) => setDeliveryMethod(e.target.value)} />
@@ -101,7 +101,7 @@ export function CheckoutPage() {
               className="checkout-input"
               value={deliveryAddress}
               onChange={(e) => setDeliveryAddress(e.target.value)}
-              placeholder="Street, city, zip"
+              placeholder={t("checkout.address_placeholder")}
               required
             />
           </div>
@@ -123,7 +123,7 @@ export function CheckoutPage() {
             </div>
             {promoResult && (
               <div className="checkout-success">
-                <CheckCircle size={14} /> Discount applied: {promoResult.discount_type} — {promoResult.discount_value}
+                <CheckCircle size={14} /> {t("checkout.discount_applied", { type: promoResult.discount_type, value: promoResult.discount_value })}
               </div>
             )}
           </div>
@@ -135,7 +135,7 @@ export function CheckoutPage() {
               className="checkout-input checkout-textarea"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="Optional notes..."
+              placeholder={t("checkout.notes_placeholder")}
               rows={3}
             />
           </div>
