@@ -44,7 +44,9 @@
     "sort_price_desc": "Ціна: від дорогих",
     "sort_newest": "Новинки",
     "search_placeholder": "Пошук товарів...",
-    "apply": "Застосувати"
+    "apply": "Застосувати",
+    "all": "Усі",
+    "clear_all": "Очистити фільтри"
   },
   "product": {
     "add_to_cart": "Додати в кошик",

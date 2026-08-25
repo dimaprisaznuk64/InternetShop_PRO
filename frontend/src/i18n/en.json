@@ -44,7 +44,9 @@
     "sort_price_desc": "Price: High to Low",
     "sort_newest": "Newest",
     "search_placeholder": "Search products...",
-    "apply": "Apply"
+    "apply": "Apply",
+    "all": "All",
+    "clear_all": "Clear all filters"
   },
   "product": {
     "add_to_cart": "Add to Cart",

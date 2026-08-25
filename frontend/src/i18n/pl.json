@@ -44,7 +44,9 @@
     "sort_price_desc": "Cena: od najdrozszych",
     "sort_newest": "Nowosci",
     "search_placeholder": "Szukaj produktow...",
-    "apply": "Zastosuj"
+    "apply": "Zastosuj",
+    "all": "Wszystkie",
+    "clear_all": "Wyczysc filtry"
   },
   "product": {
     "add_to_cart": "Dodaj do koszyka",
