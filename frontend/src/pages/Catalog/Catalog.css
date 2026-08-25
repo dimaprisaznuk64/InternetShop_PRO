@@ -250,8 +250,9 @@
 /* Products grid */
 .products-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--space-5);
+  align-items: start;
 }
 
 /* Product card (reused from Home) */
@@ -456,11 +457,5 @@
   .products-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: var(--space-3);
-  }
-}
-
-@media (min-width: 1024px) {
-  .products-grid {
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   }
 }

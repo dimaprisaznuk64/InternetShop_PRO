@@ -1,6 +1,6 @@
 .favorites-page { max-width: 960px; margin: 0 auto; }
 .favorites-page__title { font-size: var(--font-size-2xl); font-weight: 700; margin-bottom: var(--space-6); }
-.favorites-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--space-4); }
+.favorites-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: var(--space-5); align-items: start; }
 .fav-card {
   position: relative; border: 1px solid var(--color-border); border-radius: var(--radius-lg);
   background: var(--color-surface); overflow: hidden;
