@@ -86,7 +86,7 @@ export function AdminCategoriesPage() {
   };
 
   return (
-    <div className="admin-categories">
+    <div className="admin-categories container">
       <div className="admin-page-header">
         <h1>Categories ({categories.length})</h1>
         <button className="btn btn--primary" onClick={openCreate}>

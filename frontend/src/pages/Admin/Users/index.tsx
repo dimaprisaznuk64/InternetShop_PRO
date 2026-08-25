@@ -52,7 +52,7 @@ export function AdminUsersPage() {
   };
 
   return (
-    <div className="admin-users">
+    <div className="admin-users container">
       <h1>Users ({total})</h1>
 
       <div className="admin-filters">

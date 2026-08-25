@@ -34,7 +34,7 @@ export function LoginPage() {
   };
 
   return (
-    <div className="auth-page">
+    <div className="auth-page container">
       <div className="auth-card">
         <div className="auth-card__icon"><LogIn size={24} /></div>
         <h1 className="auth-card__title">{t("auth.login_title")}</h1>

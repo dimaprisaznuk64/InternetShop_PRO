@@ -205,7 +205,7 @@ export function CatalogPage() {
   );
 
   return (
-    <div className="catalog">
+    <div className="catalog container">
       <div className="catalog__header">
         <div>
           <h1 className="catalog__title">{t("catalog.title")}</h1>

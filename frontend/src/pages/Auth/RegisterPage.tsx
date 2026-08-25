@@ -35,7 +35,7 @@ export function RegisterPage() {
   };
 
   return (
-    <div className="auth-page">
+    <div className="auth-page container">
       <div className="auth-card">
         <div className="auth-card__icon"><UserPlus size={24} /></div>
         <h1 className="auth-card__title">{t("auth.register_title")}</h1>

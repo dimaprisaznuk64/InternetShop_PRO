@@ -22,7 +22,7 @@ export function CartPage() {
 
   if (!cart || cart.items.length === 0) {
     return (
-      <div className="cart-page">
+      <div className="cart-page container">
         <EmptyState
           icon={<ShoppingBag size={48} />}
           title={t("cart.empty")}
@@ -35,7 +35,7 @@ export function CartPage() {
   const itemCount = cart.items.reduce((s, i) => s + i.quantity, 0);
 
   return (
-    <div className="cart-page">
+    <div className="cart-page container">
       <div className="cart-page__header">
         <h1 className="cart-page__title">{t("cart.title")}</h1>
         <span className="cart-page__count">{itemCount} {itemCount === 1 ? "item" : "items"}</span>

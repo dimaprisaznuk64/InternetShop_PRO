@@ -30,7 +30,7 @@ export function OrdersPage() {
 
   if (orders.length === 0) {
     return (
-      <div className="orders-page">
+      <div className="orders-page container">
         <EmptyState
           icon={<ShoppingBag size={48} />}
           title="No orders yet"
@@ -41,7 +41,7 @@ export function OrdersPage() {
   }
 
   return (
-    <div className="orders-page">
+    <div className="orders-page container">
       <h1 className="orders-page__title">{t("nav.orders")}</h1>
       <div className="orders-list">
         {orders.map((order) => {

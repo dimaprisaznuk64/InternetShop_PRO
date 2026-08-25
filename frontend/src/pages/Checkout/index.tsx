@@ -65,7 +65,7 @@ export function CheckoutPage() {
   if (!cart || cart.items.length === 0) return <PageLoader />;
 
   return (
-    <div className="checkout-page">
+    <div className="checkout-page container">
       <h1 className="checkout-page__title">{t("checkout.title")}</h1>
 
       <form onSubmit={handleSubmit} className="checkout-page__layout">

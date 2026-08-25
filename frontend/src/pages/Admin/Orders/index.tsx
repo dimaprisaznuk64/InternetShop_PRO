@@ -53,7 +53,7 @@ export function AdminOrdersPage() {
   };
 
   return (
-    <div className="admin-orders">
+    <div className="admin-orders container">
       <h1>Orders ({total})</h1>
 
       <div className="admin-filters">

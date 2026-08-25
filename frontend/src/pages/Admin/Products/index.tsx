@@ -125,7 +125,7 @@ export function AdminProductsPage() {
   };
 
   return (
-    <div className="admin-products">
+    <div className="admin-products container">
       <div className="admin-page-header">
         <h1>Products ({total})</h1>
         <button className="btn btn--primary" onClick={openCreate}>

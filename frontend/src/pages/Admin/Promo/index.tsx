@@ -85,7 +85,7 @@ export function AdminPromoPage() {
   };
 
   return (
-    <div className="admin-promo">
+    <div className="admin-promo container">
       <div className="admin-page-header">
         <h1>Promo Codes ({promoCodes.length})</h1>
         <button className="btn btn--primary" onClick={openCreate}>

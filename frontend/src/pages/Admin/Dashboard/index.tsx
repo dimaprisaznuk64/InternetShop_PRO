@@ -28,7 +28,7 @@ export function DashboardPage() {
   if (!stats) return <p className="admin-error">Failed to load statistics.</p>;
 
   return (
-    <div className="admin-dashboard">
+    <div className="admin-dashboard container">
       <h1>Dashboard</h1>
 
       <div className="stats-grid">

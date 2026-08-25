@@ -26,7 +26,7 @@ export function FavoritesPage() {
 
   if (favorites.length === 0) {
     return (
-      <div className="favorites-page">
+      <div className="favorites-page container">
         <EmptyState
           icon={<Heart size={48} />}
           title="No favorites yet"
@@ -37,7 +37,7 @@ export function FavoritesPage() {
   }
 
   return (
-    <div className="favorites-page">
+    <div className="favorites-page container">
       <h1 className="favorites-page__title">{t("nav.favorites")} ({favorites.length})</h1>
       <div className="favorites-grid">
         {favorites.map((fav) => (

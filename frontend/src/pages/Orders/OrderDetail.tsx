@@ -30,7 +30,7 @@ export function OrderDetailPage() {
   if (!order) return <p>Order not found.</p>;
 
   return (
-    <div className="order-detail">
+    <div className="order-detail container">
       <nav className="breadcrumb">
         <Link to="/">Home</Link>
         <span>/</span>

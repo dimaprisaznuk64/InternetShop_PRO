@@ -49,7 +49,7 @@ export function ProfilePage() {
   const roleColors: Record<string, string> = { admin: "var(--color-danger)", manager: "var(--color-accent)", user: "var(--color-text-muted)" };
 
   return (
-    <div className="profile-page">
+    <div className="profile-page container">
       <div className="profile-header">
         <div className="profile-avatar">{user.username.charAt(0).toUpperCase()}</div>
         <div>
