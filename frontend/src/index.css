@@ -301,7 +301,7 @@
 
 .product-card__image {
   height: 180px;
-  background: #f1f5f9;
+  background: var(--color-bg-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -393,9 +393,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f1f5f9;
+  background: var(--color-bg-secondary);
 }
-
 .product-page__main-image img {
   max-width: 100%;
   max-height: 100%;
@@ -448,12 +447,12 @@
 }
 
 .star {
-  color: #d1d5db;
+  color: var(--color-text-tertiary);
   font-size: 1rem;
 }
 
 .star.filled {
-  color: #f59e0b;
+  color: var(--color-warning);
 }
 
 .rating-text {
@@ -603,7 +602,7 @@
   border-radius: var(--radius);
   overflow: hidden;
   flex-shrink: 0;
-  background: #f1f5f9;
+  background: var(--color-bg-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1020,23 +1019,23 @@
 }
 
 .badge--success {
-  background: #dcfce7;
-  color: #166534;
+  background: var(--color-success-light);
+  color: var(--color-success);
 }
 
 .badge--warning {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--color-warning-light);
+  color: var(--color-warning);
 }
 
 .badge--muted {
-  background: #f1f5f9;
-  color: #64748b;
+  background: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
 }
 
 .badge--danger {
-  background: #fee2e2;
-  color: #991b1b;
+  background: var(--color-danger-light);
+  color: var(--color-danger);
 }
 
 /* ── Status Badges ────────────────────────────────────────────────── */
@@ -1050,33 +1049,33 @@
 }
 
 .status-badge--pending {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--color-warning-light);
+  color: var(--color-warning);
 }
 
 .status-badge--paid {
-  background: #dcfce7;
-  color: #166534;
+  background: var(--color-success-light);
+  color: var(--color-success);
 }
 
 .status-badge--processing {
-  background: #dbeafe;
-  color: #1e40af;
+  background: var(--color-info-light);
+  color: var(--color-info);
 }
 
 .status-badge--shipped {
-  background: #e0e7ff;
-  color: #3730a3;
+  background: var(--color-accent-light);
+  color: var(--color-accent);
 }
 
 .status-badge--completed {
-  background: #d1fae5;
-  color: #065f46;
+  background: var(--color-success-light);
+  color: var(--color-success);
 }
 
 .status-badge--cancelled {
-  background: #fee2e2;
-  color: #991b1b;
+  background: var(--color-danger-light);
+  color: var(--color-danger);
 }
 
 /* ── Buttons ──────────────────────────────────────────────────────── */
@@ -1123,7 +1122,7 @@
 }
 
 .btn--danger:hover {
-  background: #b91c1c;
+  background: var(--color-danger-hover);
 }
 
 .btn--success {
@@ -1133,7 +1132,7 @@
 }
 
 .btn--success:hover {
-  background: #15803d;
+  background: var(--color-success-hover);
 }
 
 .btn--ghost {

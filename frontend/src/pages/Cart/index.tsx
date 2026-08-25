@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Trash2, Minus, Plus, ShoppingBag, ArrowRight } from "lucide-react";
 import { useCart } from "../../contexts/CartContext";
 import { useAuth } from "../../contexts/AuthContext";
+import { useCurrency, formatPrice } from "../../contexts/CurrencyContext";
 import { PageLoader } from "../../components/ui/Spinner";
 import { EmptyState } from "../../components/ui/EmptyState";
 import "./Cart.css";
@@ -12,6 +13,7 @@ export function CartPage() {
   const { t } = useTranslation();
   const { cart, loading, updateItem, removeItem, clear } = useCart();
   const { user } = useAuth();
+  const { currency } = useCurrency();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -61,7 +63,7 @@ export function CartPage() {
                   <span className="cart-item__variant">{item.variant_name}</span>
                 )}
                 <span className="cart-item__sku">SKU: {item.product_sku}</span>
-                <span className="cart-item__unit-price">{Number(item.product_price).toLocaleString()} \u20B4</span>
+                <span className="cart-item__unit-price">{formatPrice(item.product_price, currency)}</span>
               </div>
 
               <div className="cart-item__controls">
@@ -82,7 +84,7 @@ export function CartPage() {
                     <Plus size={14} />
                   </button>
                 </div>
-                <span className="cart-item__total">{Number(item.line_total).toLocaleString()} \u20B4</span>
+                <span className="cart-item__total">{formatPrice(item.line_total, currency)}</span>
                 <button className="cart-item__remove" onClick={() => removeItem(item.id)}>
                   <Trash2 size={16} />
                 </button>
@@ -99,7 +101,7 @@ export function CartPage() {
             <h3 className="cart-summary__title">{t("cart.subtotal")}</h3>
             <div className="cart-summary__row">
               <span>{t("cart.subtotal")} ({itemCount} items)</span>
-              <span>{Number(cart.subtotal).toLocaleString()} \u20B4</span>
+              <span>{formatPrice(cart.subtotal, currency)}</span>
             </div>
             <div className="cart-summary__row">
               <span>{t("cart.shipping")}</span>
@@ -108,7 +110,7 @@ export function CartPage() {
             <div className="cart-summary__divider" />
             <div className="cart-summary__row cart-summary__row--total">
               <span>{t("cart.total")}</span>
-              <span>{Number(cart.subtotal).toLocaleString()} \u20B4</span>
+              <span>{formatPrice(cart.subtotal, currency)}</span>
             </div>
             <Link to="/checkout" className="btn btn--primary btn--full btn--lg cart-summary__checkout">
               {t("cart.checkout")} <ArrowRight size={18} />

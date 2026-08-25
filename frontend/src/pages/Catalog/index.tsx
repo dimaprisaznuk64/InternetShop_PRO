@@ -3,6 +3,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { SlidersHorizontal, X, ChevronLeft, ChevronRight, ArrowUpDown } from "lucide-react";
 import { productsApi, categoriesApi } from "../../api";
+import { useCurrency, formatPrice } from "../../contexts/CurrencyContext";
 import type { Product, Category } from "../../types";
 import { ProductCardSkeleton } from "../../components/ui/Skeleton";
 import { EmptyState } from "../../components/ui/EmptyState";
@@ -17,6 +18,7 @@ const SORT_OPTIONS = [
 
 export function CatalogPage() {
   const { t } = useTranslation();
+  const { currency } = useCurrency();
   const [searchParams, setSearchParams] = useSearchParams();
   const isMobile = useIsMobile();
   const [products, setProducts] = useState<Product[]>([]);
@@ -317,7 +319,7 @@ export function CatalogPage() {
                     <div className="product-card__body">
                       {product.brand && <span className="product-card__brand">{product.brand}</span>}
                       <h3 className="product-card__name">{product.name}</h3>
-                      <div className="product-card__price">{Number(product.price).toLocaleString()} \u20B4</div>
+                      <div className="product-card__price">{formatPrice(product.price, currency)}</div>
                     </div>
                   </Link>
                 ))}

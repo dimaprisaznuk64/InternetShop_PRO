@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useCart } from "../../contexts/CartContext";
+import { useCurrency, CURRENCY_SYMBOLS, type Currency } from "../../contexts/CurrencyContext";
 import { useIsMobile, useLocalStorage } from "../../hooks";
 import { SearchInput } from "../ui/Input";
 import { Badge } from "../ui/Badge";
@@ -16,6 +17,7 @@ export function Header() {
   const { t, i18n } = useTranslation();
   const { user, logout, isAdmin } = useAuth();
   const { itemCount } = useCart();
+  const { currency, setCurrency } = useCurrency();
   const navigate = useNavigate();
   const location = useLocation();
   const isMobile = useIsMobile();
@@ -23,10 +25,12 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [langMenuOpen, setLangMenuOpen] = useState(false);
+  const [currencyMenuOpen, setCurrencyMenuOpen] = useState(false);
   const [theme, setTheme] = useLocalStorage<"light" | "dark">("theme", "light");
   const [searchValue, setSearchValue] = useState("");
   const userMenuRef = useRef<HTMLDivElement>(null);
   const langMenuRef = useRef<HTMLDivElement>(null);
+  const currencyMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
@@ -50,6 +54,8 @@ export function Header() {
         setUserMenuOpen(false);
       if (langMenuRef.current && !langMenuRef.current.contains(e.target as Node))
         setLangMenuOpen(false);
+      if (currencyMenuRef.current && !currencyMenuRef.current.contains(e.target as Node))
+        setCurrencyMenuOpen(false);
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -138,6 +144,35 @@ export function Header() {
                       onClick={() => changeLang(lang.code)}
                     >
                       {lang.flag} {lang.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Currency */}
+            <div className="header__dropdown-wrap" ref={currencyMenuRef}>
+              <button
+                className="header__icon-btn"
+                onClick={() => setCurrencyMenuOpen(!currencyMenuOpen)}
+                title={t("common.currency")}
+              >
+                <span className="header__currency-label">
+                  {CURRENCY_SYMBOLS[currency]}
+                </span>
+              </button>
+              {currencyMenuOpen && (
+                <div className="header__dropdown header__dropdown--right">
+                  {(Object.keys(CURRENCY_SYMBOLS) as Currency[]).map((cur) => (
+                    <button
+                      key={cur}
+                      className={`header__dropdown-item ${currency === cur ? "header__dropdown-item--active" : ""}`}
+                      onClick={() => {
+                        setCurrency(cur);
+                        setCurrencyMenuOpen(false);
+                      }}
+                    >
+                      {CURRENCY_SYMBOLS[cur]} {cur}
                     </button>
                   ))}
                 </div>

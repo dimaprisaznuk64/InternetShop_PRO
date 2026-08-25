@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { ArrowRight, Truck, Shield, Headphones } from "lucide-react";
 import { productsApi, categoriesApi } from "../../api";
+import { useCurrency, formatPrice } from "../../contexts/CurrencyContext";
 import type { Product, Category } from "../../types";
 import { ProductCardSkeleton } from "../../components/ui/Skeleton";
 import { EmptyState } from "../../components/ui/EmptyState";
@@ -10,6 +11,7 @@ import "./Home.css";
 
 export function HomePage() {
   const { t } = useTranslation();
+  const { currency } = useCurrency();
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -109,7 +111,7 @@ export function HomePage() {
                   </div>
                   <div className="product-card__body">
                     <h3 className="product-card__name">{product.name}</h3>
-                    <div className="product-card__price">{Number(product.price).toLocaleString()} \u20B4</div>
+                    <div className="product-card__price">{formatPrice(product.price, currency)}</div>
                   </div>
                 </Link>
               ))}

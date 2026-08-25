@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Heart, HeartOff } from "lucide-react";
 import { favoritesApi } from "../../api";
+import { useCurrency, formatPrice } from "../../contexts/CurrencyContext";
 import type { Favorite } from "../../types";
 import { PageLoader } from "../../components/ui/Spinner";
 import { EmptyState } from "../../components/ui/EmptyState";
@@ -10,6 +11,7 @@ import "./Favorites.css";
 
 export function FavoritesPage() {
   const { t } = useTranslation();
+  const { currency } = useCurrency();
   const [favorites, setFavorites] = useState<Favorite[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -51,7 +53,7 @@ export function FavoritesPage() {
               <div className="fav-card__body">
                 <h3 className="fav-card__name">{fav.product?.name || fav.product_id}</h3>
                 {fav.product?.price && (
-                  <span className="fav-card__price">{Number(fav.product.price).toLocaleString()} &#8372;</span>
+                  <span className="fav-card__price">{formatPrice(fav.product.price, currency)}</span>
                 )}
               </div>
             </Link>

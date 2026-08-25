@@ -5,6 +5,7 @@ import { Heart, ShoppingCart, Star, ChevronRight, Minus, Plus, Check } from "luc
 import { productsApi, reviewsApi, favoritesApi } from "../../api";
 import { useAuth } from "../../contexts/AuthContext";
 import { useCart } from "../../contexts/CartContext";
+import { useCurrency, formatPrice } from "../../contexts/CurrencyContext";
 import type { Product, Review, ProductVariant } from "../../types";
 import { PageLoader } from "../../components/ui/Spinner";
 import "./Product.css";
@@ -14,6 +15,7 @@ export function ProductPage() {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
   const { addItem } = useCart();
+  const { currency } = useCurrency();
   const [product, setProduct] = useState<Product | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
@@ -160,7 +162,7 @@ export function ProductPage() {
             </div>
           )}
 
-          <div className="product-page__price">{currentPrice.toLocaleString()} \u20B4</div>
+          <div className="product-page__price">{formatPrice(currentPrice, currency)}</div>
 
           <div className="product-page__meta">
             <span>SKU: {product.sku}</span>
@@ -186,7 +188,7 @@ export function ProductPage() {
                     disabled={v.stock === 0}
                   >
                     <span className="variant-btn__name">{v.name}</span>
-                    <span className="variant-btn__price">{Number(v.price).toLocaleString()} \u20B4</span>
+                    <span className="variant-btn__price">{formatPrice(v.price, currency)}</span>
                   </button>
                 ))}
               </div>

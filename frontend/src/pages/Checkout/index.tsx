@@ -5,12 +5,14 @@ import { Truck, Store, Tag, CheckCircle, AlertCircle } from "lucide-react";
 import { ordersApi, promoApi } from "../../api";
 import { getApiErrorMessage } from "../../api/client";
 import { useCart } from "../../contexts/CartContext";
+import { useCurrency, formatPrice } from "../../contexts/CurrencyContext";
 import { PageLoader } from "../../components/ui/Spinner";
 import "./Checkout.css";
 
 export function CheckoutPage() {
   const { t } = useTranslation();
   const { cart } = useCart();
+  const { currency } = useCurrency();
   const navigate = useNavigate();
   const [deliveryMethod, setDeliveryMethod] = useState("standard");
   const [deliveryAddress, setDeliveryAddress] = useState("");
@@ -154,7 +156,7 @@ export function CheckoutPage() {
               {cart.items.map((item) => (
                 <div key={item.id} className="checkout-summary__item">
                   <span className="checkout-summary__item-name">{item.product_name} x{item.quantity}</span>
-                  <span>{Number(item.line_total).toLocaleString()} \u20B4</span>
+                  <span>{formatPrice(item.line_total, currency)}</span>
                 </div>
               ))}
             </div>
@@ -163,7 +165,7 @@ export function CheckoutPage() {
 
             <div className="checkout-summary__row">
               <span>{t("cart.subtotal")}</span>
-              <span>{Number(cart.subtotal).toLocaleString()} \u20B4</span>
+              <span>{formatPrice(cart.subtotal, currency)}</span>
             </div>
             <div className="checkout-summary__row">
               <span>{t("cart.shipping")}</span>
@@ -178,7 +180,7 @@ export function CheckoutPage() {
             <div className="checkout-summary__divider" />
             <div className="checkout-summary__row checkout-summary__row--total">
               <span>{t("cart.total")}</span>
-              <span>{Number(cart.subtotal).toLocaleString()} \u20B4</span>
+              <span>{formatPrice(cart.subtotal, currency)}</span>
             </div>
 
             <button type="submit" className="btn btn--primary btn--full btn--lg" disabled={loading}>

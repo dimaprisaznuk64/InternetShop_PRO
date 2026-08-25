@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ordersApi } from "../../api";
+import { useCurrency, formatPrice } from "../../contexts/CurrencyContext";
 import type { Order } from "../../types";
 
 const STATUS_COLORS: Record<string, string> = {
@@ -14,6 +15,7 @@ const STATUS_COLORS: Record<string, string> = {
 
 export function OrderDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const { currency } = useCurrency();
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -63,7 +65,7 @@ export function OrderDetailPage() {
 
         <div className="order-detail__section">
           <h3>Total</h3>
-          <p className="order-detail__total">${Number(order.total).toFixed(2)}</p>
+          <p className="order-detail__total">{formatPrice(order.total, currency)}</p>
           {order.notes && <p className="order-detail__notes">Note: {order.notes}</p>}
         </div>
       </div>
@@ -90,10 +92,10 @@ export function OrderDetailPage() {
                     </Link>
                   </td>
                   <td>{item.variant?.name ?? "—"}</td>
-                  <td>${Number(item.price).toFixed(2)}</td>
+                  <td>{formatPrice(item.price, currency)}</td>
                   <td>{item.quantity}</td>
                   <td>
-                    ${(Number(item.price) * item.quantity).toFixed(2)}
+                    {formatPrice(Number(item.price) * item.quantity, currency)}
                   </td>
                 </tr>
               ))}

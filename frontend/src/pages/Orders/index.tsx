@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Package, ChevronRight, ShoppingBag } from "lucide-react";
 import { ordersApi } from "../../api";
+import { useCurrency, formatPrice } from "../../contexts/CurrencyContext";
 import type { Order } from "../../types";
 import { PageLoader } from "../../components/ui/Spinner";
 import { EmptyState } from "../../components/ui/EmptyState";
@@ -19,6 +20,7 @@ const STATUS_MAP: Record<string, { label: string; className: string }> = {
 
 export function OrdersPage() {
   const { t } = useTranslation();
+  const { currency } = useCurrency();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -55,7 +57,7 @@ export function OrdersPage() {
                   <span className="order-card__date">{new Date(order.created_at).toLocaleDateString()}</span>
                 </div>
                 <span className={`order-card__status ${status.className}`}>{status.label}</span>
-                <span className="order-card__total">{Number(order.total).toLocaleString()} &#8372;</span>
+                <span className="order-card__total">{formatPrice(order.total, currency)}</span>
                 <ChevronRight size={16} className="order-card__arrow" />
               </div>
             </Link>
