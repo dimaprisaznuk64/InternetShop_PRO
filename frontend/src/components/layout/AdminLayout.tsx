@@ -2,6 +2,7 @@ import { NavLink, Outlet } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { LayoutDashboard, Package, FolderTree, Users, ShoppingCart, Tag, ChevronRight } from "lucide-react";
 import "./AdminLayout.css";
+import "../../pages/Admin/admin.css";
 
 const NAV_ITEMS = [
   { to: "/admin", labelKey: "admin.dashboard", icon: LayoutDashboard, end: true },
