@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
   ShoppingCart, Heart, User, Menu, X, LogOut,
-  Package, Settings, Sun, Moon, Globe, ChevronDown, Shield
+  Package, Sun, Moon, Globe, ChevronDown, Shield
 } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useCart } from "../../contexts/CartContext";
@@ -243,9 +243,9 @@ export function Header() {
                         <Shield size={16} /> {t("nav.admin")}
                       </Link>
                     )}
-                    <Link to="/settings" className="header__dropdown-item">
-                      <Settings size={16} /> {t("common.theme")}
-                    </Link>
+                    <button className="header__dropdown-item" onClick={() => setTheme(theme === "light" ? "dark" : "light")}>
+                      {theme === "light" ? <Moon size={16} /> : <Sun size={16} />} {t("common.theme")}
+                    </button>
                     <div className="header__dropdown-divider" />
                     <button className="header__dropdown-item header__dropdown-item--danger" onClick={handleLogout}>
                       <LogOut size={16} /> {t("nav.logout")}

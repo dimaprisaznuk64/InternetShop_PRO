@@ -133,10 +133,23 @@
 
 /* ── Products Grid ───────────────────────────────────────────────── */
 .products-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: var(--space-5);
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
   align-items: start;
+}
+
+@media (min-width: 640px) {
+  .products-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-5);
+  }
+}
+
+@media (min-width: 1024px) {
+  .products-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 
 .product-card {
