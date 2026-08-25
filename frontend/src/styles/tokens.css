@@ -1,0 +1,165 @@
+/* ============================================
+   InternetShop PRO — Design Tokens
+   Premium Tech: Apple × Samsung × Rozetka
+   ============================================ */
+
+:root {
+  /* --- Colors: Light --- */
+  --color-bg: #f8f9fc;
+  --color-bg-secondary: #f0f2f5;
+  --color-surface: #ffffff;
+  --color-surface-hover: #f5f6f8;
+  --color-surface-active: #ebedf0;
+  --color-surface-elevated: #ffffff;
+
+  --color-border: #e2e5ea;
+  --color-border-light: #eef0f3;
+  --color-border-focus: #6366f1;
+
+  --color-text: #111827;
+  --color-text-secondary: #6b7280;
+  --color-text-tertiary: #9ca3af;
+  --color-text-inverse: #ffffff;
+  --color-text-link: #6366f1;
+
+  /* Accent */
+  --color-accent: #6366f1;
+  --color-accent-hover: #4f46e5;
+  --color-accent-active: #4338ca;
+  --color-accent-light: #eef2ff;
+  --color-accent-text: #ffffff;
+
+  /* Semantic */
+  --color-success: #10b981;
+  --color-success-light: #ecfdf5;
+  --color-danger: #ef4444;
+  --color-danger-light: #fef2f2;
+  --color-warning: #f59e0b;
+  --color-warning-light: #fffbeb;
+  --color-info: #3b82f6;
+  --color-info-light: #eff6ff;
+
+  /* --- Spacing --- */
+  --space-0: 0;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+
+  /* --- Typography --- */
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-family-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 1.875rem;
+  --font-size-4xl: 2.25rem;
+  --font-size-5xl: 3rem;
+
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+
+  /* --- Border Radius --- */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 24px;
+  --radius-full: 9999px;
+
+  /* --- Shadows --- */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.2);
+  --shadow-accent: 0 4px 14px rgba(99, 102, 241, 0.3);
+
+  /* --- Z-Index --- */
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-overlay: 300;
+  --z-modal: 400;
+  --z-toast: 500;
+
+  /* --- Transitions --- */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-spring: 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* --- Container --- */
+  --container-max: 1280px;
+  --container-narrow: 960px;
+  --container-wide: 1440px;
+
+  /* --- Header --- */
+  --header-height: 64px;
+}
+
+/* ============================================
+   Dark Mode
+   ============================================ */
+.dark {
+  --color-bg: #0b0d10;
+  --color-bg-secondary: #111418;
+  --color-surface: #161a21;
+  --color-surface-hover: #1c2028;
+  --color-surface-active: #22272f;
+  --color-surface-elevated: #1a1e26;
+
+  --color-border: #2a2f38;
+  --color-border-light: #1f2430;
+  --color-border-focus: #818cf8;
+
+  --color-text: #f5f7fa;
+  --color-text-secondary: #9ca3af;
+  --color-text-tertiary: #6b7280;
+  --color-text-inverse: #111827;
+  --color-text-link: #818cf8;
+
+  --color-accent: #818cf8;
+  --color-accent-hover: #6366f1;
+  --color-accent-active: #4f46e5;
+  --color-accent-light: rgba(99, 102, 241, 0.15);
+  --color-accent-text: #ffffff;
+
+  --color-success-light: rgba(16, 185, 129, 0.15);
+  --color-danger-light: rgba(239, 68, 68, 0.15);
+  --color-warning-light: rgba(245, 158, 11, 0.15);
+  --color-info-light: rgba(59, 130, 246, 0.15);
+
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+}
+
+/* ============================================
+   Breakpoints (for reference — use in media queries)
+   mobile:  max-width: 480px
+   tablet:  max-width: 768px
+   laptop:  max-width: 1024px
+   desktop: max-width: 1280px
+   wide:    max-width: 1440px
+   ============================================ */

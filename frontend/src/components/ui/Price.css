@@ -1,0 +1,24 @@
+.price {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.price--sm { font-size: var(--font-size-sm); }
+.price--md { font-size: var(--font-size-lg); }
+.price--lg { font-size: var(--font-size-2xl); }
+
+.price__current {
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+}
+
+.price__current--sale {
+  color: var(--color-danger);
+}
+
+.price__old {
+  font-size: 0.85em;
+  color: var(--color-text-tertiary);
+  text-decoration: line-through;
+}

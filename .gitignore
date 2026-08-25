@@ -47,3 +47,4 @@ frontend/.env.local
 # Frontend coverage / build caches (safety)
 frontend/coverage/
 *.tsbuildinfo
+nul
