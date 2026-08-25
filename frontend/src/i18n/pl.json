@@ -132,5 +132,13 @@
     "support": "Wsparcie",
     "shipping": "Darmowa dostawa od 2000 zl",
     "rights": "Wszelkie prawa zastrzezone."
+  },
+  "admin": {
+    "dashboard": "Panel glowny",
+    "products": "Produkty",
+    "categories": "Kategorie",
+    "users": "Uzytkownicy",
+    "orders": "Zamowienia",
+    "promo": "Kody promocyjne"
   }
 }

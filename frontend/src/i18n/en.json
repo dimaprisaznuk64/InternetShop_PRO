@@ -132,5 +132,13 @@
     "support": "Support",
     "shipping": "Free shipping from 2000 UAH",
     "rights": "All rights reserved."
+  },
+  "admin": {
+    "dashboard": "Dashboard",
+    "products": "Products",
+    "categories": "Categories",
+    "users": "Users",
+    "orders": "Orders",
+    "promo": "Promo Codes"
   }
 }
