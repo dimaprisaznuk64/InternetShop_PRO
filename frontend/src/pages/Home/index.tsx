@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { ArrowRight, Truck, Shield, Headphones } from "lucide-react";
 import { productsApi, categoriesApi } from "../../api";
 import { useCurrency, formatPrice } from "../../contexts/CurrencyContext";
+import { categoryName } from "../../i18n/category";
 import type { Product, Category } from "../../types";
 import { ProductCardSkeleton } from "../../components/ui/Skeleton";
 import { EmptyState } from "../../components/ui/EmptyState";
@@ -69,7 +70,7 @@ export function HomePage() {
               {categories.map((cat) => (
                 <Link key={cat.id} to={`/catalog?category_id=${cat.id}`} className="category-card">
                   <span className="category-card__icon">{getCategoryIcon(cat.name)}</span>
-                  <span className="category-card__name">{cat.name}</span>
+                  <span className="category-card__name">{categoryName(cat, t)}</span>
                   <ArrowRight size={16} className="category-card__arrow" />
                 </Link>
               ))}

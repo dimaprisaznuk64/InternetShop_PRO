@@ -142,5 +142,11 @@
     "users": "Користувачі",
     "orders": "Замовлення",
     "promo": "Промокоди"
+  },
+  "category": {
+    "smartphones": "Смартфони",
+    "laptops": "Ноутбуки",
+    "audio": "Аудіо",
+    "accessories": "Аксесуари"
   }
 }

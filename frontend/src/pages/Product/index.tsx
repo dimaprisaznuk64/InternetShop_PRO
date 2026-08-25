@@ -6,6 +6,7 @@ import { productsApi, reviewsApi, favoritesApi } from "../../api";
 import { useAuth } from "../../contexts/AuthContext";
 import { useCart } from "../../contexts/CartContext";
 import { useCurrency, formatPrice } from "../../contexts/CurrencyContext";
+import { categoryName } from "../../i18n/category";
 import type { Product, Review, ProductVariant } from "../../types";
 import { PageLoader } from "../../components/ui/Spinner";
 import "./Product.css";
@@ -110,7 +111,7 @@ export function ProductPage() {
         {product.category && (
           <>
             <ChevronRight size={14} />
-            <Link to={`/catalog?category_id=${product.category.id}`}>{product.category.name}</Link>
+            <Link to={`/catalog?category_id=${product.category.id}`}>{categoryName(product.category, t)}</Link>
           </>
         )}
         <ChevronRight size={14} />

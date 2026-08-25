@@ -142,5 +142,11 @@
     "users": "Uzytkownicy",
     "orders": "Zamowienia",
     "promo": "Kody promocyjne"
+  },
+  "category": {
+    "smartphones": "Smartfony",
+    "laptops": "Laptopy",
+    "audio": "Audio",
+    "accessories": "Akcesoria"
   }
 }

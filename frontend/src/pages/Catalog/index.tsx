@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { SlidersHorizontal, X, ChevronLeft, ChevronRight, ArrowUpDown } from "lucide-react";
 import { productsApi, categoriesApi } from "../../api";
 import { useCurrency, formatPrice } from "../../contexts/CurrencyContext";
+import { categoryName } from "../../i18n/category";
 import type { Product, Category } from "../../types";
 import { ProductCardSkeleton } from "../../components/ui/Skeleton";
 import { EmptyState } from "../../components/ui/EmptyState";
@@ -120,7 +121,7 @@ export function CatalogPage() {
               className={`filter-list__item ${categoryId === cat.id ? "filter-list__item--active" : ""}`}
               onClick={() => setParam("category_id", cat.id)}
             >
-              {cat.name}
+              {categoryName(cat, t)}
             </button>
           ))}
         </div>
@@ -256,7 +257,7 @@ export function CatalogPage() {
         <div className="catalog__chips">
           {categoryId && (
             <span className="chip">
-              {categories.find((c) => c.id === categoryId)?.name || categoryId}
+              {categoryName(categories.find((c) => c.id === categoryId), t)}
               <button onClick={() => setParam("category_id", null)}><X size={12} /></button>
             </span>
           )}
