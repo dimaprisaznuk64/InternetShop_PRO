@@ -2,6 +2,7 @@ from typing import Optional
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, or_, func
+from sqlalchemy.orm import selectinload
 from app.database import get_db
 from app.models.product import Product
 from app.schemas.product import (
@@ -53,7 +54,11 @@ async def list_products(
     if cached is not None:
         return ProductListResponse(**cached)
 
-    stmt = select(Product)
+    stmt = select(Product).options(
+        selectinload(Product.images),
+        selectinload(Product.variants),
+        selectinload(Product.category),
+    )
 
     if q:
         pattern = f"%{q}%"
@@ -145,7 +150,15 @@ async def get_product(product_id: str, db: AsyncSession = Depends(get_db)):
     if cached is not None:
         return ProductResponse(**cached)
 
-    result = await db.execute(select(Product).where(Product.id == product_id))
+    result = await db.execute(
+        select(Product)
+        .options(
+            selectinload(Product.images),
+            selectinload(Product.variants),
+            selectinload(Product.category),
+        )
+        .where(Product.id == product_id)
+    )
     product = result.scalar_one_or_none()
     if not product:
         raise NotFoundError("Product not found")
@@ -170,7 +183,17 @@ async def create_product(
     product = Product(**data.model_dump())
     db.add(product)
     await db.commit()
-    await db.refresh(product)
+
+    result = await db.execute(
+        select(Product)
+        .options(
+            selectinload(Product.images),
+            selectinload(Product.variants),
+            selectinload(Product.category),
+        )
+        .where(Product.id == product.id)
+    )
+    product = result.scalar_one()
 
     await cache_delete_pattern(f"{PRODUCTS_CACHE_PREFIX}:list:*")
     return product
@@ -201,7 +224,17 @@ async def update_product(
         setattr(product, key, value)
 
     await db.commit()
-    await db.refresh(product)
+
+    result = await db.execute(
+        select(Product)
+        .options(
+            selectinload(Product.images),
+            selectinload(Product.variants),
+            selectinload(Product.category),
+        )
+        .where(Product.id == product_id)
+    )
+    product = result.scalar_one()
 
     await cache_delete_pattern(f"{PRODUCTS_CACHE_PREFIX}:list:*")
     await cache_delete(f"{PRODUCTS_CACHE_PREFIX}:detail:{product_id}")

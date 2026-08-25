@@ -1,5 +1,6 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_serializer
 from typing import Optional
+from datetime import datetime
 
 
 class ReviewCreate(BaseModel):
@@ -16,8 +17,15 @@ class ReviewResponse(BaseModel):
     text: Optional[str]
     is_moderated: bool
     is_verified_purchase: bool = False
+    created_at: Optional[datetime] = None
 
     model_config = {"from_attributes": True}
+
+    @field_serializer("created_at")
+    def serialize_datetime(self, value: Optional[datetime], _info):
+        if value is None:
+            return None
+        return value.isoformat()
 
 
 class ReviewListResponse(BaseModel):

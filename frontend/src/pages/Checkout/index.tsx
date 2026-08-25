@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ordersApi, promoApi } from "../../api";
 import { getApiErrorMessage } from "../../api/client";
@@ -17,6 +17,12 @@ export function CheckoutPage() {
   } | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!cart || cart.items.length === 0) {
+      navigate("/cart");
+    }
+  }, [cart, navigate]);
 
   const handleApplyPromo = async () => {
     if (!promoCode.trim()) return;
@@ -55,7 +61,6 @@ export function CheckoutPage() {
   };
 
   if (!cart || cart.items.length === 0) {
-    navigate("/cart");
     return null;
   }
 
