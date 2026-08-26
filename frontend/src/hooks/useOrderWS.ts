@@ -27,7 +27,9 @@ export function useOrderWS(orderId: string | undefined) {
 
     const proto = window.location.protocol === "https:" ? "wss:" : "ws:";
     const raw = import.meta.env.VITE_API_URL || "";
-    const host = raw ? raw.replace(/^https?/, proto) : `${proto}//${window.location.host}`;
+    const host = raw
+      ? raw.replace(/^https?:\/\//, `${proto}//`)
+      : `${proto}//${window.location.host}`;
     const url = `${host}/ws/orders/${orderId}?token=${encodeURIComponent(token)}`;
 
     setWsState("connecting");
