@@ -2,7 +2,7 @@ import zipfile, os, pathlib
 
 exclude_dirs = {'.git', 'node_modules', '__pycache__', '.venv', 'dist', '.opencode', '.idea', '.next', '.pytest_cache'}
 exclude_ext = {'.pyc', '.pyo'}
-exclude_files = {'make_zip.py'}
+exclude_files = {'make_zip.py', '.env', '.env.docker', '.env.local', '.env.production'}
 src = pathlib.Path(r'C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO')
 dst = pathlib.Path(r'C:\Users\DIMAS\Desktop\InternetShop_PRO.zip')
 
