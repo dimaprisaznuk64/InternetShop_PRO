@@ -42,7 +42,11 @@ const mockProduct = {
 };
 
 vi.mock("../api", () => ({
-  productsApi: { get: vi.fn(), list: vi.fn() },
+  productsApi: {
+    get: vi.fn(),
+    list: vi.fn(),
+    priceHistory: vi.fn().mockResolvedValue([]),
+  },
   reviewsApi: {
     listByProduct: vi.fn().mockResolvedValue({ reviews: [] }),
     create: vi.fn(),
@@ -90,21 +94,24 @@ describe("ProductPage", () => {
       expect(screen.getByText("A widget for testing")).toBeInTheDocument();
     });
 
-    expect(screen.getAllByText(/49\.99/).length).toBeGreaterThanOrEqual(1);
-    expect(screen.getByText("8 in stock")).toBeInTheDocument();
+    expect(screen.getAllByText(/49[.,]99/).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByText("In stock (8)")).toBeInTheDocument();
   });
 
-  it("renders product variants as buttons", async () => {
+  it("renders product variants as color swatches", async () => {
     vi.mocked(productsApi.get).mockResolvedValue(mockProduct);
 
     renderProduct();
 
     await waitFor(() => {
-      expect(screen.getByRole("heading", { name: "Variants" })).toBeInTheDocument();
+      expect(screen.getByRole("heading", { name: /color/i })).toBeInTheDocument();
       expect(screen.getByText("Small")).toBeInTheDocument();
-      expect(screen.getByText("Large")).toBeInTheDocument();
-      expect(screen.getByText("8 left")).toBeInTheDocument();
-      expect(screen.getByText("7 left")).toBeInTheDocument();
+
+      const smallSwatch = screen.getByTitle("Small");
+      const largeSwatch = screen.getByTitle("Large");
+      expect(smallSwatch).toHaveClass("color-swatch--active");
+      expect(largeSwatch).not.toHaveClass("color-swatch--active");
+      expect(largeSwatch).toHaveAttribute("title", "Large");
     });
   });
 

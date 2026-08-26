@@ -5,8 +5,8 @@ import { Package, ChevronRight, ShoppingBag } from "lucide-react";
 import { ordersApi } from "../../api";
 import { useCurrency, formatPrice } from "../../contexts/CurrencyContext";
 import type { Order } from "../../types";
-import { PageLoader } from "../../components/ui/Spinner";
 import { EmptyState } from "../../components/ui/EmptyState";
+import { OrderCardSkeleton } from "../../components/ui/Skeleton";
 import "./Orders.css";
 
 const STATUS_MAP: Record<string, { labelKey: string; className: string }> = {
@@ -28,7 +28,16 @@ export function OrdersPage() {
     ordersApi.list().then((data) => setOrders(data.orders)).catch(console.error).finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <PageLoader />;
+  if (loading) {
+    return (
+      <div className="orders-page container">
+        <h1 className="orders-page__title">{t("nav.orders")}</h1>
+        <div className="orders-list">
+          {[1, 2, 3, 4].map((i) => <OrderCardSkeleton key={i} />)}
+        </div>
+      </div>
+    );
+  }
 
   if (orders.length === 0) {
     return (

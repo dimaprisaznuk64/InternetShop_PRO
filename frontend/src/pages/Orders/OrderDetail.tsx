@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { ordersApi } from "../../api";
 import { useCurrency, formatPrice } from "../../contexts/CurrencyContext";
 import { useOrderWS } from "../../hooks/useOrderWS";
+import { OrderDetailSkeleton } from "../../components/ui/Skeleton";
 import type { Order } from "../../types";
 
 const CANCELABLE_STATUSES = new Set(["pending", "paid"]);
@@ -58,7 +59,7 @@ export function OrderDetailPage() {
     }
   };
 
-  if (loading) return <p>{t("common.loading")}</p>;
+  if (loading) return <OrderDetailSkeleton />;
   if (!order) return <p>{t("orders.notFound")}</p>;
 
   const activeStatus = wsStatus || order.status;

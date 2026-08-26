@@ -5,8 +5,8 @@ import { Trash2, Minus, Plus, ShoppingBag, ArrowRight } from "lucide-react";
 import { useCart } from "../../contexts/CartContext";
 import { useAuth } from "../../contexts/AuthContext";
 import { useCurrency, formatPrice } from "../../contexts/CurrencyContext";
-import { PageLoader } from "../../components/ui/Spinner";
 import { EmptyState } from "../../components/ui/EmptyState";
+import { ListRowSkeleton } from "../../components/ui/Skeleton";
 import "./Cart.css";
 
 export function CartPage() {
@@ -20,7 +20,13 @@ export function CartPage() {
     if (!user) navigate("/login");
   }, [user, navigate]);
 
-  if (loading) return <PageLoader />;
+  if (loading) {
+    return (
+      <div className="cart-page container">
+        <ListRowSkeleton rows={3} />
+      </div>
+    );
+  }
 
   if (!cart || cart.items.length === 0) {
     return (

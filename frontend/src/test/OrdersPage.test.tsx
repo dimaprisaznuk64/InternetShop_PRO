@@ -58,6 +58,11 @@ vi.mock("../api", () => ({
   getAccessToken: vi.fn().mockReturnValue("token"),
 }));
 
+vi.mock("../contexts/CurrencyContext", () => ({
+  useCurrency: () => ({ currency: "USD", setCurrency: vi.fn() }),
+  formatPrice: (v: number | string) => `$${v}`,
+}));
+
 import { ordersApi } from "../api";
 
 describe("OrdersPage", () => {
@@ -80,9 +85,9 @@ describe("OrdersPage", () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText("My Orders")).toBeInTheDocument();
-      expect(screen.getByText("pending")).toBeInTheDocument();
-      expect(screen.getByText("completed")).toBeInTheDocument();
+      expect(screen.getByText("Orders")).toBeInTheDocument();
+      expect(screen.getByText(/pending/i)).toBeInTheDocument();
+      expect(screen.getByText(/completed/i)).toBeInTheDocument();
       expect(screen.getByText("$99.99")).toBeInTheDocument();
     });
   });

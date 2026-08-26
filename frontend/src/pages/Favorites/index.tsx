@@ -5,8 +5,8 @@ import { Heart, HeartOff } from "lucide-react";
 import { favoritesApi } from "../../api";
 import { useCurrency, formatPrice } from "../../contexts/CurrencyContext";
 import type { Favorite } from "../../types";
-import { PageLoader } from "../../components/ui/Spinner";
 import { EmptyState } from "../../components/ui/EmptyState";
+import { ProductCardSkeleton } from "../../components/ui/Skeleton";
 import "./Favorites.css";
 
 export function FavoritesPage() {
@@ -24,7 +24,15 @@ export function FavoritesPage() {
     setFavorites((prev) => prev.filter((f) => f.product_id !== productId));
   };
 
-  if (loading) return <PageLoader />;
+  if (loading) {
+    return (
+      <div className="favorites-page container">
+        <div className="products-grid">
+          {[1, 2, 3, 4].map((i) => <ProductCardSkeleton key={i} />)}
+        </div>
+      </div>
+    );
+  }
 
   if (favorites.length === 0) {
     return (

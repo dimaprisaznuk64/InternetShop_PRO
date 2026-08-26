@@ -9,6 +9,7 @@ import { useCurrency, formatPrice } from "../../contexts/CurrencyContext";
 import { categoryName } from "../../i18n/category";
 import type { Product, Review, ProductVariant } from "../../types";
 import { PageLoader } from "../../components/ui/Spinner";
+import { PriceHistory } from "../../components/ui/PriceHistory";
 import "./Product.css";
 
 export function ProductPage() {
@@ -248,6 +249,9 @@ export function ProductPage() {
           )}
         </div>
       </div>
+
+      {/* Price history chart (renders only when there is data) */}
+      {product && <PriceHistory productId={product.id} />}
 
       {/* Reviews */}
       <section className="product-page__reviews">

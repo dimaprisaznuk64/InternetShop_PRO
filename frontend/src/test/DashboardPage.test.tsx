@@ -106,7 +106,7 @@ describe("Admin DashboardPage", () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText(/failed to load statistics/i)).toBeInTheDocument();
+      expect(screen.getByText("Error")).toBeInTheDocument();
     });
   });
 

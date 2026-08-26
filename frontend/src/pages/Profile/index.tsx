@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { User, Calendar, Lock, CheckCircle, AlertCircle } from "lucide-react";
 import { profileApi } from "../../api";
 import type { UserResponse } from "../../types";
-import { PageLoader } from "../../components/ui/Spinner";
+import { Skeleton } from "../../components/ui/Skeleton";
 import "./Profile.css";
 
 export function ProfilePage() {
@@ -43,7 +43,24 @@ export function ProfilePage() {
     } catch { setError("Failed to change password"); }
   };
 
-  if (loading) return <PageLoader />;
+  if (loading) {
+    return (
+      <div className="profile-page container">
+        <div className="profile-header">
+          <Skeleton variant="circular" width={64} height={64} />
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            <Skeleton width={160} height={22} />
+            <Skeleton width={220} height={14} />
+          </div>
+        </div>
+        <div className="profile-grid">
+          {[1, 2].map((i) => (
+            <Skeleton key={i} variant="rectangular" height={260} />
+          ))}
+        </div>
+      </div>
+    );
+  }
   if (!user) return <div className="profile-page__error">Failed to load profile</div>;
 
   const roleColors: Record<string, string> = { admin: "var(--color-danger)", manager: "var(--color-accent)", user: "var(--color-text-muted)" };

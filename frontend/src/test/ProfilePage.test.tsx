@@ -54,7 +54,7 @@ describe("ProfilePage", () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText("Profile")).toBeInTheDocument();
+      expect(screen.getByRole("heading", { name: /tester/i })).toBeInTheDocument();
       expect(screen.getByDisplayValue("tester")).toBeInTheDocument();
       expect(screen.getByDisplayValue("test@test.com")).toBeInTheDocument();
     });
@@ -80,8 +80,10 @@ describe("ProfilePage", () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: /update profile/i })).toBeInTheDocument();
-      expect(screen.getByRole("button", { name: /change password/i })).toBeInTheDocument();
+      expect(screen.getByRole("heading", { name: /edit profile/i })).toBeInTheDocument();
+      expect(screen.getByRole("heading", { name: /change password/i })).toBeInTheDocument();
+      const saveButtons = screen.getAllByRole("button", { name: /save/i });
+      expect(saveButtons.length).toBe(2);
     });
   });
 });

@@ -95,12 +95,13 @@ describe("CartPage", () => {
 
     await waitFor(() => {
       expect(screen.getByText("Test Product")).toBeInTheDocument();
-      expect(screen.getByText("$25.00")).toBeInTheDocument();
+      expect(screen.getByText("25 ₴")).toBeInTheDocument();
       expect(screen.getByText("Shopping Cart")).toBeInTheDocument();
     });
 
     const total50 = screen.getAllByText((_content, el) =>
-      el?.textContent?.includes("50.00") ?? false
+      (el?.classList.contains("cart-item__total") &&
+        el?.textContent?.includes("50")) ?? false
     );
     expect(total50.length).toBeGreaterThanOrEqual(1);
   });

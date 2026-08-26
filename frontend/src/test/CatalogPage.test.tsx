@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { CatalogPage } from "../pages/Catalog";
 import { AuthProvider } from "../contexts/AuthContext";
@@ -100,8 +100,8 @@ describe("CatalogPage", () => {
       expect(screen.getByText("Accessories")).toBeInTheDocument();
     });
 
-    expect(screen.getAllByText(/1299\.99/).length).toBeGreaterThanOrEqual(1);
-    expect(screen.getAllByText(/12\.50/).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText(/1[\s\u00A0\u202F]?299[.,]99\s*₴/).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText(/12[.,]5\s*₴/).length).toBeGreaterThanOrEqual(1);
   });
 
   it("shows out of stock for zero stock products", async () => {
@@ -117,11 +117,11 @@ describe("CatalogPage", () => {
     );
 
     await waitFor(() => {
-      expect(screen.getAllByText("Out of stock").length).toBeGreaterThanOrEqual(1);
+      expect(screen.getAllByText("Out of Stock").length).toBeGreaterThanOrEqual(1);
     });
   });
 
-  it("shows search form", async () => {
+  it("shows category filter buttons", async () => {
     vi.mocked(productsApi.list).mockResolvedValue(mockProducts);
     vi.mocked(categoriesApi.list).mockResolvedValue(mockCategories);
 
@@ -134,8 +134,9 @@ describe("CatalogPage", () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByPlaceholderText(/search products/i)).toBeInTheDocument();
-      expect(screen.getByRole("button", { name: /search/i })).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: "Laptops" })).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: "Accessories" })).toBeInTheDocument();
+      expect(screen.getAllByRole("button", { name: "All" }).length).toBeGreaterThanOrEqual(1);
     });
   });
 
@@ -208,8 +209,9 @@ describe("CatalogPage", () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText("Sort by:")).toBeInTheDocument();
-      expect(screen.getByDisplayValue("Newest")).toBeInTheDocument();
+      expect(screen.getAllByText("Newest").length).toBeGreaterThanOrEqual(1);
+      expect(screen.getAllByText("Price: Low to High").length).toBeGreaterThanOrEqual(1);
+      expect(screen.getAllByText("Price: High to Low").length).toBeGreaterThanOrEqual(1);
     });
   });
 
@@ -273,7 +275,7 @@ describe("CatalogPage", () => {
     });
   });
 
-  it("shows stock count for in-stock products", async () => {
+  it("shows stock badge only for zero stock products", async () => {
     vi.mocked(productsApi.list).mockResolvedValue(mockProducts);
     vi.mocked(categoriesApi.list).mockResolvedValue(mockCategories);
 
@@ -286,7 +288,16 @@ describe("CatalogPage", () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText("5 in stock")).toBeInTheDocument();
+      expect(screen.getByText("Mouse Basic")).toBeInTheDocument();
+      expect(screen.getByText("Laptop Pro")).toBeInTheDocument();
     });
+
+    const mouseCard = screen.getByText("Mouse Basic").closest("a");
+    expect(within(mouseCard as HTMLElement).getByText("Out of Stock")).toBeInTheDocument();
+
+    const laptopCard = screen.getByText("Laptop Pro").closest("a");
+    expect(
+      within(laptopCard as HTMLElement).queryByText("Out of Stock")
+    ).not.toBeInTheDocument();
   });
 });

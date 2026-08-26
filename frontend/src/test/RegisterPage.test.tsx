@@ -26,6 +26,10 @@ function renderWithAuth(ui: React.ReactElement) {
   );
 }
 
+const emailInput = () => screen.getByPlaceholderText("you@example.com");
+const usernameInput = () => screen.getByPlaceholderText("username");
+const passwordInputs = () => screen.getAllByPlaceholderText("••••••••");
+
 describe("RegisterPage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -34,10 +38,10 @@ describe("RegisterPage", () => {
   it("renders register form with all fields", () => {
     renderWithAuth(<RegisterPage />);
     expect(screen.getByRole("heading", { name: /create account/i })).toBeInTheDocument();
-    expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/^username/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/^password/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/confirm password/i)).toBeInTheDocument();
+    expect(emailInput()).toBeInTheDocument();
+    expect(usernameInput()).toBeInTheDocument();
+    expect(passwordInputs()[0]).toBeInTheDocument();
+    expect(passwordInputs()[1]).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /create account/i })).toBeInTheDocument();
   });
 
@@ -53,10 +57,10 @@ describe("RegisterPage", () => {
     const user = userEvent.setup();
     renderWithAuth(<RegisterPage />);
 
-    await user.type(screen.getByLabelText(/email/i), "test@test.com");
-    await user.type(screen.getByLabelText(/^username/i), "tester");
-    await user.type(screen.getByLabelText(/^password/i), "pass123");
-    await user.type(screen.getByLabelText(/confirm password/i), "pass456");
+    await user.type(emailInput(), "test@test.com");
+    await user.type(usernameInput(), "tester");
+    await user.type(passwordInputs()[0], "pass123");
+    await user.type(passwordInputs()[1], "pass456");
     await user.click(screen.getByRole("button", { name: /create account/i }));
 
     await waitFor(() => {
@@ -65,8 +69,8 @@ describe("RegisterPage", () => {
   });
 
   it("shows password toggle button", () => {
-    renderWithAuth(<RegisterPage />);
-    expect(screen.getByText("Show")).toBeInTheDocument();
+    const { container } = renderWithAuth(<RegisterPage />);
+    expect(container.querySelector(".auth-field__toggle")).toBeInTheDocument();
   });
 
   it("calls register on valid form submit", async () => {
@@ -97,10 +101,10 @@ describe("RegisterPage", () => {
 
     renderWithAuth(<RegisterPage />);
 
-    await user.type(screen.getByLabelText(/email/i), "new@new.com");
-    await user.type(screen.getByLabelText(/^username/i), "newuser");
-    await user.type(screen.getByLabelText(/^password/i), "pass123");
-    await user.type(screen.getByLabelText(/confirm password/i), "pass123");
+    await user.type(emailInput(), "new@new.com");
+    await user.type(usernameInput(), "newuser");
+    await user.type(passwordInputs()[0], "pass123");
+    await user.type(passwordInputs()[1], "pass123");
     await user.click(screen.getByRole("button", { name: /create account/i }));
 
     await waitFor(() => {
@@ -118,10 +122,10 @@ describe("RegisterPage", () => {
 
     renderWithAuth(<RegisterPage />);
 
-    await user.type(screen.getByLabelText(/email/i), "dup@dup.com");
-    await user.type(screen.getByLabelText(/^username/i), "dup");
-    await user.type(screen.getByLabelText(/^password/i), "pass123");
-    await user.type(screen.getByLabelText(/confirm password/i), "pass123");
+    await user.type(emailInput(), "dup@dup.com");
+    await user.type(usernameInput(), "dup");
+    await user.type(passwordInputs()[0], "pass123");
+    await user.type(passwordInputs()[1], "pass123");
     await user.click(screen.getByRole("button", { name: /create account/i }));
 
     await waitFor(() => {

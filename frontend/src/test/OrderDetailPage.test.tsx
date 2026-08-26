@@ -83,14 +83,14 @@ describe("OrderDetailPage", () => {
     await waitFor(() => {
       expect(screen.getByText(/99.99/)).toBeInTheDocument();
     });
-    expect(screen.getByText("pending")).toBeInTheDocument();
+    expect(screen.getByText("Pending")).toBeInTheDocument();
   });
 
   it("renders cancelled state without crashing", async () => {
     vi.mocked(ordersApi.get).mockResolvedValue({ ...mockOrder, status: "cancelled" });
     renderAt("/orders/ord-1111");
     await waitFor(() => {
-      expect(screen.getByText("cancelled")).toBeInTheDocument();
+      expect(screen.getByText("Cancelled")).toBeInTheDocument();
     });
   });
 });

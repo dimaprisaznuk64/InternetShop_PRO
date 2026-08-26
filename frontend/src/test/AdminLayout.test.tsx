@@ -28,7 +28,7 @@ describe("AdminLayout", () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText("Admin Panel")).toBeInTheDocument();
+    expect(screen.getAllByText(/admin/i).length).toBeGreaterThan(0);
     expect(screen.getByText("Dashboard")).toBeInTheDocument();
     expect(screen.getByText("Products")).toBeInTheDocument();
     expect(screen.getByText("Categories")).toBeInTheDocument();

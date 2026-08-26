@@ -34,11 +34,11 @@ describe("LoginPage", () => {
   it("renders login form", async () => {
     renderWithAuth(<LoginPage />);
     await waitFor(() => {
-      expect(screen.getByRole("heading", { name: /login/i })).toBeInTheDocument();
+      expect(screen.getByRole("heading", { name: /welcome back/i })).toBeInTheDocument();
     });
-    expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /login/i })).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("you@example.com")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("••••••••")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /sign in/i })).toBeInTheDocument();
   });
 
   it("shows link to register page", async () => {
@@ -52,9 +52,9 @@ describe("LoginPage", () => {
   });
 
   it("shows password toggle button", async () => {
-    renderWithAuth(<LoginPage />);
+    const { container } = renderWithAuth(<LoginPage />);
     await waitFor(() => {
-      expect(screen.getByText("Show")).toBeInTheDocument();
+      expect(container.querySelector(".auth-field__toggle")).toBeInTheDocument();
     });
   });
 
@@ -77,9 +77,9 @@ describe("LoginPage", () => {
 
     renderWithAuth(<LoginPage />);
 
-    await user.type(screen.getByLabelText(/email/i), "t@t.com");
-    await user.type(screen.getByLabelText(/password/i), "pass123");
-    await user.click(screen.getByRole("button", { name: /login/i }));
+    await user.type(screen.getByPlaceholderText("you@example.com"), "t@t.com");
+    await user.type(screen.getByPlaceholderText("••••••••"), "pass123");
+    await user.click(screen.getByRole("button", { name: /sign in/i }));
 
     await waitFor(() => {
       expect(authApi.login).toHaveBeenCalledWith({
@@ -95,9 +95,9 @@ describe("LoginPage", () => {
 
     renderWithAuth(<LoginPage />);
 
-    await user.type(screen.getByLabelText(/email/i), "bad@bad.com");
-    await user.type(screen.getByLabelText(/password/i), "wrong");
-    await user.click(screen.getByRole("button", { name: /login/i }));
+    await user.type(screen.getByPlaceholderText("you@example.com"), "bad@bad.com");
+    await user.type(screen.getByPlaceholderText("••••••••"), "wrong");
+    await user.click(screen.getByRole("button", { name: /sign in/i }));
 
     await waitFor(() => {
       expect(screen.getByText(/invalid email or password/i)).toBeInTheDocument();

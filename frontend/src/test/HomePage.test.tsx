@@ -11,7 +11,7 @@ describe("HomePage", () => {
       </MemoryRouter>
     );
     expect(
-      screen.getByRole("heading", { name: /welcome to internetshop/i })
+      screen.getByRole("heading", { name: /technology you want to own/i })
     ).toBeInTheDocument();
   });
 
@@ -21,7 +21,7 @@ describe("HomePage", () => {
         <HomePage />
       </MemoryRouter>
     );
-    expect(screen.getByRole("link", { name: /browse catalog/i })).toHaveAttribute(
+    expect(screen.getAllByRole("link", { name: /shop now/i })[0]).toHaveAttribute(
       "href",
       "/catalog"
     );
