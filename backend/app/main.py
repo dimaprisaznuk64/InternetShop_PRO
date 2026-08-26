@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import sys
 
 if sys.platform == "win32":
@@ -28,7 +29,9 @@ from app.routers.reviews import router as reviews_router
 from app.routers.promo import router as promo_router
 from app.routers.admin import router as admin_router
 from app.routers.notifications import router as notifications_router
+from app.routers.ws import router as ws_router
 
+logger = logging.getLogger(__name__)
 settings = get_settings()
 
 
@@ -88,6 +91,7 @@ app.include_router(reviews_router)
 app.include_router(promo_router)
 app.include_router(admin_router)
 app.include_router(notifications_router)
+app.include_router(ws_router)
 
 
 @app.exception_handler(IntegrityError)
@@ -95,6 +99,27 @@ async def integrity_error_handler(request: Request, exc: IntegrityError):
     return JSONResponse(
         status_code=409,
         content={"detail": "Operation conflicts with existing data"},
+    )
+
+
+from app.utils.dependencies import UnauthorizedError
+
+
+@app.exception_handler(UnauthorizedError)
+async def unauthorized_error_handler(request: Request, exc: UnauthorizedError):
+    return JSONResponse(
+        status_code=401,
+        content={"detail": exc.detail},
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    logger.exception("Unhandled exception on %s %s", request.method, request.url.path)
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "Internal server error"},
     )
 
 

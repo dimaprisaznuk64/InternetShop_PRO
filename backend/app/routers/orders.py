@@ -21,6 +21,7 @@ from app.utils.dependencies import get_current_user, require_admin
 from app.utils.exceptions import NotFoundError, BadRequestError
 from app.cache import cache_delete, cache_delete_pattern
 from app.services.background import email_service, notification_service, task_manager
+from app.services.websocket import ws_manager
 
 router = APIRouter(prefix="/api/orders", tags=["orders"])
 
@@ -193,6 +194,49 @@ async def list_my_orders(
     return OrderListResponse(orders=serialized, total=len(serialized))
 
 
+@router.post("/{order_id}/cancel", response_model=OrderResponse)
+async def cancel_order(
+    order_id: str,
+    current_user=Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    result = await db.execute(
+        select(Order).where(Order.id == order_id).options(selectinload(Order.items))
+    )
+    order = result.scalar_one_or_none()
+    if not order:
+        raise NotFoundError("Order not found")
+
+    if order.user_id != current_user.id:
+        raise BadRequestError("Access denied")
+
+    if order.status not in (OrderStatus.pending, OrderStatus.paid):
+        raise BadRequestError(
+            f"Cannot cancel order with status '{order.status.value}'. "
+            "Only pending or paid orders can be cancelled."
+        )
+
+    order.status = OrderStatus.cancelled
+    await db.commit()
+
+    result = await db.execute(
+        select(Order).where(Order.id == order.id).options(selectinload(Order.items))
+    )
+    order = result.scalar_one()
+
+    await cache_delete("admin:stats")
+    await cache_delete_pattern("admin:popular_products:*")
+
+    await notification_service.create(
+        db, current_user.id, "order_cancelled",
+        "Order cancelled",
+        f"Your order #{order.id[:8]} has been cancelled.",
+        {"order_id": order.id},
+    )
+
+    return _serialize_order(order)
+
+
 @router.get("/{order_id}", response_model=OrderResponse)
 async def get_order(
     order_id: str,
@@ -260,6 +304,14 @@ async def update_order_status(
 
     order.status = data.status
     await db.commit()
+
+    # Broadcast status change to connected WebSocket clients
+    status_val = data.status if isinstance(data.status, str) else data.status.value
+    await ws_manager.broadcast(order_id, {
+        "type": "status_update",
+        "status": status_val,
+        "order_id": order_id,
+    })
 
     result = await db.execute(
         select(Order).where(Order.id == order.id).options(selectinload(Order.items))
