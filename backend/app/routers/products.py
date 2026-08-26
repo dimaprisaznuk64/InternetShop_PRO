@@ -14,6 +14,7 @@ from app.schemas.product import (
 from app.utils.dependencies import require_admin, require_manager
 from app.utils.exceptions import NotFoundError, AlreadyExistsError
 from app.cache import cache_get, cache_set, cache_delete, cache_delete_pattern
+from app.models.price_history import PriceHistory
 
 router = APIRouter(prefix="/api/products", tags=["products"])
 
@@ -220,8 +221,20 @@ async def update_product(
     if existing.scalar_one_or_none():
         raise AlreadyExistsError("Product with this slug or SKU already exists")
 
-    for key, value in data.model_dump().items():
+    old_price = product.price
+    update_data = data.model_dump()
+    new_price = update_data.get("price")
+
+    for key, value in update_data.items():
         setattr(product, key, value)
+
+    if new_price is not None and old_price is not None and new_price != old_price:
+        db.add(PriceHistory(
+            product_id=product_id,
+            old_price=old_price,
+            new_price=new_price,
+            changed_by_user_id=current_user.id,
+        ))
 
     await db.commit()
 
@@ -239,6 +252,33 @@ async def update_product(
     await cache_delete_pattern(f"{PRODUCTS_CACHE_PREFIX}:list:*")
     await cache_delete(f"{PRODUCTS_CACHE_PREFIX}:detail:{product_id}")
     return product
+
+
+@router.get("/{product_id}/price-history")
+async def get_price_history(
+    product_id: str,
+    days: int = Query(90, ge=1, le=365),
+    db: AsyncSession = Depends(get_db),
+):
+    from datetime import datetime, timedelta, UTC
+    since = datetime.now(UTC) - timedelta(days=days)
+    result = await db.execute(
+        select(PriceHistory)
+        .where(
+            PriceHistory.product_id == product_id,
+            PriceHistory.changed_at >= since,
+        )
+        .order_by(PriceHistory.changed_at.asc())
+    )
+    records = result.scalars().all()
+    return [
+        {
+            "date": r.changed_at.isoformat(),
+            "old_price": float(r.old_price),
+            "new_price": float(r.new_price),
+        }
+        for r in records
+    ]
 
 
 @router.delete("/{product_id}", status_code=status.HTTP_204_NO_CONTENT)

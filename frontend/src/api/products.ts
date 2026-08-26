@@ -80,4 +80,12 @@ export const productsApi = {
     api
       .delete(`/api/products/${productId}/variants/${variantId}`)
       .then((r) => r.data),
+
+  priceHistory: (productId: string, days: number = 90) =>
+    api
+      .get<{ date: string; old_price: number; new_price: number }[]>(
+        `/api/products/${productId}/price-history`,
+        { params: { days } }
+      )
+      .then((r) => r.data),
 };

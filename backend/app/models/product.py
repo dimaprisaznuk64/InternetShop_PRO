@@ -38,6 +38,10 @@ class Product(Base):
     variants: Mapped[list["ProductVariant"]] = relationship(
         back_populates="product", cascade="all, delete-orphan"
     )
+    price_history: Mapped[list["PriceHistory"]] = relationship(
+        back_populates="product", cascade="all, delete-orphan",
+        order_by="PriceHistory.changed_at.desc()",
+    )
 
 
 class ProductImage(Base):
@@ -52,8 +56,12 @@ class ProductImage(Base):
     url: Mapped[str] = mapped_column(String(500))
     is_primary: Mapped[bool] = mapped_column(Boolean, default=False)
     position: Mapped[int] = mapped_column(Integer, default=0)
+    variant_id: Mapped[Optional[str]] = mapped_column(
+        String(36), ForeignKey("product_variants.id", ondelete="SET NULL"), nullable=True
+    )
 
     product: Mapped["Product"] = relationship(back_populates="images")
+    variant: Mapped[Optional["ProductVariant"]] = relationship(back_populates="images")
 
 
 class ProductVariant(Base):
@@ -70,5 +78,7 @@ class ProductVariant(Base):
     price: Mapped[Decimal] = mapped_column(Numeric(10, 2))
     stock: Mapped[int] = mapped_column(Integer, default=0)
     attributes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    color: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
 
     product: Mapped["Product"] = relationship(back_populates="variants")
+    images: Mapped[list["ProductImage"]] = relationship(back_populates="variant")
