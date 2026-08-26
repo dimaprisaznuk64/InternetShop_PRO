@@ -1,74 +1,22 @@
-/* Legacy variables kept for backward compat during redesign phases */
+/* Legacy aliases — point to new tokens for any components still referencing them */
 :root {
-  --primary: var(--color-accent, #2563eb);
-  --primary-hover: var(--color-accent-hover, #1d4ed8);
-  --danger: var(--color-danger, #dc2626);
-  --success: var(--color-success, #16a34a);
-  --bg: var(--color-bg, #f8fafc);
-  --surface: var(--color-surface, #ffffff);
-  --text: var(--color-text, #1e293b);
-  --text-muted: var(--color-text-secondary, #64748b);
-  --border: var(--color-border, #e2e8f0);
-  --radius: var(--radius-md, 8px);
+  --primary: var(--color-accent);
+  --primary-hover: var(--color-accent-hover);
+  --danger: var(--color-danger);
+  --success: var(--color-success);
+  --bg: var(--color-bg);
+  --surface: var(--color-surface);
+  --text: var(--color-text);
+  --text-muted: var(--color-text-secondary);
+  --border: var(--color-border);
+  --radius: var(--radius-md);
 }
-
-.container {
-  max-width: var(--container-max, 1200px);
-  margin: 0 auto;
-  padding: 0 var(--space-6, 1rem);
-}
-
-/* ── Header (styles now in Header.css) ───────────────────────────── */
 
 /* ── Main ────────────────────────────────────────────────────────── */
 .main {
   min-height: calc(100vh - 64px);
   padding: var(--space-8) 0;
   overflow-x: hidden;
-}
-
-/* ── Footer (styles now in Footer.css) ───────────────────────────── */
-
-/* ── Buttons ─────────────────────────────────────────────────────── */
-.btn {
-  display: inline-block;
-  padding: 0.5rem 1.25rem;
-  border: none;
-  border-radius: var(--radius);
-  cursor: pointer;
-  font-size: 0.9rem;
-  text-decoration: none;
-  text-align: center;
-}
-
-.btn--primary {
-  background: var(--primary);
-  color: white;
-}
-
-.btn--primary:hover {
-  background: var(--primary-hover);
-}
-
-.btn--primary:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.btn--ghost {
-  background: transparent;
-  color: var(--text);
-  border: 1px solid var(--border);
-}
-
-.btn--sm {
-  padding: 0.3rem 0.75rem;
-  font-size: 0.8rem;
-}
-
-.btn--danger {
-  background: var(--danger);
-  color: white;
 }
 
 /* ── Auth pages ──────────────────────────────────────────────────── */
@@ -307,7 +255,7 @@
 
 .variants__item.active {
   border-color: var(--primary);
-  background: #eff6ff;
+  background: var(--color-accent-light);
 }
 
 .variants__item.disabled {
@@ -660,6 +608,133 @@
 
 .orders-table a:hover {
   text-decoration: underline;
+}
+
+/* ── Order Tracker (real-time) ──────────────────────────────────── */
+.order-tracker {
+  margin: var(--space-6) 0;
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+
+.order-tracker__ws {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-5);
+}
+
+.order-tracker__live {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  font-family: var(--font-family-mono);
+  color: var(--color-success);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.order-tracker__live::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-success);
+  animation: pulse-dot 1.5s ease infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.order-tracker__connecting {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.order-tracker__steps {
+  display: flex;
+  align-items: flex-start;
+}
+
+.order-tracker__step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  position: relative;
+}
+
+.order-tracker__dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: var(--color-bg-secondary);
+  color: var(--color-text-muted);
+  border: 2px solid var(--color-border);
+  transition: all var(--transition-base);
+  z-index: 1;
+}
+
+.order-tracker__step--done .order-tracker__dot {
+  background: var(--color-success);
+  border-color: var(--color-success);
+  color: #fff;
+}
+
+.order-tracker__step--active .order-tracker__dot {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #fff;
+  box-shadow: 0 0 0 4px var(--color-accent-subtle);
+}
+
+.order-tracker__label {
+  margin-top: var(--space-2);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.order-tracker__step--done .order-tracker__label,
+.order-tracker__step--active .order-tracker__label {
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.order-tracker__line {
+  position: absolute;
+  top: 16px;
+  left: calc(50% + 18px);
+  right: calc(-50% + 18px);
+  height: 2px;
+  background: var(--color-border);
+  transition: background var(--transition-base);
+}
+
+.order-tracker__line--done {
+  background: var(--color-success);
+}
+
+.order-tracker__cancelled {
+  margin-top: var(--space-4);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-danger-light);
+  color: var(--color-danger);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-align: center;
 }
 
 /* ── Admin Layout ─────────────────────────────────────────────────── */

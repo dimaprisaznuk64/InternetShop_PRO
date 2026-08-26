@@ -67,6 +67,7 @@ export interface ProductImage {
   url: string;
   is_primary: boolean;
   position: number;
+  variant_id?: string | null;
 }
 
 export interface ProductVariant {
@@ -77,6 +78,7 @@ export interface ProductVariant {
   price: string;
   stock: number;
   attributes: string | null;
+  color?: string | null;
 }
 
 export interface Product {
@@ -85,6 +87,7 @@ export interface Product {
   slug: string;
   description: string | null;
   price: string;
+  old_price?: string | null;
   sku: string;
   stock: number;
   category_id: string;
@@ -132,6 +135,7 @@ export interface ProductImageCreate {
   url: string;
   is_primary?: boolean;
   position?: number;
+  variant_id?: string;
 }
 
 export interface ProductVariantCreate {
@@ -140,6 +144,7 @@ export interface ProductVariantCreate {
   price: string;
   stock: number;
   attributes?: string;
+  color?: string;
 }
 
 export interface ProductVariantUpdate {
@@ -148,6 +153,7 @@ export interface ProductVariantUpdate {
   price?: string;
   stock?: number;
   attributes?: string;
+  color?: string;
 }
 
 // ─── Cart ──────────────────────────────────────────────────────────
