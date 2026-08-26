@@ -11,6 +11,16 @@ from app.cache import (
 )
 
 
+@pytest.fixture(autouse=True)
+def _restore_real_redis_client():
+    """These tests mutate the module-level redis_client; restore it afterwards
+    so later test files are not silently left without a working Redis."""
+    import app.cache as cache_module
+    original = cache_module.redis_client
+    yield
+    cache_module.redis_client = original
+
+
 @pytest.mark.asyncio
 async def test_cache_set_and_get():
     mock_redis = AsyncMock()
@@ -110,7 +120,7 @@ async def test_close_redis():
     mock_redis = AsyncMock()
     cache_module.redis_client = mock_redis
     await close_redis()
-    mock_redis.close.assert_called_once()
+    mock_redis.aclose.assert_called_once()
     assert cache_module.redis_client is None
 
 

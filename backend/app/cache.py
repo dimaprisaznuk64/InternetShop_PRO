@@ -37,8 +37,11 @@ async def init_redis() -> None:
 async def close_redis() -> None:
     global redis_client
     if redis_client:
-        await redis_client.close()
-        redis_client = None
+        client, redis_client = redis_client, None
+        try:
+            await client.aclose()
+        except Exception as e:
+            logger.warning("Redis close error (ignored): %s", e)
         logger.info("Redis connection closed")
 
 

@@ -1,8 +1,13 @@
 import sys
 import asyncio
+import os
 
 if sys.platform == "win32":
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+
+# Keep tests hermetic: local .env values must not change endpoint behavior.
+# Env vars take priority over .env in pydantic-settings.
+os.environ["WEBHOOK_SECRET"] = ""
 
 import pytest
 from httpx import AsyncClient, ASGITransport
@@ -21,6 +26,7 @@ TestSession = async_sessionmaker(test_engine, class_=AsyncSession, expire_on_com
 
 @pytest.fixture(scope="session")
 def event_loop():
+    """Single shared loop so the global Redis client / engine stay bound to it."""
     loop = asyncio.new_event_loop()
     yield loop
     loop.close()
