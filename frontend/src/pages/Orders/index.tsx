@@ -9,13 +9,13 @@ import { PageLoader } from "../../components/ui/Spinner";
 import { EmptyState } from "../../components/ui/EmptyState";
 import "./Orders.css";
 
-const STATUS_MAP: Record<string, { label: string; className: string }> = {
-  pending: { label: "Pending", className: "status--pending" },
-  paid: { label: "Paid", className: "status--paid" },
-  processing: { label: "Processing", className: "status--processing" },
-  shipped: { label: "Shipped", className: "status--shipped" },
-  completed: { label: "Completed", className: "status--completed" },
-  cancelled: { label: "Cancelled", className: "status--cancelled" },
+const STATUS_MAP: Record<string, { labelKey: string; className: string }> = {
+  pending: { labelKey: "orders.status_pending", className: "status--pending" },
+  paid: { labelKey: "orders.status_paid", className: "status--paid" },
+  processing: { labelKey: "orders.status_processing", className: "status--processing" },
+  shipped: { labelKey: "orders.status_shipped", className: "status--shipped" },
+  completed: { labelKey: "orders.status_completed", className: "status--completed" },
+  cancelled: { labelKey: "orders.status_cancelled", className: "status--cancelled" },
 };
 
 export function OrdersPage() {
@@ -47,7 +47,7 @@ export function OrdersPage() {
       <h1 className="orders-page__title">{t("nav.orders")}</h1>
       <div className="orders-list">
         {orders.map((order) => {
-          const status = STATUS_MAP[order.status] || { label: order.status, className: "" };
+          const status = STATUS_MAP[order.status] || { labelKey: "orders.status_" + order.status, className: "" };
           return (
             <Link key={order.id} to={`/orders/${order.id}`} className="order-card">
               <div className="order-card__main">
@@ -56,7 +56,7 @@ export function OrdersPage() {
                   <span className="order-card__id">#{order.id.slice(0, 8)}</span>
                   <span className="order-card__date">{new Date(order.created_at).toLocaleDateString()}</span>
                 </div>
-                <span className={`order-card__status ${status.className}`}>{status.label}</span>
+                <span className={`order-card__status ${status.className}`}>{t(status.labelKey, order.status)}</span>
                 <span className="order-card__total">{formatPrice(order.total, currency)}</span>
                 <ChevronRight size={16} className="order-card__arrow" />
               </div>

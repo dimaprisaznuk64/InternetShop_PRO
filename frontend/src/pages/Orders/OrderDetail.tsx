@@ -63,8 +63,16 @@ export function OrderDetailPage() {
 
   const activeStatus = wsStatus || order.status;
   const activeIdx = statusToIndex(activeStatus);
-  const canCancel = CANCELABLE_STATUSES.has(activeStatus);
   const isCancelled = activeStatus === "cancelled";
+
+  // 30-minute cancellation window for paid orders (matches backend ORDER_CANCEL_WINDOW_MINUTES)
+  const CANCEL_WINDOW_MIN = 30;
+  const deadline = new Date(order.created_at).getTime() + CANCEL_WINDOW_MIN * 60_000;
+  const minutesLeft = Math.max(0, Math.ceil((deadline - Date.now()) / 60_000));
+  const windowExpired = activeStatus === "paid" && minutesLeft <= 0;
+  const canCancel =
+    CANCELABLE_STATUSES.has(activeStatus) &&
+    !(activeStatus === "paid" && windowExpired);
 
   return (
     <div className="order-detail container">
@@ -84,6 +92,13 @@ export function OrderDetailPage() {
           </button>
         )}
       </div>
+
+      {activeStatus === "pending" && (
+        <p className="order-tracker__hint">{t("orders.cancel_hint", { minutes: CANCEL_WINDOW_MIN })}</p>
+      )}
+      {windowExpired && (
+        <p className="order-tracker__hint order-tracker__hint--expired">{t("orders.cancel_expired")}</p>
+      )}
 
       {/* Real-time progress tracker */}
       <div className="order-tracker">
@@ -128,7 +143,9 @@ export function OrderDetailPage() {
       <div className="order-detail__grid">
         <div className="order-detail__section">
           <h3>{t("orders.status")}</h3>
-          <span className={`status-badge status-badge--${activeStatus}`}>{activeStatus}</span>
+          <span className={`status-badge status-badge--${activeStatus}`}>
+            {t(`orders.status_${activeStatus}`, activeStatus)}
+          </span>
           <p className="order-detail__date">
             {t("orders.created")}: {new Date(order.created_at).toLocaleDateString()}
           </p>

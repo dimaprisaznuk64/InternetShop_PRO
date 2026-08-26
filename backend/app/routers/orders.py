@@ -2,9 +2,10 @@ from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
 from sqlalchemy.orm import selectinload
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from decimal import Decimal
 from app.database import get_db
+from app.config import get_settings
 from app.models.user import User
 from app.models.cart import Cart, CartItem
 from app.models.product import Product
@@ -215,6 +216,15 @@ async def cancel_order(
             f"Cannot cancel order with status '{order.status.value}'. "
             "Only pending or paid orders can be cancelled."
         )
+
+    if order.status == OrderStatus.paid:
+        from datetime import datetime, timedelta, UTC
+        window = timedelta(minutes=get_settings().ORDER_CANCEL_WINDOW_MINUTES)
+        if datetime.now(UTC) - order.created_at > window:
+            raise BadRequestError(
+                "Cancellation window expired. Paid orders can only be "
+                f"cancelled within {get_settings().ORDER_CANCEL_WINDOW_MINUTES} minutes."
+            )
 
     order.status = OrderStatus.cancelled
     await db.commit()

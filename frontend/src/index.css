@@ -737,6 +737,16 @@
   text-align: center;
 }
 
+.order-tracker__hint {
+  margin: calc(-1 * var(--space-4)) 0 var(--space-5);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.order-tracker__hint--expired {
+  color: var(--color-danger);
+}
+
 /* ── Admin Layout ─────────────────────────────────────────────────── */
 .admin-layout {
   display: grid;

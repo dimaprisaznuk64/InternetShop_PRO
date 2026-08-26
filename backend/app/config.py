@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     REDIS_URL: str = "redis://localhost:6379/0"
     DEBUG: bool = True
     WEBHOOK_SECRET: str = ""
+    ORDER_CANCEL_WINDOW_MINUTES: int = 30
 
     CORS_ORIGINS: str = "http://localhost:3000"
     ALLOWED_HOSTS: str = "*"
