@@ -66,7 +66,7 @@ async def refresh_token(data: RefreshRequest, db: AsyncSession = Depends(get_db)
         if not verify_token_type(payload, "refresh"):
             raise BadRequestError("Invalid token type -- expected refresh token")
 
-        if not verify_token_not_blacklisted(payload):
+        if not await verify_token_not_blacklisted(payload):
             raise BadRequestError("Refresh token has been revoked")
 
         user_id: str = payload.get("sub")
@@ -85,7 +85,7 @@ async def refresh_token(data: RefreshRequest, db: AsyncSession = Depends(get_db)
     # Blacklist old refresh token (rotation)
     jti = payload.get("jti")
     if jti:
-        blacklist_token(jti)
+        await blacklist_token(jti)
 
     access = create_access_token(user.id)
     refresh = create_refresh_token(user.id)
@@ -102,7 +102,7 @@ async def logout(
         refresh_payload = decode_token(data.refresh_token)
         jti = refresh_payload.get("jti")
         if jti:
-            blacklist_token(jti)
+            await blacklist_token(jti)
     except JWTError:
         pass
 

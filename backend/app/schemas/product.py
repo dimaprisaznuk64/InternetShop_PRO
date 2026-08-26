@@ -34,6 +34,7 @@ class ProductImageResponse(BaseModel):
     url: str
     is_primary: bool
     position: int
+    variant_id: Optional[str] = None
 
     model_config = {"from_attributes": True}
 
@@ -46,6 +47,7 @@ class ProductVariantResponse(BaseModel):
     price: Decimal
     stock: int
     attributes: Optional[str]
+    color: Optional[str] = None
 
     model_config = {"from_attributes": True}
 

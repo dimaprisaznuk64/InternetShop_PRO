@@ -75,38 +75,38 @@ class TestTokenStructure:
 # TOKEN BLACKLIST
 # ═══════════════════════════════════════════════════════════════
 
+@pytest.mark.asyncio
 class TestTokenBlacklist:
 
-    def setup_method(self):
-        clear_blacklist()
-
-    def test_token_not_blacklisted_by_default(self):
+    async def test_token_not_blacklisted_by_default(self):
         token = create_access_token("user-1")
         payload = decode_token(token)
-        assert is_token_blacklisted(payload["jti"]) is False
+        assert await is_token_blacklisted(payload["jti"]) is False
 
-    def test_blacklist_token(self):
+    async def test_blacklist_token(self):
         token = create_access_token("user-1")
         payload = decode_token(token)
-        blacklist_token(payload["jti"])
-        assert is_token_blacklisted(payload["jti"]) is True
+        await blacklist_token(payload["jti"])
+        assert await is_token_blacklisted(payload["jti"]) is True
+        await clear_blacklist()
 
-    def test_blacklist_only_affects_specific_token(self):
+    async def test_blacklist_only_affects_specific_token(self):
         t1 = create_access_token("user-1")
         t2 = create_access_token("user-1")
         p1 = decode_token(t1)
         p2 = decode_token(t2)
-        blacklist_token(p1["jti"])
-        assert is_token_blacklisted(p1["jti"]) is True
-        assert is_token_blacklisted(p2["jti"]) is False
+        await blacklist_token(p1["jti"])
+        assert await is_token_blacklisted(p1["jti"]) is True
+        assert await is_token_blacklisted(p2["jti"]) is False
+        await clear_blacklist()
 
-    def test_clear_blacklist(self):
+    async def test_clear_blacklist(self):
         token = create_access_token("user-1")
         payload = decode_token(token)
-        blacklist_token(payload["jti"])
-        assert is_token_blacklisted(payload["jti"]) is True
-        clear_blacklist()
-        assert is_token_blacklisted(payload["jti"]) is False
+        await blacklist_token(payload["jti"])
+        assert await is_token_blacklisted(payload["jti"]) is True
+        await clear_blacklist()
+        assert await is_token_blacklisted(payload["jti"]) is False
 
 
 # ═══════════════════════════════════════════════════════════════

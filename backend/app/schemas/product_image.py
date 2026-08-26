@@ -6,6 +6,7 @@ class ProductImageCreate(BaseModel):
     url: str = Field(min_length=1, max_length=500)
     is_primary: bool = False
     position: int = 0
+    variant_id: Optional[str] = None
 
 
 class ProductImageResponse(BaseModel):
@@ -14,6 +15,7 @@ class ProductImageResponse(BaseModel):
     url: str
     is_primary: bool
     position: int
+    variant_id: Optional[str] = None
 
     model_config = {"from_attributes": True}
 

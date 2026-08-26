@@ -93,13 +93,26 @@ export function ProductPage() {
 
   const handleVariantSelect = useCallback((variant: ProductVariant) => {
     setSelectedVariant(variant);
+    setSelectedImage(0);
     setQuantity(1);
   }, []);
+
+  const isLightColor = (hex: string): boolean => {
+    const c = hex.replace("#", "");
+    const r = parseInt(c.substring(0, 2), 16);
+    const g = parseInt(c.substring(2, 4), 16);
+    const b = parseInt(c.substring(4, 6), 16);
+    return (r * 299 + g * 587 + b * 114) / 1000 > 150;
+  };
 
   if (loading) return <PageLoader />;
   if (!product) return <div className="product-page__error">Product not found</div>;
 
   const sortedImages = [...(product.images ?? [])].sort((a, b) => a.position - b.position);
+  const filteredImages = selectedVariant
+    ? sortedImages.filter((img) => img.variant_id === selectedVariant.id || !img.variant_id)
+    : sortedImages;
+  const displayImages = filteredImages.length > 0 ? filteredImages : sortedImages;
 
   return (
     <div className="product-page container">
@@ -121,14 +134,14 @@ export function ProductPage() {
       <div className="product-page__content">
         {/* Images */}
         <div className="product-page__gallery">
-          {sortedImages.length > 0 ? (
+          {displayImages.length > 0 ? (
             <>
               <div className="product-page__main-image">
-                <img src={sortedImages[selectedImage]?.url} alt={product.name} />
+                <img src={displayImages[selectedImage]?.url} alt={product.name} />
               </div>
-              {sortedImages.length > 1 && (
+              {displayImages.length > 1 && (
                 <div className="product-page__thumbnails">
-                  {sortedImages.map((img, i) => (
+                  {displayImages.map((img, i) => (
                     <button
                       key={img.id}
                       className={`product-page__thumb ${i === selectedImage ? "product-page__thumb--active" : ""}`}
@@ -176,20 +189,27 @@ export function ProductPage() {
             <p className="product-page__desc">{product.description}</p>
           )}
 
-          {/* Variants */}
+          {/* Color Variants */}
           {product.variants?.length ? (
             <div className="product-page__variants">
-              <h4 className="product-page__section-title">{t("product.variants")}</h4>
-              <div className="product-page__variant-list">
+              <h4 className="product-page__section-title">
+                {t("product.color")}: <span>{selectedVariant?.name}</span>
+              </h4>
+              <div className="product-page__color-list">
                 {product.variants.map((v) => (
                   <button
                     key={v.id}
-                    className={`variant-btn ${selectedVariant?.id === v.id ? "variant-btn--active" : ""} ${v.stock === 0 ? "variant-btn--disabled" : ""}`}
+                    className={`color-swatch ${selectedVariant?.id === v.id ? "color-swatch--active" : ""} ${v.stock === 0 ? "color-swatch--disabled" : ""}`}
+                    style={{ backgroundColor: v.color || "#ccc" }}
                     onClick={() => handleVariantSelect(v)}
                     disabled={v.stock === 0}
+                    title={v.name}
                   >
-                    <span className="variant-btn__name">{v.name}</span>
-                    <span className="variant-btn__price">{formatPrice(v.price, currency)}</span>
+                    {selectedVariant?.id === v.id && (
+                      <span className="color-swatch__check" style={{ color: isLightColor(v.color || "#ccc") ? "#000" : "#fff" }}>
+                        &#10003;
+                      </span>
+                    )}
                   </button>
                 ))}
               </div>

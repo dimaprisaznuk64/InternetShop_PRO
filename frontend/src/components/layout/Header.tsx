@@ -2,14 +2,14 @@ import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
-  ShoppingCart, Heart, User, Menu, X, LogOut,
-  Package, Sun, Moon, Globe, ChevronDown, Shield
+  ShoppingCart, Menu, X,
+  Sun, Moon, Search
 } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useCart } from "../../contexts/CartContext";
 import { useCurrency, CURRENCY_SYMBOLS, type Currency } from "../../contexts/CurrencyContext";
-import { useIsMobile, useLocalStorage } from "../../hooks";
-import { SearchInput } from "../ui/Input";
+import { useIsMobile } from "../../hooks";
+import { useTheme } from "../../hooks/useTheme";
 import { Badge } from "../ui/Badge";
 import "./Header.css";
 
@@ -26,7 +26,8 @@ export function Header() {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [langMenuOpen, setLangMenuOpen] = useState(false);
   const [currencyMenuOpen, setCurrencyMenuOpen] = useState(false);
-  const [theme, setTheme] = useLocalStorage<"light" | "dark">("theme", "light");
+  const [searchOpen, setSearchOpen] = useState(false);
+  const { theme, toggle: toggleTheme } = useTheme();
   const [searchValue, setSearchValue] = useState("");
   const userMenuRef = useRef<HTMLDivElement>(null);
   const langMenuRef = useRef<HTMLDivElement>(null);
@@ -39,13 +40,11 @@ export function Header() {
   }, []);
 
   useEffect(() => {
-    document.documentElement.classList.toggle("dark", theme === "dark");
-  }, [theme]);
-
-  useEffect(() => {
     setMobileMenuOpen(false);
     setUserMenuOpen(false);
     setLangMenuOpen(false);
+    setCurrencyMenuOpen(false);
+    setSearchOpen(false);
   }, [location.pathname]);
 
   useEffect(() => {
@@ -66,6 +65,7 @@ export function Header() {
     if (searchValue.trim()) {
       navigate(`/catalog?q=${encodeURIComponent(searchValue.trim())}`);
       setSearchValue("");
+      setSearchOpen(false);
     }
   };
 
@@ -81,12 +81,10 @@ export function Header() {
   };
 
   const languages = [
-    { code: "uk", label: "UA", flag: "\u{1F1FA}\u{1F1E6}" },
-    { code: "en", label: "EN", flag: "\u{1F1EC}\u{1F1E7}" },
-    { code: "pl", label: "PL", flag: "\u{1F1F5}\u{1F1F1}" },
+    { code: "uk", label: "UA" },
+    { code: "en", label: "EN" },
+    { code: "pl", label: "PL" },
   ];
-
-  const currentLang = languages.find((l) => l.code === i18n.language) || languages[0];
 
   return (
     <>
@@ -115,16 +113,28 @@ export function Header() {
           {/* Search */}
           {!isMobile && (
             <form className="header__search" onSubmit={handleSearch}>
-              <SearchInput
-                value={searchValue}
-                onChange={(e) => setSearchValue(e.target.value)}
-                placeholder={t("catalog.search_placeholder")}
-              />
+              <div className="header__search-wrap">
+                <Search size={16} className="header__search-icon" />
+                <input
+                  type="text"
+                  className="header__search-input"
+                  value={searchValue}
+                  onChange={(e) => setSearchValue(e.target.value)}
+                  placeholder={t("catalog.search_placeholder")}
+                />
+              </div>
             </form>
           )}
 
           {/* Right Actions */}
           <div className="header__actions">
+            {/* Mobile Search */}
+            {isMobile && (
+              <button className="header__icon-btn" onClick={() => setSearchOpen(!searchOpen)}>
+                <Search size={18} />
+              </button>
+            )}
+
             {/* Language */}
             <div className="header__dropdown-wrap" ref={langMenuRef}>
               <button
@@ -132,8 +142,7 @@ export function Header() {
                 onClick={() => setLangMenuOpen(!langMenuOpen)}
                 title={t("common.language")}
               >
-                <Globe size={18} />
-                <span className="header__lang-label">{currentLang.flag}</span>
+                <span className="header__lang-label">{languages.find(l => l.code === i18n.language)?.label || "EN"}</span>
               </button>
               {langMenuOpen && (
                 <div className="header__dropdown header__dropdown--right">
@@ -143,7 +152,7 @@ export function Header() {
                       className={`header__dropdown-item ${i18n.language === lang.code ? "header__dropdown-item--active" : ""}`}
                       onClick={() => changeLang(lang.code)}
                     >
-                      {lang.flag} {lang.label}
+                      {lang.label}
                     </button>
                   ))}
                 </div>
@@ -157,9 +166,7 @@ export function Header() {
                 onClick={() => setCurrencyMenuOpen(!currencyMenuOpen)}
                 title={t("common.currency")}
               >
-                <span className="header__currency-label">
-                  {CURRENCY_SYMBOLS[currency]}
-                </span>
+                <span className="header__currency-label">{CURRENCY_SYMBOLS[currency]}</span>
               </button>
               {currencyMenuOpen && (
                 <div className="header__dropdown header__dropdown--right">
@@ -167,10 +174,7 @@ export function Header() {
                     <button
                       key={cur}
                       className={`header__dropdown-item ${currency === cur ? "header__dropdown-item--active" : ""}`}
-                      onClick={() => {
-                        setCurrency(cur);
-                        setCurrencyMenuOpen(false);
-                      }}
+                      onClick={() => { setCurrency(cur); setCurrencyMenuOpen(false); }}
                     >
                       {CURRENCY_SYMBOLS[cur]} {cur}
                     </button>
@@ -182,18 +186,11 @@ export function Header() {
             {/* Theme */}
             <button
               className="header__icon-btn"
-              onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+              onClick={toggleTheme}
               title={t("common.theme")}
             >
               {theme === "light" ? <Moon size={18} /> : <Sun size={18} />}
             </button>
-
-            {/* Favorites */}
-            {user && (
-              <Link to="/favorites" className="header__icon-btn" title={t("nav.favorites")}>
-                <Heart size={18} />
-              </Link>
-            )}
 
             {/* Cart */}
             {user && (
@@ -213,12 +210,6 @@ export function Header() {
                   <div className="header__avatar">
                     {user.username.charAt(0).toUpperCase()}
                   </div>
-                  {!isMobile && (
-                    <>
-                      <span className="header__username">{user.username}</span>
-                      <ChevronDown size={14} />
-                    </>
-                  )}
                 </button>
                 {userMenuOpen && (
                   <div className="header__dropdown header__dropdown--right">
@@ -233,22 +224,22 @@ export function Header() {
                     </div>
                     <div className="header__dropdown-divider" />
                     <Link to="/profile" className="header__dropdown-item">
-                      <User size={16} /> {t("nav.profile")}
+                      {t("nav.profile")}
                     </Link>
                     <Link to="/orders" className="header__dropdown-item">
-                      <Package size={16} /> {t("nav.orders")}
+                      {t("nav.orders")}
+                    </Link>
+                    <Link to="/favorites" className="header__dropdown-item">
+                      {t("nav.favorites")}
                     </Link>
                     {isAdmin && (
                       <Link to="/admin" className="header__dropdown-item">
-                        <Shield size={16} /> {t("nav.admin")}
+                        {t("nav.admin")}
                       </Link>
                     )}
-                    <button className="header__dropdown-item" onClick={() => setTheme(theme === "light" ? "dark" : "light")}>
-                      {theme === "light" ? <Moon size={16} /> : <Sun size={16} />} {t("common.theme")}
-                    </button>
                     <div className="header__dropdown-divider" />
                     <button className="header__dropdown-item header__dropdown-item--danger" onClick={handleLogout}>
-                      <LogOut size={16} /> {t("nav.logout")}
+                      {t("nav.logout")}
                     </button>
                   </div>
                 )}
@@ -273,20 +264,33 @@ export function Header() {
         </div>
       </header>
 
+      {/* Mobile Search Overlay */}
+      {isMobile && searchOpen && (
+        <div className="header__search-overlay">
+          <form className="header__search-form" onSubmit={handleSearch}>
+            <button type="button" className="header__icon-btn" onClick={() => setSearchOpen(false)}>
+              <X size={18} />
+            </button>
+            <input
+              autoFocus
+              type="text"
+              className="header__search-input"
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+              placeholder={t("catalog.search_placeholder")}
+            />
+            <button type="submit" className="header__icon-btn">
+              <Search size={18} />
+            </button>
+          </form>
+        </div>
+      )}
+
       {/* Mobile Menu */}
       {isMobile && mobileMenuOpen && (
         <div className="mobile-menu">
           <div className="mobile-menu__overlay" onClick={() => setMobileMenuOpen(false)} />
           <div className="mobile-menu__panel">
-            {/* Search */}
-            <form className="mobile-menu__search" onSubmit={handleSearch}>
-              <SearchInput
-                value={searchValue}
-                onChange={(e) => setSearchValue(e.target.value)}
-                placeholder={t("catalog.search_placeholder")}
-              />
-            </form>
-
             <nav className="mobile-menu__nav">
               <Link to="/catalog" className="mobile-menu__link">{t("nav.catalog")}</Link>
               {user && (
@@ -304,10 +308,34 @@ export function Header() {
 
             <div className="mobile-menu__divider" />
 
+            <div className="mobile-menu__section">
+              <div className="mobile-menu__section-title">{t("common.language")}</div>
+              <div className="header__lang-pills header__lang-pills--mobile">
+                {languages.map((lang) => (
+                  <button
+                    key={lang.code}
+                    className={`header__lang-pill ${i18n.language === lang.code ? "header__lang-pill--active" : ""}`}
+                    onClick={() => changeLang(lang.code)}
+                  >
+                    {lang.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="mobile-menu__section">
+              <div className="mobile-menu__section-title">{t("common.theme")}</div>
+              <button className="mobile-menu__link" onClick={toggleTheme}>
+                {theme === "light" ? <Moon size={18} /> : <Sun size={18} />} {t("common.theme")}
+              </button>
+            </div>
+
+            <div className="mobile-menu__divider" />
+
             <div className="mobile-menu__bottom">
               {user ? (
                 <button className="mobile-menu__link mobile-menu__link--danger" onClick={handleLogout}>
-                  <LogOut size={18} /> {t("nav.logout")}
+                  {t("nav.logout")}
                 </button>
               ) : (
                 <>

@@ -1,25 +1,53 @@
+import logging
 from datetime import datetime, timedelta, timezone
 from jose import jwt, JWTError
 from passlib.context import CryptContext
 from app.config import get_settings
 
+logger = logging.getLogger(__name__)
+
 settings = get_settings()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-# ─── Token blacklist (in-memory; production → Redis/DB) ─────
-_token_blacklist: set[str] = set()
+BLACKLIST_PREFIX = "bl:token:"
 
 
-def blacklist_token(jti: str) -> None:
-    _token_blacklist.add(jti)
+async def blacklist_token(jti: str) -> None:
+    from app.cache import get_redis
+    redis = await get_redis()
+    if redis:
+        ttl = settings.REFRESH_TOKEN_EXPIRE_DAYS * 86400
+        try:
+            await redis.set(f"{BLACKLIST_PREFIX}{jti}", "1", ex=ttl)
+        except Exception as e:
+            logger.warning("Redis blacklist set failed: %s", e)
+    else:
+        logger.warning("Redis unavailable, token %s not blacklisted", jti)
 
 
-def is_token_blacklisted(jti: str) -> bool:
-    return jti in _token_blacklist
+async def is_token_blacklisted(jti: str) -> bool:
+    from app.cache import get_redis
+    redis = await get_redis()
+    if redis:
+        try:
+            return await redis.exists(f"{BLACKLIST_PREFIX}{jti}") == 1
+        except Exception as e:
+            logger.warning("Redis blacklist check failed: %s", e)
+    return False
 
 
-def clear_blacklist() -> None:
-    _token_blacklist.clear()
+async def clear_blacklist() -> None:
+    from app.cache import get_redis
+    redis = await get_redis()
+    if redis:
+        try:
+            keys = []
+            async for key in redis.scan_iter(match=f"{BLACKLIST_PREFIX}*"):
+                keys.append(key)
+            if keys:
+                await redis.delete(*keys)
+        except Exception as e:
+            logger.warning("Redis blacklist clear failed: %s", e)
 
 
 # ─── Password hashing ────────────────────────────────────────
@@ -73,9 +101,9 @@ def verify_token_type(payload: dict, expected_type: str) -> bool:
     return payload.get("type") == expected_type
 
 
-def verify_token_not_blacklisted(payload: dict) -> bool:
+async def verify_token_not_blacklisted(payload: dict) -> bool:
     """Check that token jti is not in the blacklist."""
     jti = payload.get("jti")
-    if jti and is_token_blacklisted(jti):
+    if jti and await is_token_blacklisted(jti):
         return False
     return True

@@ -229,8 +229,12 @@ export function CatalogPage() {
                   key={i}
                   className={`catalog__sort-option ${sortBy === opt.value && sortOrder === opt.order ? "catalog__sort-option--active" : ""}`}
                   onClick={() => {
-                    setParam("sort_by", opt.value);
-                    setParam("sort_order", opt.order);
+                    setSearchParams((prev) => {
+                      prev.set("sort_by", opt.value);
+                      prev.set("sort_order", opt.order);
+                      prev.delete("page");
+                      return prev;
+                    });
                   }}
                 >
                   {t(opt.labelKey)}

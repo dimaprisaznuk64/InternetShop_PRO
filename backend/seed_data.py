@@ -1,23 +1,32 @@
 """Seed database with sample categories and products."""
+import argparse
 import asyncio
-import sys
 import os
+import sys
 
 if sys.platform == "win32":
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 import httpx
 
-BASE = "http://localhost:8000"
-ADMIN_EMAIL = "admin@example.com"
-ADMIN_PASSWORD = "Admin123!"
+
+def parse_args():
+    parser = argparse.ArgumentParser(description="Seed database with categories and products")
+    parser.add_argument("--base-url", default=os.getenv("SEED_BASE_URL", "http://localhost:8000"),
+                        help="API base URL (default: $SEED_BASE_URL or http://localhost:8000)")
+    parser.add_argument("--admin-email", default=os.getenv("SEED_ADMIN_EMAIL", "admin@example.com"),
+                        help="Admin email (default: $SEED_ADMIN_EMAIL or admin@example.com)")
+    parser.add_argument("--admin-password", default=os.getenv("SEED_ADMIN_PASSWORD", "Admin123!"),
+                        help="Admin password (default: $SEED_ADMIN_PASSWORD)")
+    return parser.parse_args()
 
 
 async def main():
-    async with httpx.AsyncClient(base_url=BASE) as client:
+    args = parse_args()
+    async with httpx.AsyncClient(base_url=args.base_url) as client:
         # Login as admin
         r = await client.post("/api/auth/login", json={
-            "email": ADMIN_EMAIL, "password": ADMIN_PASSWORD,
+            "email": args.admin_email, "password": args.admin_password,
         })
         token = r.json()["access_token"]
         headers = {"Authorization": f"Bearer {token}"}
@@ -193,7 +202,7 @@ async def main():
                     )
             print(f"Images + variants added for: {prod['name']}")
 
-        print("\nDone! Refresh http://localhost:3000")
+        print(f"\nDone! Refresh {args.base_url.replace(':8000', ':3000')}")
 
 
 if __name__ == "__main__":

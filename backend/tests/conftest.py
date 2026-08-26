@@ -11,6 +11,7 @@ from app.main import app
 from app.database import Base, get_db
 from app.models.user import User, UserRole
 from app.utils.security import hash_password, create_access_token
+from app.cache import init_redis, close_redis
 
 TEST_DATABASE_URL = "sqlite+aiosqlite:///./test.db"
 
@@ -31,7 +32,9 @@ async def setup_database():
     async with test_engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
+    await init_redis()
     yield
+    await close_redis()
     async with test_engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
     await test_engine.dispose()

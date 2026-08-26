@@ -9,6 +9,7 @@ class ProductVariantCreate(BaseModel):
     price: Decimal = Field(ge=0, decimal_places=2)
     stock: int = Field(ge=0, default=0)
     attributes: Optional[str] = None
+    color: Optional[str] = Field(None, max_length=50)
 
 
 class ProductVariantUpdate(BaseModel):
@@ -17,6 +18,7 @@ class ProductVariantUpdate(BaseModel):
     price: Decimal = Field(ge=0, decimal_places=2)
     stock: int = Field(ge=0, default=0)
     attributes: Optional[str] = None
+    color: Optional[str] = Field(None, max_length=50)
 
 
 class ProductVariantResponse(BaseModel):
@@ -27,6 +29,7 @@ class ProductVariantResponse(BaseModel):
     price: Decimal
     stock: int
     attributes: Optional[str]
+    color: Optional[str] = None
 
     model_config = {"from_attributes": True}
 
