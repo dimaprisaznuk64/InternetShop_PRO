@@ -61,7 +61,12 @@
     "reviews": "Відгуки",
     "similar_products": "Схожі товари",
     "no_reviews": "Відгуків ще немає",
-    "verified_purchase": "Підтверджена покупка"
+    "verified_purchase": "Підтверджена покупка",
+    "color": "Колір",
+    "variants": "Варіанти",
+    "rating": "Оцінка",
+    "write_review": "Написати відгук...",
+    "submit_review": "Надіслати відгук"
   },
   "cart": {
     "title": "Ваш кошик",
@@ -134,7 +139,10 @@
     "no_data": "Немає даних",
     "language": "Мова",
     "currency": "Валюта",
-    "theme": "Тема"
+    "theme": "Тема",
+    "dark": "Темна",
+    "light": "Світла",
+    "home": "Головна"
   },
   "footer": {
     "description": "Ваш надійний технічний магазин. Смартфони, ноутбуки, аудіо — найкращі ціни та швидка доставка.",
@@ -157,5 +165,48 @@
     "laptops": "Ноутбуки",
     "audio": "Аудіо",
     "accessories": "Аксесуари"
+  },
+  "orders": {
+    "title": "Замовлення",
+    "status": "Статус",
+    "created": "Створено",
+    "items": "Товари",
+    "product": "Товар",
+    "variant": "Варіант",
+    "price": "Ціна",
+    "qty": "Кількість",
+    "total": "Сума",
+    "note": "Примітка",
+    "standard": "Стандартна",
+    "notFound": "Замовлення не знайдено.",
+    "confirmCancel": "Ви впевнені, що хочете скасувати це замовлення?",
+    "cancelFailed": "Не вдалося скасувати замовлення.",
+    "cancelled": "Замовлення скасовано",
+    "live": "ОНЛАЙН",
+    "step_accepted": "Прийнято",
+    "step_paid": "Оплачено",
+    "step_assembling": "Збирається",
+    "step_shipped": "Відправлено",
+    "step_delivered": "Доставлено"
+  },
+  "command_palette": {
+    "search": "Пошук товарів, дій...",
+    "no_results": "Нічого не знайдено"
+  },
+  "product": {
+    "in_stock": "В наявності",
+    "out_of_stock": "Немає в наявності",
+    "color": "Колір",
+    "add_to_cart": "Додати в кошик",
+    "added": "Додано",
+    "reviews": "Відгуки",
+    "rating": "Оцінка",
+    "write_review": "Напишіть свій відгук...",
+    "submit_review": "Надіслати відгук",
+    "no_reviews": "Відгуків ще немає. Будьте першим!",
+    "priceHistory": "Історія цін",
+    "priceDropped": "Ціна знизилась",
+    "priceIncreased": "Ціна підвищилась",
+    "current": "Поточна"
   }
 }

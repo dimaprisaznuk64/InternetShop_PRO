@@ -61,7 +61,12 @@
     "reviews": "Reviews",
     "similar_products": "Similar Products",
     "no_reviews": "No reviews yet",
-    "verified_purchase": "Verified Purchase"
+    "verified_purchase": "Verified Purchase",
+    "color": "Color",
+    "variants": "Options",
+    "rating": "Rating",
+    "write_review": "Write a review...",
+    "submit_review": "Submit Review"
   },
   "cart": {
     "title": "Shopping Cart",
@@ -134,7 +139,10 @@
     "no_data": "No data",
     "language": "Language",
     "currency": "Currency",
-    "theme": "Theme"
+    "theme": "Theme",
+    "dark": "Dark",
+    "light": "Light",
+    "home": "Home"
   },
   "footer": {
     "description": "Your trusted tech store. Smartphones, laptops, audio — best prices and fast delivery.",
@@ -157,5 +165,48 @@
     "laptops": "Laptops",
     "audio": "Audio",
     "accessories": "Accessories"
+  },
+  "orders": {
+    "title": "Order",
+    "status": "Status",
+    "created": "Created",
+    "items": "Items",
+    "product": "Product",
+    "variant": "Variant",
+    "price": "Price",
+    "qty": "Qty",
+    "total": "Total",
+    "note": "Note",
+    "standard": "Standard",
+    "notFound": "Order not found.",
+    "confirmCancel": "Are you sure you want to cancel this order?",
+    "cancelFailed": "Failed to cancel order.",
+    "cancelled": "Order has been cancelled",
+    "live": "LIVE",
+    "step_accepted": "Accepted",
+    "step_paid": "Paid",
+    "step_assembling": "Assembling",
+    "step_shipped": "Shipped",
+    "step_delivered": "Delivered"
+  },
+  "command_palette": {
+    "search": "Search products, actions...",
+    "no_results": "No results found"
+  },
+  "product": {
+    "in_stock": "In stock",
+    "out_of_stock": "Out of stock",
+    "color": "Color",
+    "add_to_cart": "Add to cart",
+    "added": "Added",
+    "reviews": "Reviews",
+    "rating": "Rating",
+    "write_review": "Write your review...",
+    "submit_review": "Submit review",
+    "no_reviews": "No reviews yet. Be the first!",
+    "priceHistory": "Price History",
+    "priceDropped": "Price dropped",
+    "priceIncreased": "Price increased",
+    "current": "Current"
   }
 }

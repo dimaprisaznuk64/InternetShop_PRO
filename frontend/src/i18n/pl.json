@@ -61,7 +61,12 @@
     "reviews": "Recenzje",
     "similar_products": "Podobne produkty",
     "no_reviews": "Brak recenzji",
-    "verified_purchase": "Zweryfikowany zakup"
+    "verified_purchase": "Zweryfikowany zakup",
+    "color": "Kolor",
+    "variants": "Warianty",
+    "rating": "Ocena",
+    "write_review": "Napisz recenzje...",
+    "submit_review": "Wyslij recenzje"
   },
   "cart": {
     "title": "Twoj koszyk",
@@ -134,7 +139,10 @@
     "no_data": "Brak danych",
     "language": "Jezyk",
     "currency": "Waluta",
-    "theme": "Motyw"
+    "theme": "Motyw",
+    "dark": "Ciemny",
+    "light": "Jasny",
+    "home": "Strona glowna"
   },
   "footer": {
     "description": "Twoj zaufany sklep elektroniczny. Smartfony, laptowy, audio — najlepsze ceny i szybka dostawa.",
@@ -157,5 +165,48 @@
     "laptops": "Laptopy",
     "audio": "Audio",
     "accessories": "Akcesoria"
+  },
+  "orders": {
+    "title": "Zamowienie",
+    "status": "Status",
+    "created": "Utworzono",
+    "items": "Produkty",
+    "product": "Produkt",
+    "variant": "Wariant",
+    "price": "Cena",
+    "qty": "Ilosc",
+    "total": "Suma",
+    "note": "Uwaga",
+    "standard": "Standardowa",
+    "notFound": "Zamowienie nie znaleziono.",
+    "confirmCancel": "Czy na pewno chcesz anulowac to zamowienie?",
+    "cancelFailed": "Nie udalo sie anulowac zamowienia.",
+    "cancelled": "Zamowienie anulowane",
+    "live": "NA ZYWO",
+    "step_accepted": "Przyjeto",
+    "step_paid": "Oplacono",
+    "step_assembling": "Kompletowanie",
+    "step_shipped": "Wyslano",
+    "step_delivered": "Dostarczono"
+  },
+  "command_palette": {
+    "search": "Szukaj produktow, akcji...",
+    "no_results": "Nie znaleziono"
+  },
+  "product": {
+    "in_stock": "Dostepny",
+    "out_of_stock": "Niedostepny",
+    "color": "Kolor",
+    "add_to_cart": "Dodaj do koszyka",
+    "added": "Dodano",
+    "reviews": "Opinie",
+    "rating": "Ocena",
+    "write_review": "Napisz swoja opinie...",
+    "submit_review": "Wyslij opinie",
+    "no_reviews": "Brak opini. Badz pierwszy!",
+    "priceHistory": "Historia cen",
+    "priceDropped": "Cena spadla",
+    "priceIncreased": "Cena wzrosla",
+    "current": "Aktualna"
   }
 }

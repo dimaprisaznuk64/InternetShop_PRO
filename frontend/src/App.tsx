@@ -4,6 +4,7 @@ import { CartProvider } from "./contexts/CartContext";
 import { CurrencyProvider } from "./contexts/CurrencyContext";
 import { Layout } from "./components/layout/Layout";
 import { AdminLayout } from "./components/layout/AdminLayout";
+import { ErrorBoundary } from "./components/ui/ErrorBoundary";
 
 import { HomePage } from "./pages/Home";
 import { CatalogPage } from "./pages/Catalog";
@@ -126,14 +127,16 @@ function AppRoutes() {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <CartProvider>
-          <CurrencyProvider>
-            <AppRoutes />
-          </CurrencyProvider>
-        </CartProvider>
-      </AuthProvider>
-    </BrowserRouter>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <AuthProvider>
+          <CartProvider>
+            <CurrencyProvider>
+              <AppRoutes />
+            </CurrencyProvider>
+          </CartProvider>
+        </AuthProvider>
+      </BrowserRouter>
+    </ErrorBoundary>
   );
 }

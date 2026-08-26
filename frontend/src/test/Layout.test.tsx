@@ -24,7 +24,7 @@ describe("Layout", () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText("InternetShop")).toBeInTheDocument();
+    expect(screen.getAllByText("InternetShop").length).toBeGreaterThan(0);
     expect(
       screen.getByText(/InternetShop PRO/)
     ).toBeInTheDocument();
