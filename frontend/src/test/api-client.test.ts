@@ -42,7 +42,7 @@ describe("API client token management", () => {
     expect(getRefreshToken()).toBeNull();
   });
 
-  it("API_BASE defaults to localhost:8000", () => {
-    expect(API_BASE).toBe("http://localhost:8000");
+  it("API_BASE defaults to empty string for Vite proxy", () => {
+    expect(API_BASE).toBe(import.meta.env.VITE_API_URL || "");
   });
 });

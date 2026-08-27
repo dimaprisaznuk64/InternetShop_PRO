@@ -1,4 +1,4 @@
-﻿# release-check.ps1 - automated GitHub release readiness check
+# release-check.ps1 - automated GitHub release readiness check
 # Usage:
 #   .\release-check.ps1              # full check (git + secrets + versions + tests + build + compose)
 #   .\release-check.ps1 -SkipTests   # quick pass without pytest/build/compose
@@ -76,7 +76,8 @@ if (-not $SkipTests) {
 
     Step "Backend tests (pytest)"
     Push-Location backend
-    & ".\.venv\Scripts\python.exe" -m pytest tests -q -p no:cacheprovider 2>&1 | Select-Object -Last 1 | Write-Host
+    $py = if (Test-Path ".\.venv\Scripts\python.exe") { ".\.venv\Scripts\python.exe" } else { "python" }
+    & $py -m pytest tests -q -p no:cacheprovider 2>&1 | Select-Object -Last 1 | Write-Host
     if ($LASTEXITCODE -eq 0) { Ok "backend suite green" } else { Fail "backend tests failed" }
     Pop-Location
 

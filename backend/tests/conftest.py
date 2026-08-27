@@ -33,6 +33,47 @@ def event_loop():
     loop.close()
 
 
+import fnmatch
+
+
+class InMemoryRedisMock:
+    def __init__(self):
+        self._data = {}
+
+    async def ping(self):
+        return True
+
+    async def get(self, key):
+        return self._data.get(key)
+
+    async def set(self, key, value, ex=None):
+        self._data[key] = str(value)
+        return True
+
+    async def exists(self, key):
+        return 1 if key in self._data else 0
+
+    async def delete(self, *keys):
+        count = 0
+        for k in keys:
+            if k in self._data:
+                del self._data[k]
+                count += 1
+        return count
+
+    async def scan_iter(self, match="*"):
+        for k in list(self._data.keys()):
+            if fnmatch.fnmatch(k, match):
+                yield k
+
+    async def flushdb(self):
+        self._data.clear()
+        return True
+
+    async def aclose(self):
+        self._data.clear()
+
+
 @pytest.fixture(scope="session", autouse=True)
 async def setup_database():
     import app.models  # noqa
@@ -41,6 +82,8 @@ async def setup_database():
         await conn.run_sync(Base.metadata.create_all)
     await init_redis()
     import app.cache as cache_module
+    if cache_module.redis_client is None:
+        cache_module.redis_client = InMemoryRedisMock()
     if cache_module.redis_client:
         await cache_module.redis_client.flushdb()
     yield
