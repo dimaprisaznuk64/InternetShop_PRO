@@ -81,13 +81,17 @@ services:
       dockerfile: Dockerfile
     command: celery -A app.celery_app worker -l info -c 4
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "celery -A app.celery_app inspect ping -d celery@$$HOSTNAME"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     env_file:
       - .env.docker
     environment:
       DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-internetshop}
     depends_on:
-      postgres:
-        condition: service_healthy
       redis:
         condition: service_healthy
     networks:
@@ -99,6 +103,12 @@ services:
       dockerfile: Dockerfile
     command: celery -A app.celery_app beat -l info
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import glob; assert any(a == b'beat' for f in glob.glob('/proc/[0-9]*/cmdline') for a in open(f,'rb').read().split(b'\\x00'))\""]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     env_file:
       - .env.docker
     environment:

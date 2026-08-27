@@ -8,6 +8,7 @@ if sys.platform == "win32":
 # Keep tests hermetic: local .env values must not change endpoint behavior.
 # Env vars take priority over .env in pydantic-settings.
 os.environ["WEBHOOK_SECRET"] = ""
+os.environ["RATE_LIMIT_ENABLED"] = "false"
 
 import pytest
 from httpx import AsyncClient, ASGITransport
@@ -39,6 +40,9 @@ async def setup_database():
         await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
     await init_redis()
+    import app.cache as cache_module
+    if cache_module.redis_client:
+        await cache_module.redis_client.flushdb()
     yield
     await close_redis()
     async with test_engine.begin() as conn:
@@ -56,6 +60,9 @@ async def db_session():
     async with test_engine.begin() as conn:
         for table in reversed(Base.metadata.sorted_tables):
             await conn.execute(table.delete())
+    import app.cache as cache_module
+    if cache_module.redis_client:
+        await cache_module.redis_client.flushdb()
 
 
 @pytest.fixture
