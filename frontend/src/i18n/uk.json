@@ -158,7 +158,30 @@
     "categories": "Категорії",
     "users": "Користувачі",
     "orders": "Замовлення",
-    "promo": "Промокоди"
+    "promo": "Промокоди",
+    "users_page": {
+      "title": "Користувачі ({{total}})",
+      "search_placeholder": "Пошук за ім’ям або email...",
+      "all_roles": "Усі ролі",
+      "username": "Ім’я користувача",
+      "email": "Email",
+      "role": "Роль",
+      "status": "Статус",
+      "joined": "Зареєстровано",
+      "actions": "Дії",
+      "role_user": "Користувач",
+      "role_manager": "Менеджер",
+      "role_admin": "Адмін",
+      "active": "Активний",
+      "blocked": "Заблокований",
+      "block": "Заблокувати",
+      "unblock": "Розблокувати",
+      "loading": "Завантаження...",
+      "empty": "Користувачів не знайдено.",
+      "previous": "Назад",
+      "next": "Далі",
+      "page_of": "Сторінка {{page}} з {{total}}"
+    }
   },
   "category": {
     "smartphones": "Смартфони",

@@ -1,10 +1,14 @@
 import { useState, useEffect, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { adminApi } from "../../../api";
 import type { UserResponse } from "../../../types";
+import { useAuth } from "../../../contexts/AuthContext";
 
 const PAGE_SIZE = 20;
 
 export function AdminUsersPage() {
+  const { t } = useTranslation();
+  const { user: currentUser } = useAuth();
   const [users, setUsers] = useState<UserResponse[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -53,12 +57,12 @@ export function AdminUsersPage() {
 
   return (
     <div className="admin-users container">
-      <h1>Users ({total})</h1>
+      <h1>{t("admin.users_page.title", { total })}</h1>
 
       <div className="admin-filters">
         <input
           type="text"
-          placeholder="Search by name or email..."
+          placeholder={t("admin.users_page.search_placeholder")}
           value={search}
           onChange={(e) => { setSearch(e.target.value); setPage(0); }}
         />
@@ -66,67 +70,73 @@ export function AdminUsersPage() {
           value={roleFilter}
           onChange={(e) => { setRoleFilter(e.target.value); setPage(0); }}
         >
-          <option value="">All roles</option>
-          <option value="user">User</option>
-          <option value="manager">Manager</option>
-          <option value="admin">Admin</option>
+          <option value="">{t("admin.users_page.all_roles")}</option>
+          <option value="user">{t("admin.users_page.role_user")}</option>
+          <option value="manager">{t("admin.users_page.role_manager")}</option>
+          <option value="admin">{t("admin.users_page.role_admin")}</option>
         </select>
       </div>
 
       {loading ? (
-        <p className="admin-loading">Loading...</p>
+        <p className="admin-loading">{t("admin.users_page.loading")}</p>
       ) : users.length === 0 ? (
-        <p className="admin-empty">No users found.</p>
+        <p className="admin-empty">{t("admin.users_page.empty")}</p>
       ) : (
         <>
           <table className="admin-table">
             <thead>
               <tr>
-                <th>Username</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Status</th>
-                <th>Joined</th>
-                <th>Actions</th>
+                <th>{t("admin.users_page.username")}</th>
+                <th>{t("admin.users_page.email")}</th>
+                <th>{t("admin.users_page.role")}</th>
+                <th>{t("admin.users_page.status")}</th>
+                <th>{t("admin.users_page.joined")}</th>
+                <th>{t("admin.users_page.actions")}</th>
               </tr>
             </thead>
             <tbody>
-              {users.map((user) => (
-                <tr key={user.id}>
-                  <td>{user.username}</td>
-                  <td>{user.email}</td>
-                  <td>
-                    <select
-                      className="admin-select"
-                      value={user.role}
-                      onChange={(e) =>
-                        handleRoleChange(user.id, e.target.value)
-                      }
-                    >
-                      <option value="user">user</option>
-                      <option value="manager">manager</option>
-                      <option value="admin">admin</option>
-                    </select>
-                  </td>
-                  <td>
-                    <span className={`badge badge--${user.is_active ? "success" : "muted"}`}>
-                      {user.is_active ? "Active" : "Blocked"}
-                    </span>
-                  </td>
-                  <td>{new Date(user.created_at).toLocaleDateString()}</td>
-                  <td className="admin-table__actions">
-                    {user.is_active ? (
-                      <button className="btn btn--sm btn--danger" onClick={() => handleBlock(user.id)}>
-                        Block
-                      </button>
-                    ) : (
-                      <button className="btn btn--sm btn--success" onClick={() => handleUnblock(user.id)}>
-                        Unblock
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              ))}
+              {users.map((user) => {
+                const isSelf = currentUser?.id === user.id;
+                return (
+                  <tr key={user.id}>
+                    <td>{user.username}</td>
+                    <td>{user.email}</td>
+                    <td>
+                      <select
+                        className="admin-select"
+                        value={user.role}
+                        disabled={isSelf}
+                        onChange={(e) =>
+                          handleRoleChange(user.id, e.target.value)
+                        }
+                      >
+                        <option value="user">{t("admin.users_page.role_user")}</option>
+                        <option value="manager">{t("admin.users_page.role_manager")}</option>
+                        <option value="admin">{t("admin.users_page.role_admin")}</option>
+                      </select>
+                    </td>
+                    <td>
+                      <span className={`badge badge--${user.is_active ? "success" : "muted"}`}>
+                        {user.is_active ? t("admin.users_page.active") : t("admin.users_page.blocked")}
+                      </span>
+                    </td>
+                    <td>{new Date(user.created_at).toLocaleDateString()}</td>
+                    <td className="admin-table__actions">
+                      {isSelf ? (
+                        <span className="badge badge--info">{t("admin.users_page.role_admin")}</span>
+                      ) : user.is_active ? (
+                        <button className="btn btn--sm btn--danger" onClick={() => handleBlock(user.id)}>
+                          {t("admin.users_page.block")}
+                        </button>
+                      ) : (
+                        <button className="btn btn--sm btn--success" onClick={() => handleUnblock(user.id)}>
+                          {t("admin.users_page.unblock")}
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
 
@@ -137,17 +147,17 @@ export function AdminUsersPage() {
                 disabled={page === 0}
                 onClick={() => setPage((p) => p - 1)}
               >
-                Previous
+                {t("admin.users_page.previous")}
               </button>
               <span>
-                Page {page + 1} of {totalPages}
+                {t("admin.users_page.page_of", { page: page + 1, total: totalPages })}
               </span>
               <button
                 className="btn btn--sm"
                 disabled={page >= totalPages - 1}
                 onClick={() => setPage((p) => p + 1)}
               >
-                Next
+                {t("admin.users_page.next")}
               </button>
             </div>
           )}

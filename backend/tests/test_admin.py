@@ -69,6 +69,16 @@ async def test_unblock_user(client, db_session):
 
 
 @pytest.mark.asyncio
+async def test_admin_cannot_block_self(client, db_session):
+    token = await _admin_token(db_session)
+    headers = {"Authorization": f"Bearer {token}"}
+
+    resp = await client.patch("/api/admin/users/adm-panel-id/block", headers=headers)
+    assert resp.status_code == 400
+
+
+
+@pytest.mark.asyncio
 async def test_change_role(client, db_session):
     token = await _admin_token(db_session)
     headers = {"Authorization": f"Bearer {token}"}

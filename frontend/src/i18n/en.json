@@ -158,7 +158,30 @@
     "categories": "Categories",
     "users": "Users",
     "orders": "Orders",
-    "promo": "Promo Codes"
+    "promo": "Promo Codes",
+    "users_page": {
+      "title": "Users ({{total}})",
+      "search_placeholder": "Search by name or email...",
+      "all_roles": "All roles",
+      "username": "Username",
+      "email": "Email",
+      "role": "Role",
+      "status": "Status",
+      "joined": "Joined",
+      "actions": "Actions",
+      "role_user": "User",
+      "role_manager": "Manager",
+      "role_admin": "Admin",
+      "active": "Active",
+      "blocked": "Blocked",
+      "block": "Block",
+      "unblock": "Unblock",
+      "loading": "Loading...",
+      "empty": "No users found.",
+      "previous": "Previous",
+      "next": "Next",
+      "page_of": "Page {{page}} of {{total}}"
+    }
   },
   "category": {
     "smartphones": "Smartphones",

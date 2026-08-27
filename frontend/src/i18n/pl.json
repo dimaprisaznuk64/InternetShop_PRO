@@ -158,7 +158,30 @@
     "categories": "Kategorie",
     "users": "Uzytkownicy",
     "orders": "Zamowienia",
-    "promo": "Kody promocyjne"
+    "promo": "Kody promocyjne",
+    "users_page": {
+      "title": "Uzytkownicy ({{total}})",
+      "search_placeholder": "Szukaj po nazwie lub e-mail...",
+      "all_roles": "Wszystkie role",
+      "username": "Nazwa uzytkownika",
+      "email": "E-mail",
+      "role": "Rola",
+      "status": "Status",
+      "joined": "Dolaczyl",
+      "actions": "Akcje",
+      "role_user": "Uzytkownik",
+      "role_manager": "Menedzer",
+      "role_admin": "Administrator",
+      "active": "Aktywny",
+      "blocked": "Zablokowany",
+      "block": "Zablokuj",
+      "unblock": "Odblokuj",
+      "loading": "Ladowanie...",
+      "empty": "Nie znaleziono uzytkownikow.",
+      "previous": "Poprzednia",
+      "next": "Nastepna",
+      "page_of": "Strona {{page}} z {{total}}"
+    }
   },
   "category": {
     "smartphones": "Smartfony",

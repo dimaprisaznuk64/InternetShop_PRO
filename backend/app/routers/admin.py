@@ -63,6 +63,9 @@ async def block_user(
     current_user=Depends(require_admin),
     db: AsyncSession = Depends(get_db),
 ):
+    if current_user.id == user_id:
+        raise BadRequestError("You cannot block your own account")
+
     result = await db.execute(select(User).where(User.id == user_id))
     user = result.scalar_one_or_none()
     if not user:

@@ -4,9 +4,16 @@
 
 ## Останнє оновлення
 
-- Дата: 2026-08-25
-- Стан: **UI Redesign — Phase 2 завершено.**
+- Дата: 2026-08-27
+- Стан: **Admin i18n + self-block guard.**
 - Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`
+
+### Зміни 2026-08-27:
+- **frontend: Admin Users page** — повністю перекладено (en/uk/pl): заголовки, пошук, ролі, статуси, кнопки Block/Unblock, пагінація
+- **frontend: Admin Users** — для свого акаунта приховано кнопку Block і задизейблено зміну ролі (`useAuth`)
+- **backend: `/api/admin/users/{id}/block`** — заборона самоблокування (400, "You cannot block your own account")
+- **tests:** додано `test_admin_cannot_block_self`
+- QA: frontend 84/84, backend 1088/1088 green
 
 ### UI Redesign Phases
 
