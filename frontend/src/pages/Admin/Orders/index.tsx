@@ -90,8 +90,8 @@ export function AdminOrdersPage() {
             <tbody>
               {orders.map((order) => (
                 <tr key={order.id}>
-                  <td className="admin-table__mono">{order.id.slice(0, 8)}...</td>
-                  <td className="admin-table__mono">{order.user_id.slice(0, 8)}...</td>
+                  <td className="admin-table__mono">{order.id ? `${order.id.slice(0, 8)}...` : "—"}</td>
+                  <td className="admin-table__mono">{order.user_id ? `${order.user_id.slice(0, 8)}...` : "—"}</td>
                   <td>${Number(order.total).toFixed(2)}</td>
                   <td>
                     <select

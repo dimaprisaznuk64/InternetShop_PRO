@@ -40,6 +40,7 @@ def _serialize_order(order: Order) -> OrderResponse:
     ]
     return OrderResponse(
         id=order.id,
+        user_id=order.user_id,
         status=order.status.value if hasattr(order.status, 'value') else order.status,
         total=f"{float(order.total):.2f}",
         discount=f"{float(order.discount or 0):.2f}",
@@ -247,6 +248,40 @@ async def cancel_order(
     return _serialize_order(order)
 
 
+@router.get("/admin/all", response_model=OrderListResponse)
+async def admin_list_orders(
+    status_filter: str = Query(None, alias="status"),
+    user_id: str = Query(None),
+    limit: int = Query(20, ge=1, le=100),
+    offset: int = Query(0, ge=0),
+    current_user=Depends(require_admin),
+    db: AsyncSession = Depends(get_db),
+):
+    stmt = select(Order)
+    count_stmt = select(func.count(Order.id))
+
+    if status_filter:
+        stmt = stmt.where(Order.status == status_filter)
+        count_stmt = count_stmt.where(Order.status == status_filter)
+
+    if user_id:
+        stmt = stmt.where(Order.user_id == user_id)
+        count_stmt = count_stmt.where(Order.user_id == user_id)
+
+    total_res = await db.execute(count_stmt)
+    total_count = total_res.scalar() or 0
+
+    stmt = stmt.options(selectinload(Order.items)).order_by(Order.created_at.desc()).offset(offset).limit(limit)
+    result = await db.execute(stmt)
+    orders = result.scalars().all()
+
+    serialized = []
+    for order in orders:
+        serialized.append(_serialize_order(order))
+
+    return OrderListResponse(orders=serialized, total=total_count)
+
+
 @router.get("/{order_id}", response_model=OrderResponse)
 async def get_order(
     order_id: str,
@@ -264,34 +299,6 @@ async def get_order(
         raise BadRequestError("Access denied")
 
     return _serialize_order(order)
-
-
-@router.get("/admin/all", response_model=OrderListResponse)
-async def admin_list_orders(
-    status_filter: str = Query(None, alias="status"),
-    user_id: str = Query(None),
-    limit: int = Query(20, ge=1, le=100),
-    offset: int = Query(0, ge=0),
-    current_user=Depends(require_admin),
-    db: AsyncSession = Depends(get_db),
-):
-    stmt = select(Order)
-
-    if status_filter:
-        stmt = stmt.where(Order.status == status_filter)
-
-    if user_id:
-        stmt = stmt.where(Order.user_id == user_id)
-
-    stmt = stmt.options(selectinload(Order.items)).order_by(Order.created_at.desc()).offset(offset).limit(limit)
-    result = await db.execute(stmt)
-    orders = result.scalars().all()
-
-    serialized = []
-    for order in orders:
-        serialized.append(_serialize_order(order))
-
-    return OrderListResponse(orders=serialized, total=len(serialized))
 
 
 @router.patch("/{order_id}/status", response_model=OrderResponse)

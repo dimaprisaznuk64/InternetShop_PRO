@@ -454,3 +454,26 @@ async def test_checkout_unknown_promo_rejected(client, db_session):
     )
     assert response.status_code == 400
     assert "not found" in response.json()["detail"]
+
+
+@pytest.mark.asyncio
+async def test_admin_list_orders_endpoint(client, db_session):
+    admin_tok = await _admin_token(db_session)
+    admin_headers = {"Authorization": f"Bearer {admin_tok}"}
+    
+    user_tok = await _user_token(db_session)
+    user_headers = {"Authorization": f"Bearer {user_tok}"}
+    prod_id = await _setup_product(db_session, stock=10, price=50.00)
+    await _add_to_cart(client, user_headers, prod_id, qty=1)
+    
+    checkout_resp = await client.post("/api/orders/checkout", json={}, headers=user_headers)
+    assert checkout_resp.status_code == 201
+    
+    # Admin list should return the order with user_id
+    admin_resp = await client.get("/api/orders/admin/all", headers=admin_headers)
+    assert admin_resp.status_code == 200
+    data = admin_resp.json()
+    assert data["total"] >= 1
+    assert len(data["orders"]) >= 1
+    assert data["orders"][0]["user_id"] == "ord-user-id"
+

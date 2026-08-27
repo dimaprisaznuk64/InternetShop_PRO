@@ -23,13 +23,14 @@ class OrderItemResponse(BaseModel):
 
 class OrderResponse(BaseModel):
     id: str
+    user_id: Optional[str] = None
     status: str
     total: str
     discount: str = "0.00"
-    delivery_method: Optional[str]
-    delivery_address: Optional[str]
-    notes: Optional[str]
-    items: list[OrderItemResponse]
+    delivery_method: Optional[str] = None
+    delivery_address: Optional[str] = None
+    notes: Optional[str] = None
+    items: list[OrderItemResponse] = []
     created_at: str
 
     model_config = {"from_attributes": True}
