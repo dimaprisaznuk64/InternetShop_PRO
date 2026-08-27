@@ -4,7 +4,7 @@ Full-stack e-commerce platform: FastAPI + PostgreSQL + Redis + Celery on the bac
 
 > Built as a production-grade learning project — 76 structured lessons from architecture to final release.
 
-![status](https://img.shields.io/badge/tests-1087%20backend%20%2B%2082%20frontend-brightgreen)
+![status](https://img.shields.io/badge/tests-1087%20backend%20%2B%2084%20frontend-brightgreen)
 ![version](https://img.shields.io/badge/version-1.0.1-blue)
 ![python](https://img.shields.io/badge/python-3.12+-blue)
 ![fastapi](https://img.shields.io/badge/FastAPI-0.1xx-009688)
@@ -16,16 +16,21 @@ Full-stack e-commerce platform: FastAPI + PostgreSQL + Redis + Celery on the bac
 **Storefront**
 - Catalog: categories / subcategories, products, images, variants (e.g. iPhone Black 128GB / White 256GB)
 - Search by name, SKU and description using PostgreSQL `ILIKE`, filters (category, price, stock, brand), sorting & pagination
+- Price history per product with chart (backend-tracked via scheduled task)
 - Cart with stock validation, race-condition-safe checkout (row locking)
 - Orders with full lifecycle: `pending → paid → processing → shipped → completed / cancelled`
+- Real-time order status updates via WebSocket (order tracker page)
 - Payments: provider integration, webhooks with HMAC signature verification, idempotency
 - Favorites, reviews & moderation. Review policy: any registered user may post a
   review; purchases are detected automatically and shown as a **Verified Purchase** badge
 - Promo codes (percentage / fixed, expiry, usage limits, min order amount)
 - Delivery methods & shipping cost calculation
+- i18n (EN/UK) incl. translated category names, skeleton loaders, empty/error states
+- Keyboard command palette (Ctrl+K) for quick navigation
 
 **Accounts & Security**
-- JWT auth: access + refresh tokens, `jti`, refresh-token blacklist (in-process, single instance; Redis-backed — у плані v1.1.0), token-type validation, refresh rotation with reuse detection
+- JWT auth: access + refresh tokens, `jti`, refresh-token blacklist (Redis-backed, `bl:token:` keys), token-type validation, refresh rotation with reuse detection
+- Realtime order tracking via WebSocket (`/ws/orders`)
 - RBAC: user / manager / admin
 - Rate limiting (login 5/min, register 3/min, password change 3/5min, 100/min default)
 - Security headers (CSP, HSTS), CORS allow-list
@@ -100,7 +105,7 @@ backend/app/
 | Database | PostgreSQL 16, Redis 7 |
 | Async jobs | Celery (worker + beat) |
 | Frontend | React 19, TypeScript, Vite, React Router 7, Axios |
-| Testing | Pytest (1087 tests), Vitest + Testing Library (82 tests) |
+| Testing | Pytest (1087 tests), Vitest + Testing Library (84 tests) |
 | DevOps | Docker Compose, Nginx, GitHub Actions, bash deploy scripts |
 
 ## Quick Start (Docker)
@@ -194,7 +199,7 @@ cd backend && pytest
 cd frontend && npm test
 ```
 
-Current status: **1087 backend + 82 frontend tests passing.**
+Current status: **1087 backend + 84 frontend tests passing.**
 
 ## Screenshots
 
