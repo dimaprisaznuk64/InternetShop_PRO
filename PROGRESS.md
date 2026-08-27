@@ -9,6 +9,7 @@
 - Робоча папка: `C:\Users\DIMAS\Desktop\Programming\PythonPRO\InternetShop_PRO`
 
 ### Зміни 2026-08-27:
+- **frontend: Admin Dashboard** — перекладено (en/uk/pl): Revenue, Reviews, Avg, active, Recent Orders, Latest Products, таблиці, статуси, кнопки "View all"
 - **frontend: Admin Users page** — повністю перекладено (en/uk/pl): заголовки, пошук, ролі, статуси, кнопки Block/Unblock, пагінація
 - **frontend: Admin Users** — для свого акаунта приховано кнопку Block і задизейблено зміну ролі (`useAuth`)
 - **backend: `/api/admin/users/{id}/block`** — заборона самоблокування (400, "You cannot block your own account")

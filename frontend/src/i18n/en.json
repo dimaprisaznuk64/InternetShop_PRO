@@ -159,6 +159,28 @@
     "users": "Users",
     "orders": "Orders",
     "promo": "Promo Codes",
+    "dashboard_stats": {
+      "revenue": "Revenue",
+      "reviews": "Reviews",
+      "active": "active",
+      "avg": "Avg",
+      "na": "N/A"
+    },
+    "dashboard_sections": {
+      "recent_orders": "Recent Orders",
+      "no_orders": "No orders yet.",
+      "id": "ID",
+      "total": "Total",
+      "status": "Status",
+      "date": "Date",
+      "view_all_orders": "View all orders",
+      "latest_products": "Latest Products",
+      "no_products": "No products yet.",
+      "name": "Name",
+      "price": "Price",
+      "stock": "Stock",
+      "view_all_products": "View all products"
+    },
     "users_page": {
       "title": "Users ({{total}})",
       "search_placeholder": "Search by name or email...",

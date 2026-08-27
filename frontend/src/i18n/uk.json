@@ -159,6 +159,28 @@
     "users": "Користувачі",
     "orders": "Замовлення",
     "promo": "Промокоди",
+    "dashboard_stats": {
+      "revenue": "Дохід",
+      "reviews": "Відгуки",
+      "active": "активних",
+      "avg": "Середнє",
+      "na": "Н/Д"
+    },
+    "dashboard_sections": {
+      "recent_orders": "Останні замовлення",
+      "no_orders": "Замовлень ще немає.",
+      "id": "ID",
+      "total": "Сума",
+      "status": "Статус",
+      "date": "Дата",
+      "view_all_orders": "Переглянути всі замовлення",
+      "latest_products": "Останні товари",
+      "no_products": "Товарів ще немає.",
+      "name": "Назва",
+      "price": "Ціна",
+      "stock": "Залишок",
+      "view_all_products": "Переглянути всі товари"
+    },
     "users_page": {
       "title": "Користувачі ({{total}})",
       "search_placeholder": "Пошук за ім’ям або email...",

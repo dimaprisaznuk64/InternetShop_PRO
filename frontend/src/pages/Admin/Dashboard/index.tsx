@@ -41,7 +41,7 @@ export function DashboardPage() {
           <span className="stat-card__icon"><UsersIcon size={20} /></span>
           <h3>{t("admin.users")}</h3>
           <p>{stats.total_users}</p>
-          <small>{stats.active_users} active</small>
+          <small>{stats.active_users} {t("admin.dashboard_stats.active")}</small>
         </Link>
         <Link to="/admin/products" className="stat-card stat-card--link">
           <span className="stat-card__icon"><Package size={20} /></span>
@@ -55,32 +55,32 @@ export function DashboardPage() {
         </Link>
         <div className="stat-card">
           <span className="stat-card__icon"><DollarSign size={20} /></span>
-          <h3>Revenue</h3>
+          <h3>{t("admin.dashboard_stats.revenue")}</h3>
           <p>&#8372;{Number(stats.total_revenue).toLocaleString()}</p>
         </div>
         <div className="stat-card">
           <span className="stat-card__icon"><Star size={20} /></span>
-          <h3>Reviews</h3>
+          <h3>{t("admin.dashboard_stats.reviews")}</h3>
           <p>{stats.total_reviews}</p>
           <small>
-            Avg: {stats.average_rating ? Number(stats.average_rating).toFixed(1) : "N/A"}
+            {t("admin.dashboard_stats.avg")}: {stats.average_rating ? Number(stats.average_rating).toFixed(1) : t("admin.dashboard_stats.na")}
           </small>
         </div>
       </div>
 
       <div className="admin-dashboard__grid">
         <section className="admin-card">
-          <h2>Recent Orders</h2>
+          <h2>{t("admin.dashboard_sections.recent_orders")}</h2>
           {recentOrders.length === 0 ? (
-            <p className="admin-empty">No orders yet.</p>
+            <p className="admin-empty">{t("admin.dashboard_sections.no_orders")}</p>
           ) : (
             <table className="admin-table admin-table--compact">
               <thead>
                 <tr>
-                  <th>ID</th>
-                  <th>Total</th>
-                  <th>Status</th>
-                  <th>Date</th>
+                  <th>{t("admin.dashboard_sections.id")}</th>
+                  <th>{t("admin.dashboard_sections.total")}</th>
+                  <th>{t("admin.dashboard_sections.status")}</th>
+                  <th>{t("admin.dashboard_sections.date")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -90,7 +90,7 @@ export function DashboardPage() {
                     <td>&#8372;{Number(order.total).toLocaleString()}</td>
                     <td>
                       <span className={`status-badge status-badge--${order.status}`}>
-                        {order.status}
+                        {t(`orders.status_${order.status}`)}
                       </span>
                     </td>
                     <td>{new Date(order.created_at).toLocaleDateString()}</td>
@@ -100,21 +100,21 @@ export function DashboardPage() {
             </table>
           )}
           <Link to="/admin/orders" className="admin-card__footer">
-            View all orders <ArrowRight size={14} />
+            {t("admin.dashboard_sections.view_all_orders")} <ArrowRight size={14} />
           </Link>
         </section>
 
         <section className="admin-card">
-          <h2>Latest Products</h2>
+          <h2>{t("admin.dashboard_sections.latest_products")}</h2>
           {topProducts.length === 0 ? (
-            <p className="admin-empty">No products yet.</p>
+            <p className="admin-empty">{t("admin.dashboard_sections.no_products")}</p>
           ) : (
             <table className="admin-table admin-table--compact">
               <thead>
                 <tr>
-                  <th>Name</th>
-                  <th>Price</th>
-                  <th>Stock</th>
+                  <th>{t("admin.dashboard_sections.name")}</th>
+                  <th>{t("admin.dashboard_sections.price")}</th>
+                  <th>{t("admin.dashboard_sections.stock")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -129,7 +129,7 @@ export function DashboardPage() {
             </table>
           )}
           <Link to="/admin/products" className="admin-card__footer">
-            View all products <ArrowRight size={14} />
+            {t("admin.dashboard_sections.view_all_products")} <ArrowRight size={14} />
           </Link>
         </section>
       </div>

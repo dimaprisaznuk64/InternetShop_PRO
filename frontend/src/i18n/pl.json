@@ -159,6 +159,28 @@
     "users": "Uzytkownicy",
     "orders": "Zamowienia",
     "promo": "Kody promocyjne",
+    "dashboard_stats": {
+      "revenue": "Przychod",
+      "reviews": "Recenzje",
+      "active": "aktywnych",
+      "avg": "Srednia",
+      "na": "N/D"
+    },
+    "dashboard_sections": {
+      "recent_orders": "Ostatnie zamowienia",
+      "no_orders": "Brak zamowien.",
+      "id": "ID",
+      "total": "Suma",
+      "status": "Status",
+      "date": "Data",
+      "view_all_orders": "Zobacz wszystkie zamowienia",
+      "latest_products": "Najnowsze produkty",
+      "no_products": "Brak produktow.",
+      "name": "Nazwa",
+      "price": "Cena",
+      "stock": "Stan",
+      "view_all_products": "Zobacz wszystkie produkty"
+    },
     "users_page": {
       "title": "Uzytkownicy ({{total}})",
       "search_placeholder": "Szukaj po nazwie lub e-mail...",
